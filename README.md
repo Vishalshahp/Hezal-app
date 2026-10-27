@@ -15,17 +15,19 @@ Hezal Market is designed to make roadside sellers, pushcart vendors, and tempora
 
 ---
 
-## 2. Current Status: Phase 3 Authentication & RBAC Ready
+## 2. Current Status: Phase 4 Vendor Profile & Product Management Ready
 
-Phase 3 establishes the end-to-end user authentication, registration, password security, session handling, and role-based access control (RBAC).
+Phase 4 establishes complete stall profile management, GeoJSON Point coordinates with update timestamping, weekly operating schedules, real-time availability toggling, product catalogue CRUD with optional pricing, category taxonomy, and a multi-tier image upload service.
 
 ### Core Features Established:
-- **Authentication**: Separate registration portals for Customers and Vendors, login, logout, and session lookup (`GET /api/auth/me`).
-- **Security**: HttpOnly cookies with CSRF mitigation (`SameSite: Lax`), bcrypt password hashing (12 rounds), and cryptographically secure SHA-256 password reset tokens.
-- **Role-Based Access Control**: Strict backend protection (`authenticate` and `authorizeRoles`) and React Router route guards (`ProtectedRoute`) covering `customer`, `vendor`, and `admin` roles.
-- **Role Escalation Protection**: Public registration endpoints hardcode role assignment; administrator accounts can only be provisioned via controlled CLI (`npm run seed:admin`).
-- **Automated Quality**: 39 automated tests (33 server integration tests, 6 client component navigation tests) and ESLint running with zero warnings across client and server.
-- **Operational Health**: Phase 2 health checks (`/api/health` and `/api/health/db`) remain fully operational.
+- **Vendor Stall Management**: Full CRUD for business details, fixed vs mobile stall types, public contact info, address, and category assignment.
+- **Geospatial Tracking**: GeoJSON `Point` coordinate storage `[longitude, latitude]` with a `2dsphere` index and explicit `locationUpdatedAt` timestamp.
+- **Operating Schedule vs Availability**: Distinct separation of weekly operating schedule (Mon-Sun hours) and real-time operational status (`open`, `away`, `closed`).
+- **Product Catalogue**: Full CRUD for vendor products, optional pricing for weight/seasonal items, and real-time stock availability toggling.
+- **Media Upload Pipeline**: In-memory validation (5MB, JPEG/PNG/WebP) with dual-mode storage (Cloudinary cloud storage with automatic local `/uploads/` fallback).
+- **Public Visibility Boundary**: Profiles default to `pending` status. Public endpoints return HTTP 404 for unapproved stalls, while allowing owners and administrators to preview drafts.
+- **Automated Quality**: 67 automated tests (59 server integration tests, 8 client component navigation tests) and ESLint running with zero warnings across client and server.
+- **Operational Health**: Phase 2 health checks (`/api/health` and `/api/health/db`) and Phase 3 auth checks remain 100% operational.
 
 ---
 
@@ -54,9 +56,13 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-### 4. Provision Initial Administrator
+### 4. Seed Initial Data
 ```bash
+# Provision initial platform administrator
 npm run seed:admin
+
+# Seed 8 core marketplace categories
+npm run seed:categories
 ```
 
 ### 5. Run the Development Servers
@@ -76,7 +82,7 @@ npm run dev
 
 ---
 
-## 4. Key Authentication Endpoints
+## 4. Key Endpoints
 
 | Method | Route | Access | Description |
 | :--- | :--- | :--- | :--- |
@@ -85,8 +91,20 @@ npm run dev
 | `POST` | `/api/auth/login` | Public | Issues HttpOnly auth cookie & JWT |
 | `POST` | `/api/auth/logout` | Authenticated | Clears HttpOnly cookie |
 | `GET` | `/api/auth/me` | Authenticated | Restores authenticated session |
-| `POST` | `/api/auth/forgot-password` | Public | Generates secure single-use reset token |
-| `POST` | `/api/auth/reset-password/:token` | Public | Verifies token and updates password |
+| `GET` | `/api/categories` | Public | Returns marketplace taxonomy categories |
+| `GET` | `/api/vendor/profile` | Vendor | Fetches vendor stall profile & stats |
+| `PUT` | `/api/vendor/profile` | Vendor | Updates stall profile details |
+| `PUT` | `/api/vendor/location` | Vendor | Updates stall coordinates & operating schedule |
+| `PUT` | `/api/vendor/availability` | Vendor | Updates manual status (`open`, `away`, `closed`) |
+| `POST` | `/api/vendor/upload` | Vendor | Uploads stall cover/gallery images |
+| `GET` | `/api/vendor/dashboard/stats` | Vendor | Returns profile completeness & catalogue metrics |
+| `GET` | `/api/products/my` | Vendor | Lists all products belonging to the vendor |
+| `POST` | `/api/products` | Vendor | Adds new product to catalogue |
+| `PUT` | `/api/products/:id` | Vendor | Updates existing product (ownership enforced) |
+| `DELETE`| `/api/products/:id` | Vendor | Removes product from catalogue |
+| `PATCH`| `/api/products/:id/availability` | Vendor | Toggles product stock availability |
+| `POST` | `/api/products/upload` | Vendor | Uploads product image |
+| `GET` | `/api/vendors/:id` | Public / Gated | Returns stall profile (404 if pending/rejected) |
 
 ---
 
@@ -94,26 +112,28 @@ npm run dev
 
 ### Root Workspace Commands
 ```bash
-npm run test         # Run both backend and frontend test suites (39 tests)
-npm run lint         # Run both backend and frontend linters (0 errors, 0 warnings)
-npm run seed:admin   # Seed initial administrator account
+npm run test            # Run both backend and frontend test suites (67 tests)
+npm run lint            # Run both backend and frontend linters (0 errors, 0 warnings)
+npm run seed:admin      # Seed initial administrator account
+npm run seed:categories # Seed marketplace category taxonomy
 ```
 
 ### Server Commands (`cd server`)
 ```bash
-npm run dev          # Start server with nodemon auto-reload
-npm start            # Start production server
-npm test             # Run Vitest API integration tests
-npm run lint         # Run ESLint on src and tests
-npm run seed:admin   # Seed initial administrator account
+npm run dev             # Start server with nodemon auto-reload
+npm start               # Start production server
+npm test                # Run Vitest API integration tests (59 tests)
+npm run lint            # Run ESLint on src and tests
+npm run seed:admin      # Seed initial administrator account
+npm run seed:categories # Seed marketplace category taxonomy
 ```
 
 ### Client Commands (`cd client`)
 ```bash
-npm run dev          # Start Vite dev server on port 5173
-npm run build        # Build production bundle in client/dist
-npm test             # Run Vitest component tests
-npm run lint         # Run ESLint on client source
+npm run dev             # Start Vite dev server on port 5173
+npm run build           # Build production bundle in client/dist
+npm test                # Run Vitest component tests (8 tests)
+npm run lint            # Run ESLint on client source
 ```
 
 ---
@@ -127,8 +147,8 @@ npm run lint         # Run ESLint on client source
 ## 7. Delivery Roadmap
 - [x] **Phase 1**: Design & Architecture Planning
 - [x] **Phase 2**: Project Foundation Setup
-- [x] **Phase 3**: Accounts, Authentication & Roles *(Completed)*
-- [ ] **Phase 4**: Vendor Profile & Product Management
+- [x] **Phase 3**: Accounts, Authentication & Roles
+- [x] **Phase 4**: Vendor Profile & Product Management *(Completed)*
 - [ ] **Phase 5**: Customer Discovery & Map Navigation
 - [ ] **Phase 6**: Admin Moderation & Reporting
 - [ ] **Phase 7**: End-to-End Testing & Deployment

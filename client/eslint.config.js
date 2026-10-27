@@ -25,7 +25,14 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         fetch: 'readonly',
-        AbortController: 'readonly'
+        AbortController: 'readonly',
+        alert: 'readonly',
+        navigator: 'readonly',
+        FormData: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        URL: 'readonly',
+        FileReader: 'readonly'
       }
     },
     settings: {

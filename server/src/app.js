@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -8,10 +10,15 @@ import apiRouter from './routes/index.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import errorHandler from './middleware/errorHandler.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 
-// Security HTTP headers
-app.use(helmet());
+// Security HTTP headers with cross-origin resource policy for uploaded images
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 
 // Cross-Origin Resource Sharing
 app.use(
@@ -50,6 +57,9 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 if (!env.isTest) {
   app.use(morgan(env.isDevelopment ? 'dev' : 'combined'));
 }
+
+// Serve static uploads for local image storage
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Root route ping
 app.get('/', (req, res) => {

@@ -94,6 +94,38 @@ describe('Hezal Market Client Authentication & Navigation', () => {
     });
   });
 
+  it('redirects unauthenticated user accessing protected /vendor/profile to /login', async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter initialEntries={['/vendor/profile']}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </MemoryRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Sign In to Hezal Market/i })).toBeInTheDocument();
+    });
+  });
+
+  it('redirects unauthenticated user accessing protected /vendor/products to /login', async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter initialEntries={['/vendor/products']}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </MemoryRouter>
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Sign In to Hezal Market/i })).toBeInTheDocument();
+    });
+  });
+
   it('renders forgot password page', async () => {
     await act(async () => {
       render(

@@ -26,6 +26,9 @@ export const env = {
   ADMIN_NAME: process.env.ADMIN_NAME || 'Platform Administrator',
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'admin@hezalmarket.com',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'AdminPassword123!',
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
   isProduction: process.env.NODE_ENV === 'production',
   isTest: process.env.NODE_ENV === 'test',
   isDevelopment: process.env.NODE_ENV === 'development' || !process.env.NODE_ENV

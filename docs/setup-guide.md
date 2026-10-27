@@ -1,6 +1,6 @@
 # Hezal Market — Local Development & Setup Guide
 
-Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 3 (Authentication & Role-Based Access Control).
+Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 4 (Vendor Profile, Product Management, Image Uploads, and Stall Information).
 
 ---
 
@@ -33,8 +33,9 @@ hezal-market/
 │   │   ├── components/         # Reusable UI components (Navbar, Footer, StatusCard, ProtectedRoute)
 │   │   ├── context/            # React AuthContext providing user state and session management
 │   │   ├── layouts/            # Page layouts (MainLayout)
-│   │   ├── pages/              # Application pages (HomePage, LoginPage, RegisterCustomer, RegisterVendor, etc.)
-│   │   ├── services/           # HTTP API client and authentication service
+│   │   ├── pages/              # Application pages (HomePage, LoginPage, RegisterCustomer, RegisterVendor,
+│   │   │                       #  VendorDashboard, VendorProfilePage, VendorLocationPage, VendorProductsPage)
+│   │   ├── services/           # HTTP API client, authService, vendorService, productService
 │   │   ├── App.jsx             # React Router routing tree with role-protected route guards
 │   │   ├── index.css           # Tailwind CSS directives
 │   │   ├── main.jsx            # React root mount with AuthProvider
@@ -48,24 +49,26 @@ hezal-market/
 │   └── vite.config.js          # Vite build and test configuration
 │
 ├── server/                     # Backend REST API (Node.js + Express + Mongoose)
+│   ├── uploads/                # Local file storage for images when Cloudinary is not configured
 │   ├── src/
 │   │   ├── config/             # Environment validation and MongoDB connection
-│   │   ├── controllers/        # Request handlers (Health controller, Auth controller)
-│   │   ├── middleware/         # Auth verification, RBAC role guard, error handler, 404 router
-│   │   ├── models/             # Mongoose schemas (User model with bcrypt hashing)
-│   │   ├── routes/             # Modular API routes (health, auth, role-protected demo checks)
-│   │   ├── scripts/            # Admin provisioning script (seedAdmin.js)
+│   │   ├── controllers/        # Request handlers (auth, health, category, vendorProfile, product)
+│   │   ├── middleware/         # Auth verification, RBAC role guard, upload middleware, error handler
+│   │   ├── models/             # Mongoose schemas (User, Category, VendorProfile, Product)
+│   │   ├── routes/             # Modular API routes (auth, health, categories, vendor, products, public vendors)
+│   │   ├── scripts/            # Admin provisioning (seedAdmin.js) & Category taxonomy (seedCategories.js)
+│   │   ├── services/           # Image upload service (Cloudinary with local filesystem fallback)
 │   │   ├── utils/              # Standardized API response format, token/cookie manager, logger
 │   │   ├── app.js              # Express application assembly and middleware chain
 │   │   └── server.js           # Server listening and graceful shutdown
-│   ├── tests/                  # Integration tests (Health endpoints, 404 handler, Auth & RBAC)
+│   ├── tests/                  # Integration tests (auth, vendor/product, health, error handlers)
 │   ├── .env.example            # Environment template for backend
 │   ├── eslint.config.js        # ESLint flat configuration
 │   ├── package.json            # Server dependencies and scripts
 │   └── vitest.config.js        # Vitest server test runner configuration
 │
 ├── docs/                       # Project documentation
-│   ├── architecture-notes.md   # Architectural decisions and Phase 3 specifications
+│   ├── architecture-notes.md   # Architectural decisions and Phase 4 specifications
 │   └── setup-guide.md          # This setup and verification guide
 │
 ├── .gitignore                  # Git exclusion rules
@@ -96,6 +99,11 @@ Key configuration parameters:
 | `ADMIN_NAME` | Name for administrator provisioning script | `Platform Administrator` |
 | `ADMIN_EMAIL` | Email for administrator provisioning script | `admin@hezalmarket.com` |
 | `ADMIN_PASSWORD`| Initial password for administrator provisioning | `AdminPassword123!` |
+| `CLOUDINARY_CLOUD_NAME` | (Optional) Cloudinary account cloud name | `your_cloud_name` |
+| `CLOUDINARY_API_KEY` | (Optional) Cloudinary account API key | `your_api_key` |
+| `CLOUDINARY_API_SECRET` | (Optional) Cloudinary account API secret | `your_api_secret` |
+
+> *Note: If Cloudinary keys are omitted, the server automatically defaults to local image storage under `server/uploads/`.*
 
 ### Frontend (`client/.env`)
 Copy `client/.env.example` to `client/.env`:
@@ -108,19 +116,20 @@ cp client/.env.example client/.env
 
 ---
 
-## 4. Administrator Provisioning
+## 4. Seeding Initial Data
 
+### 4.1 Administrator Provisioning
 Hezal Market strictly prevents public registration of administrators. To provision the initial platform administrator:
-
 ```bash
-# Run administrator seed script
-cd server
-npm run seed:admin
-# Alternatively from the project root:
 npm run seed:admin
 ```
+This reads credentials from `server/.env` (`ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`), hashes the password using bcrypt (12 salt rounds), and creates an active user with `role: 'admin'`.
 
-This reads credentials from your `server/.env` (`ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`), hashes the password using bcrypt (12 salt rounds), and creates an active user with `role: 'admin'`. If an admin account with that email already exists, it safely prevents duplicates.
+### 4.2 Category Taxonomy Seeding
+To seed the 8 core marketplace categories (Street Food, Fresh Produce, Beverages & Juices, Flowers & Plants, Handcrafts, Clothing, Household Essentials, Repair & Services):
+```bash
+npm run seed:categories
+```
 
 ---
 
@@ -159,40 +168,29 @@ The client will start at `http://localhost:5173`.
 
 ---
 
-## 7. Authentication Endpoints & Manual Verification
+## 7. Phase 4 Endpoints & Manual Verification
 
-### 1. Customer Registration
-```bash
-curl -X POST http://localhost:5000/api/auth/register/customer \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Aarav Patel","email":"aarav@example.com","password":"Password123!","confirmPassword":"Password123!"}'
-```
+### 1. Categories
+- `GET /api/categories` — Fetch all active categories.
 
-### 2. Vendor Registration
-```bash
-curl -X POST http://localhost:5000/api/auth/register/vendor \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Ramesh Prajapati","email":"ramesh@example.com","phone":"+919876543210","password":"VendorPassword123!","confirmPassword":"VendorPassword123!"}'
-```
+### 2. Vendor Profile Management (`role: vendor`)
+- `GET /api/vendor/profile` — Fetch the authenticated vendor's stall profile and stats.
+- `PUT /api/vendor/profile` — Create or update stall name, description, stall type, categories, and public contact.
+- `PUT /api/vendor/location` — Update coordinates (`[longitude, latitude]`), stall address, landmark, and operating hours. Automatically timestamps `locationUpdatedAt`.
+- `PUT /api/vendor/availability` — Toggle manual availability status (`open`, `away`, `closed`).
+- `POST /api/vendor/upload` — Upload stall cover or photos (`multipart/form-data`, field: `image`, max 5MB).
+- `GET /api/vendor/dashboard/stats` — Retrieve profile completion %, product counts, and stock availability metrics.
 
-### 3. User Sign In
-```bash
-curl -i -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"aarav@example.com","password":"Password123!"}'
-```
-*Notice the `Set-Cookie: hezal_auth_token=...; HttpOnly; SameSite=Lax` header in the response.*
+### 3. Product Catalogue Management (`role: vendor`)
+- `GET /api/products/my` — Fetch all products belonging to the authenticated vendor.
+- `POST /api/products` — Create a new product (`name`, `description`, `categoryId`, optional `price`, `image`).
+- `PUT /api/products/:id` — Update product details (strictly verifies vendor ownership).
+- `DELETE /api/products/:id` — Delete a product (strictly verifies vendor ownership).
+- `PATCH /api/products/:id/availability` — Quick toggle product stock availability (`isAvailable: true/false`).
+- `POST /api/products/upload` — Upload product photo (`multipart/form-data`, field: `image`).
 
-### 4. Session Lookup (`GET /api/auth/me`)
-```bash
-curl http://localhost:5000/api/auth/me \
-  -H "Authorization: Bearer <TOKEN_RETURNED_FROM_LOGIN>"
-```
-
-### 5. Sign Out
-```bash
-curl -i -X POST http://localhost:5000/api/auth/logout
-```
+### 4. Public Profile Endpoint
+- `GET /api/vendors/:id` — Returns public stall details and available products for approved vendors. Returns `404 Not Found` if pending or unapproved (unless requested by the profile owner or an administrator).
 
 ---
 
@@ -202,7 +200,9 @@ curl -i -X POST http://localhost:5000/api/auth/logout
 ```bash
 npm run test
 ```
-Runs 33 backend integration tests and 6 frontend component navigation tests.
+Runs all 67 automated tests:
+- **59 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, and Ownership Security guards.
+- **8 client component & navigation tests** covering branding, route transitions, and role protection guards.
 
 ### Running All Linters (Root Workspace)
 ```bash

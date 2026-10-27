@@ -55,5 +55,32 @@ export async function fetchJson(endpoint, options = {}) {
   }
 }
 
+/**
+ * Upload multipart form-data (e.g. image files) with HttpOnly cookie support
+ */
+export async function uploadFormData(endpoint, formData) {
+  const url = `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+
+  const data = await response.json().catch(() => ({
+    success: false,
+    message: 'Failed to parse response from server',
+  }));
+
+  if (!response.ok) {
+    const error = new Error(data.message || `HTTP ${response.status} Error`);
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+}
+
 export { API_BASE_URL };
-export default { fetchJson, API_BASE_URL };
+export default { fetchJson, uploadFormData, API_BASE_URL };

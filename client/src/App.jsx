@@ -8,7 +8,10 @@ import RegisterVendorPage from './pages/RegisterVendorPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
-import VendorDashboardPlaceholder from './pages/VendorDashboardPlaceholder';
+import VendorDashboard from './pages/VendorDashboard';
+import VendorProfilePage from './pages/VendorProfilePage';
+import VendorLocationPage from './pages/VendorLocationPage';
+import VendorProductsPage from './pages/VendorProductsPage';
 import AdminDashboardPlaceholder from './pages/AdminDashboardPlaceholder';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -26,12 +29,36 @@ export default function App() {
         <Route path="reset-password/:token" element={<ResetPasswordPage />} />
         <Route path="unauthorized" element={<UnauthorizedPage />} />
 
-        {/* Vendor Protected Routes */}
+        {/* Vendor Protected Management Routes */}
         <Route
           path="vendor/dashboard"
           element={
             <ProtectedRoute allowedRoles={['vendor']}>
-              <VendorDashboardPlaceholder />
+              <VendorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="vendor/profile"
+          element={
+            <ProtectedRoute allowedRoles={['vendor']}>
+              <VendorProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="vendor/location"
+          element={
+            <ProtectedRoute allowedRoles={['vendor']}>
+              <VendorLocationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="vendor/products"
+          element={
+            <ProtectedRoute allowedRoles={['vendor']}>
+              <VendorProductsPage />
             </ProtectedRoute>
           }
         />

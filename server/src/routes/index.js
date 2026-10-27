@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import healthRoutes from './healthRoutes.js';
 import authRoutes from './authRoutes.js';
+import categoryRoutes from './categoryRoutes.js';
+import vendorRoutes from './vendorRoutes.js';
+import publicVendorRoutes from './publicVendorRoutes.js';
+import productRoutes from './productRoutes.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
@@ -11,6 +15,18 @@ router.use('/health', healthRoutes);
 
 // Mount authentication routes under /api/auth
 router.use('/auth', authRoutes);
+
+// Mount categories routes under /api/categories
+router.use('/categories', categoryRoutes);
+
+// Mount vendor operational routes under /api/vendor
+router.use('/vendor', vendorRoutes);
+
+// Mount public vendor discovery routes under /api/vendors
+router.use('/vendors', publicVendorRoutes);
+
+// Mount product routes under /api/products
+router.use('/products', productRoutes);
 
 // Role verification test/placeholder routes
 router.get(

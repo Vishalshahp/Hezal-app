@@ -9,21 +9,23 @@
 Hezal Market is designed to make roadside sellers, pushcart vendors, and temporary stall operators digitally discoverable without the burden of e-commerce checkout systems, transaction commissions, or delivery logistics.
 
 - **Frontend**: React 18 with Vite, Tailwind CSS, and React Router.
-- **Backend**: Node.js & Express REST API (ES Modules).
+- **Backend**: Node.js & Express REST API (ES Modules) with HttpOnly cookies & JWT.
 - **Database**: MongoDB Atlas with Mongoose ODM & GeoJSON spatial queries.
 - **Scope Discipline**: Vendor discovery, published locations, and navigation links. No payments, checkout, or continuous background GPS tracking.
 
 ---
 
-## 2. Current Status: Phase 2 Foundation Ready
+## 2. Current Status: Phase 3 Authentication & RBAC Ready
 
-Phase 2 establishes the core application skeletons, environment configurations, security headers, standardized health checks, automated test runners, and developer documentation.
+Phase 3 establishes the end-to-end user authentication, registration, password security, session handling, and role-based access control (RBAC).
 
 ### Core Features Established:
-- **Client**: Vite + React 18 SPA with Tailwind CSS, design tokens, responsive layout, React Router foundation, and a live runtime system health dashboard (`StatusCard.jsx`).
-- **Server**: Express REST API with modular routers, helmet, CORS, JSON limits, centralized error handling, 404 handler, and clean startup/shutdown lifecycle.
-- **Database Health**: `GET /api/health/db` with real MongoDB admin ping and safe disconnected fallbacks.
-- **Automated Quality**: Vitest test suites and ESLint configurations running with zero warnings across client and server.
+- **Authentication**: Separate registration portals for Customers and Vendors, login, logout, and session lookup (`GET /api/auth/me`).
+- **Security**: HttpOnly cookies with CSRF mitigation (`SameSite: Lax`), bcrypt password hashing (12 rounds), and cryptographically secure SHA-256 password reset tokens.
+- **Role-Based Access Control**: Strict backend protection (`authenticate` and `authorizeRoles`) and React Router route guards (`ProtectedRoute`) covering `customer`, `vendor`, and `admin` roles.
+- **Role Escalation Protection**: Public registration endpoints hardcode role assignment; administrator accounts can only be provisioned via controlled CLI (`npm run seed:admin`).
+- **Automated Quality**: 39 automated tests (33 server integration tests, 6 client component navigation tests) and ESLint running with zero warnings across client and server.
+- **Operational Health**: Phase 2 health checks (`/api/health` and `/api/health/db`) remain fully operational.
 
 ---
 
@@ -34,12 +36,8 @@ Phase 2 establishes the core application skeletons, environment configurations, 
 - npm (v9+)
 - MongoDB Atlas account OR local MongoDB running on port 27017
 
-### 2. Clone and Setup Environment Files
+### 2. Setup Environment Files
 ```bash
-# Clone the repository
-git clone <repo-url> hezal-market
-cd hezal-market
-
 # Setup Backend Environment
 cp server/.env.example server/.env
 
@@ -56,7 +54,12 @@ cd server && npm install
 cd ../client && npm install
 ```
 
-### 4. Run the Development Servers
+### 4. Provision Initial Administrator
+```bash
+npm run seed:admin
+```
+
+### 5. Run the Development Servers
 In Terminal 1 (Backend):
 ```bash
 cd server
@@ -73,18 +76,17 @@ npm run dev
 
 ---
 
-## 4. Health Check Endpoints
+## 4. Key Authentication Endpoints
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/health` | Verifies Express API server status and uptime |
-| `GET` | `/api/health/db` | Performs real round-trip admin ping against MongoDB |
-
-Try them in your browser or terminal:
-```bash
-curl http://localhost:5000/api/health
-curl http://localhost:5000/api/health/db
-```
+| Method | Route | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register/customer` | Public | Registers customer account |
+| `POST` | `/api/auth/register/vendor` | Public | Registers vendor merchant account |
+| `POST` | `/api/auth/login` | Public | Issues HttpOnly auth cookie & JWT |
+| `POST` | `/api/auth/logout` | Authenticated | Clears HttpOnly cookie |
+| `GET` | `/api/auth/me` | Authenticated | Restores authenticated session |
+| `POST` | `/api/auth/forgot-password` | Public | Generates secure single-use reset token |
+| `POST` | `/api/auth/reset-password/:token` | Public | Verifies token and updates password |
 
 ---
 
@@ -92,8 +94,9 @@ curl http://localhost:5000/api/health/db
 
 ### Root Workspace Commands
 ```bash
-npm run test         # Run both backend and frontend test suites
-npm run lint         # Run both backend and frontend linters
+npm run test         # Run both backend and frontend test suites (39 tests)
+npm run lint         # Run both backend and frontend linters (0 errors, 0 warnings)
+npm run seed:admin   # Seed initial administrator account
 ```
 
 ### Server Commands (`cd server`)
@@ -102,6 +105,7 @@ npm run dev          # Start server with nodemon auto-reload
 npm start            # Start production server
 npm test             # Run Vitest API integration tests
 npm run lint         # Run ESLint on src and tests
+npm run seed:admin   # Seed initial administrator account
 ```
 
 ### Client Commands (`cd client`)
@@ -122,8 +126,8 @@ npm run lint         # Run ESLint on client source
 
 ## 7. Delivery Roadmap
 - [x] **Phase 1**: Design & Architecture Planning
-- [x] **Phase 2**: Project Foundation Setup *(Completed)*
-- [ ] **Phase 3**: Accounts, Authentication & Roles
+- [x] **Phase 2**: Project Foundation Setup
+- [x] **Phase 3**: Accounts, Authentication & Roles *(Completed)*
 - [ ] **Phase 4**: Vendor Profile & Product Management
 - [ ] **Phase 5**: Customer Discovery & Map Navigation
 - [ ] **Phase 6**: Admin Moderation & Reporting

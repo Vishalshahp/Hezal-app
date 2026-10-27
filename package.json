@@ -11,7 +11,8 @@
     "lint:server": "npm --prefix server run lint",
     "lint:client": "npm --prefix client run lint",
     "test": "npm run test:server && npm run test:client",
-    "lint": "npm run lint:server && npm run lint:client"
+    "lint": "npm run lint:server && npm run lint:client",
+    "seed:admin": "npm --prefix server run seed:admin"
   },
   "keywords": [
     "mern",

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import env from './config/env.js';
 import apiRouter from './routes/index.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
@@ -37,6 +38,9 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   })
 );
+
+// Cookie parsing for HttpOnly authentication tokens
+app.use(cookieParser());
 
 // JSON request body parser with 10kb limit
 app.use(express.json({ limit: '10kb' }));

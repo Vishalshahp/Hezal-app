@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 /**
- * Reusable JSON fetch wrapper
+ * Reusable JSON fetch wrapper with HttpOnly cookie support
  * @param {string} endpoint - Relative path (e.g. '/health')
  * @param {RequestInit} [options] - Fetch configuration options
  */
@@ -18,6 +18,7 @@ export async function fetchJson(endpoint, options = {}) {
 
   try {
     const response = await fetch(url, {
+      credentials: 'include', // Automatically send and receive HttpOnly cookies
       ...options,
       headers: {
         ...defaultHeaders,

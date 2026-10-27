@@ -1,0 +1,24 @@
+{
+  "name": "hezal-market",
+  "version": "1.0.0",
+  "description": "Hezal Market - Local Vendor Discovery Platform",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "lint:server": "npm --prefix server run lint",
+    "lint:client": "npm --prefix client run lint",
+    "test": "npm run test:server && npm run test:client",
+    "lint": "npm run lint:server && npm run lint:client"
+  },
+  "keywords": [
+    "mern",
+    "local-vendor-discovery",
+    "street-vendors",
+    "geospatial"
+  ],
+  "author": "Hezal Market Team",
+  "license": "ISC"
+}

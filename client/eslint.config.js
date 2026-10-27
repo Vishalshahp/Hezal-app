@@ -32,6 +32,7 @@ export default [
         localStorage: 'readonly',
         sessionStorage: 'readonly',
         URL: 'readonly',
+        URLSearchParams: 'readonly',
         FileReader: 'readonly'
       }
     },

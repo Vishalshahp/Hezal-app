@@ -13,7 +13,8 @@
     "test": "npm run test:server && npm run test:client",
     "lint": "npm run lint:server && npm run lint:client",
     "seed:admin": "npm --prefix server run seed:admin",
-    "seed:categories": "npm --prefix server run seed:categories"
+    "seed:categories": "npm --prefix server run seed:categories",
+    "seed:vendors": "npm --prefix server run seed:vendors"
   },
   "keywords": [
     "mern",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Store, MapPin, LogOut, Shield } from 'lucide-react';
+import { Store, MapPin, LogOut, Shield, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
@@ -17,22 +17,33 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo & Name */}
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-xl bg-primary-500 flex items-center justify-center text-white shadow-sm">
-              <Store className="h-6 w-6" />
-            </div>
-            <div>
-              <span className="font-display font-bold text-xl text-slate-900 tracking-tight">
-                Hezal Market
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-200">
-                Phase 3 Auth
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center space-x-6">
+            <Link to="/" className="flex items-center space-x-3">
+              <div className="h-10 w-10 rounded-xl bg-primary-500 flex items-center justify-center text-white shadow-sm">
+                <Store className="h-6 w-6" />
+              </div>
+              <div>
+                <span className="font-display font-bold text-xl text-slate-900 tracking-tight">
+                  Hezal Market
+                </span>
+                <span className="hidden sm:inline-block ml-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Discovery Active
+                </span>
+              </div>
+            </Link>
+
+            {/* Explore Link in Navigation */}
+            <Link
+              to="/explore"
+              className="inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-700 hover:text-primary-600 hover:bg-slate-100 transition-colors"
+            >
+              <Compass className="h-4 w-4 text-primary-600" />
+              <span>Explore Stalls</span>
+            </Link>
+          </div>
 
           {/* Center tagline */}
-          <div className="hidden lg:flex items-center text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+          <div className="hidden xl:flex items-center text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
             <MapPin className="h-3.5 w-3.5 mr-1 text-slate-400" />
             <span>Discover Local. Shop Nearby.</span>
           </div>

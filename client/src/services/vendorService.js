@@ -46,6 +46,31 @@ export async function getCategories() {
   return await fetchJson('/categories');
 }
 
+export async function searchVendors(params = {}) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') {
+      query.append(key, value);
+    }
+  }
+  const qs = query.toString();
+  return await fetchJson(`/vendors${qs ? `?${qs}` : ''}`);
+}
+
+export async function getNearbyVendors(params = {}) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') {
+      query.append(key, value);
+    }
+  }
+  return await fetchJson(`/vendors/nearby?${query.toString()}`);
+}
+
+export async function getPublicProfile(id) {
+  return await fetchJson(`/vendors/${id}`);
+}
+
 export default {
   getMyProfile,
   createProfile,
@@ -55,4 +80,7 @@ export default {
   getVendorStats,
   uploadStallImage,
   getCategories,
+  searchVendors,
+  getNearbyVendors,
+  getPublicProfile
 };

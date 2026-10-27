@@ -15,19 +15,19 @@ Hezal Market is designed to make roadside sellers, pushcart vendors, and tempora
 
 ---
 
-## 2. Current Status: Phase 4 Vendor Profile & Product Management Ready
+## 2. Current Status: Phase 5 Customer Discovery & Interactive Maps Ready
 
-Phase 4 establishes complete stall profile management, GeoJSON Point coordinates with update timestamping, weekly operating schedules, real-time availability toggling, product catalogue CRUD with optional pricing, category taxonomy, and a multi-tier image upload service.
+Phase 5 establishes a complete, full-stack customer discovery experience: public keyword search, product-assisted stall matching, category browsing, ephemeral browser geolocation, manual locality search, geospatial radial querying using MongoDB `$geoNear`, interactive map exploration via React Leaflet with OpenStreetMap tiles, and walking directions to published stall locations.
 
 ### Core Features Established:
-- **Vendor Stall Management**: Full CRUD for business details, fixed vs mobile stall types, public contact info, address, and category assignment.
-- **Geospatial Tracking**: GeoJSON `Point` coordinate storage `[longitude, latitude]` with a `2dsphere` index and explicit `locationUpdatedAt` timestamp.
-- **Operating Schedule vs Availability**: Distinct separation of weekly operating schedule (Mon-Sun hours) and real-time operational status (`open`, `away`, `closed`).
-- **Product Catalogue**: Full CRUD for vendor products, optional pricing for weight/seasonal items, and real-time stock availability toggling.
-- **Media Upload Pipeline**: In-memory validation (5MB, JPEG/PNG/WebP) with dual-mode storage (Cloudinary cloud storage with automatic local `/uploads/` fallback).
-- **Public Visibility Boundary**: Profiles default to `pending` status. Public endpoints return HTTP 404 for unapproved stalls, while allowing owners and administrators to preview drafts.
-- **Automated Quality**: 67 automated tests (59 server integration tests, 8 client component navigation tests) and ESLint running with zero warnings across client and server.
-- **Operational Health**: Phase 2 health checks (`/api/health` and `/api/health/db`) and Phase 3 auth checks remain 100% operational.
+- **Public Homepage**: Dynamic hero search, popular categories grid, featured verified stalls with live backend data, quick "Near Me" detection, and vendor recruitment banner.
+- **Unified Explore Page (`/explore`)**: Debounced keyword and area search, category pills, radius selector (1km–25km), view layout toggles (Split, List, Map), and live synchronization between list cards and map pins.
+- **Geospatial Discovery (`GET /api/vendors/nearby`)**: Bounded radial search using MongoDB `$geoNear` aggregation on the `2dsphere` index with spherical distance calculation in meters.
+- **Product-Assisted Search**: Customers searching for product keywords (e.g. "Pani Puri" or "Clay Pot") discover all stalls selling those items, with sample products previewed directly on the stall card.
+- **Interactive Maps (React Leaflet)**: OpenStreetMap tile integration, custom DivIcon HTML pins with pulse/highlight effects, stall popups with thumbnail, badges, address, and profile links.
+- **External Walking Directions**: Directions buttons format coordinates `lat,lng` straight to Google Maps / navigation apps with explicit disclaimers regarding published schedules.
+- **Public Stall Profiles (`/vendors/:id`)**: Comprehensive stall presentation with banner photo, category badges, operating hours table, mini-map, and full searchable product catalogue.
+- **Automated Quality**: **91 automated tests** (76 server integration tests, 15 client component and discovery tests) and ESLint running with zero warnings across client and server.
 
 ---
 
@@ -63,6 +63,9 @@ npm run seed:admin
 
 # Seed 8 core marketplace categories
 npm run seed:categories
+
+# Seed realistic approved sample stalls in Ahmedabad (for dev & testing)
+npm run seed:vendors
 ```
 
 ### 5. Run the Development Servers
@@ -86,12 +89,15 @@ npm run dev
 
 | Method | Route | Access | Description |
 | :--- | :--- | :--- | :--- |
+| `GET` | `/api/vendors` | Public | Search approved stalls by keyword, area, or category |
+| `GET` | `/api/vendors/nearby` | Public | Geospatial radius discovery (`$geoNear`) with distance |
+| `GET` | `/api/vendors/:id` | Public / Gated | Public stall profile with active products (404 if pending) |
+| `GET` | `/api/categories` | Public | Returns marketplace taxonomy categories |
 | `POST` | `/api/auth/register/customer` | Public | Registers customer account |
 | `POST` | `/api/auth/register/vendor` | Public | Registers vendor merchant account |
 | `POST` | `/api/auth/login` | Public | Issues HttpOnly auth cookie & JWT |
 | `POST` | `/api/auth/logout` | Authenticated | Clears HttpOnly cookie |
 | `GET` | `/api/auth/me` | Authenticated | Restores authenticated session |
-| `GET` | `/api/categories` | Public | Returns marketplace taxonomy categories |
 | `GET` | `/api/vendor/profile` | Vendor | Fetches vendor stall profile & stats |
 | `PUT` | `/api/vendor/profile` | Vendor | Updates stall profile details |
 | `PUT` | `/api/vendor/location` | Vendor | Updates stall coordinates & operating schedule |
@@ -104,7 +110,6 @@ npm run dev
 | `DELETE`| `/api/products/:id` | Vendor | Removes product from catalogue |
 | `PATCH`| `/api/products/:id/availability` | Vendor | Toggles product stock availability |
 | `POST` | `/api/products/upload` | Vendor | Uploads product image |
-| `GET` | `/api/vendors/:id` | Public / Gated | Returns stall profile (404 if pending/rejected) |
 
 ---
 
@@ -112,27 +117,29 @@ npm run dev
 
 ### Root Workspace Commands
 ```bash
-npm run test            # Run both backend and frontend test suites (67 tests)
+npm run test            # Run both backend and frontend test suites (91 tests)
 npm run lint            # Run both backend and frontend linters (0 errors, 0 warnings)
 npm run seed:admin      # Seed initial administrator account
 npm run seed:categories # Seed marketplace category taxonomy
+npm run seed:vendors    # Seed sample approved vendors
 ```
 
 ### Server Commands (`cd server`)
 ```bash
 npm run dev             # Start server with nodemon auto-reload
 npm start               # Start production server
-npm test                # Run Vitest API integration tests (59 tests)
+npm test                # Run Vitest API integration tests (76 tests)
 npm run lint            # Run ESLint on src and tests
 npm run seed:admin      # Seed initial administrator account
 npm run seed:categories # Seed marketplace category taxonomy
+npm run seed:vendors    # Seed sample approved vendors
 ```
 
 ### Client Commands (`cd client`)
 ```bash
 npm run dev             # Start Vite dev server on port 5173
 npm run build           # Build production bundle in client/dist
-npm test                # Run Vitest component tests (8 tests)
+npm test                # Run Vitest component tests (15 tests)
 npm run lint            # Run ESLint on client source
 ```
 
@@ -148,7 +155,7 @@ npm run lint            # Run ESLint on client source
 - [x] **Phase 1**: Design & Architecture Planning
 - [x] **Phase 2**: Project Foundation Setup
 - [x] **Phase 3**: Accounts, Authentication & Roles
-- [x] **Phase 4**: Vendor Profile & Product Management *(Completed)*
-- [ ] **Phase 5**: Customer Discovery & Map Navigation
+- [x] **Phase 4**: Vendor Profile & Product Management
+- [x] **Phase 5**: Customer Discovery & Map Navigation *(Completed)*
 - [ ] **Phase 6**: Admin Moderation & Reporting
 - [ ] **Phase 7**: End-to-End Testing & Deployment

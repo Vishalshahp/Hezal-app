@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
+import ExplorePage from './pages/ExplorePage';
+import PublicVendorProfilePage from './pages/PublicVendorProfilePage';
 import LoginPage from './pages/LoginPage';
 import RegisterCustomerPage from './pages/RegisterCustomerPage';
 import RegisterVendorPage from './pages/RegisterVendorPage';
@@ -22,6 +24,8 @@ export default function App() {
       <Route path="/" element={<MainLayout />}>
         {/* Public Routes */}
         <Route index element={<HomePage />} />
+        <Route path="explore" element={<ExplorePage />} />
+        <Route path="vendors/:id" element={<PublicVendorProfilePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register/customer" element={<RegisterCustomerPage />} />
         <Route path="register/vendor" element={<RegisterVendorPage />} />

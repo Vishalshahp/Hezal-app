@@ -1,9 +1,19 @@
 import { Router } from 'express';
-import { getPublicProfile } from '../controllers/vendorProfileController.js';
+import {
+  searchVendors,
+  getNearbyVendors,
+  getPublicStallProfile
+} from '../controllers/discoveryController.js';
 
 const router = Router();
 
+// GET /api/vendors/nearby - Geospatial nearby vendor discovery (must precede /:id)
+router.get('/nearby', getNearbyVendors);
+
+// GET /api/vendors - Public search and discovery
+router.get('/', searchVendors);
+
 // GET /api/vendors/:id - Public vendor stall profile
-router.get('/:id', getPublicProfile);
+router.get('/:id', getPublicStallProfile);
 
 export default router;

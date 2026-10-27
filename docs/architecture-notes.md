@@ -1,13 +1,13 @@
 # Hezal Market — Architecture & Implementation Notes
 
-This document records the architectural baseline established across **Phase 2 (Foundation)**, **Phase 3 (Authentication & Role-Based Access Control)**, and **Phase 4 (Vendor Profile, Product Management, Image Uploads, and Stall Information)**, detailing design decisions, module boundaries, security policies, and implementation specifics.
+This document records the architectural baseline established across **Phase 2 (Foundation)**, **Phase 3 (Authentication & Role-Based Access Control)**, **Phase 4 (Vendor Profile & Products)**, and **Phase 5 (Customer Discovery, Search & Interactive Maps)**, detailing design decisions, module boundaries, security policies, and implementation specifics.
 
 ---
 
 ## 1. System Overview & Technology Stack
 
 The application adheres to the approved MERN stack architecture with deliberate scope boundaries:
-- **Client Tier**: React 18 SPA built with Vite 6, styled with Tailwind CSS v3, navigated via React Router v6, with central session state maintained by `AuthContext`.
+- **Client Tier**: React 18 SPA built with Vite 6, styled with Tailwind CSS v3, navigated via React Router v6, with central session state maintained by `AuthContext`. Maps integrated via `leaflet` 1.9 and `react-leaflet` 4.2 with OpenStreetMap tiles.
 - **Application Tier**: Node.js v24 + Express 4.21 configured with native ES Modules (`"type": "module"`), `cookie-parser`, `bcryptjs`, `jsonwebtoken`, and `multer`.
 - **Media Tier**: Dual-mode image storage service supporting Cloudinary cloud storage and automatic local file storage under `server/uploads/`.
 - **Data Tier**: MongoDB Atlas accessed via Mongoose 8.10 with indexed collections, 2dsphere geospatial coordinates, and schema-level security.
@@ -30,7 +30,8 @@ server/
 │   │   ├── healthController.js       # API health verification and MongoDB admin ping
 │   │   ├── categoryController.js     # Category taxonomy retrieval
 │   │   ├── vendorProfileController.js# Vendor profile, coordinates, availability, and stats
-│   │   └── productController.js      # Product catalogue CRUD and stock availability
+│   │   ├── productController.js      # Product catalogue CRUD and stock availability
+│   │   └── discoveryController.js    # Public search, nearby geospatial aggregation, stall profile
 │   ├── middleware/
 │   │   ├── authMiddleware.js         # Verifies JWT via HttpOnly cookie or Bearer header
 │   │   ├── roleMiddleware.js         # Authorizes requests based on permitted roles
@@ -48,11 +49,12 @@ server/
 │   │   ├── categoryRoutes.js         # Public category endpoints
 │   │   ├── vendorRoutes.js           # Protected vendor stall management endpoints
 │   │   ├── productRoutes.js          # Protected product catalogue endpoints
-│   │   ├── publicVendorRoutes.js     # Public vendor stall endpoints (approval-gated)
+│   │   ├── publicVendorRoutes.js     # Public vendor search, nearby, and stall profile routes
 │   │   └── index.js                  # Top-level API router mounting all domain routers
 │   ├── scripts/
 │   │   ├── seedAdmin.js              # Provision root administrator account
-│   │   └── seedCategories.js         # Seed 8 core marketplace taxonomy categories
+│   │   ├── seedCategories.js         # Seed 8 core marketplace taxonomy categories
+│   │   └── seedSampleVendors.js      # Seed realistic approved stalls in Ahmedabad
 │   ├── services/
 │   │   └── imageService.js           # Image storage abstraction (Cloudinary / Local)
 │   ├── utils/
@@ -64,6 +66,7 @@ server/
 └── tests/
     ├── auth.test.js                  # Auth, registration, session, and RBAC tests
     ├── vendor.test.js                # Vendor profile, products, location, and upload tests
+    ├── discovery.test.js             # Public search, product matching, and $geoNear tests
     ├── health.test.js                # Health check endpoint tests
     └── errors.test.js                # 404 handler and error response tests
 ```
@@ -71,26 +74,28 @@ server/
 ### 2.2 Frontend (`client/`)
 ```
 client/src/
-├── components/          # Reusable UI components (Navbar, Footer, StatusCard, ProtectedRoute)
+├── components/          # Reusable UI (Navbar, Footer, StatusCard, ProtectedRoute, VendorCard, InteractiveMap)
 ├── context/             # React AuthContext providing user state and session management
 ├── layouts/             # Structural wrappers (MainLayout with dynamic header/footer)
 ├── pages/               # Route view components
-│   ├── HomePage.jsx
+│   ├── HomePage.jsx                  # Dynamic landing page with hero search, categories, and stalls
+│   ├── ExplorePage.jsx               # Unified search, radius filters, interactive map & list
+│   ├── PublicVendorProfilePage.jsx   # Public stall showcase, operating hours, mini-map, products
 │   ├── LoginPage.jsx
 │   ├── RegisterCustomerPage.jsx
 │   ├── RegisterVendorPage.jsx
 │   ├── ForgotPasswordPage.jsx
 │   ├── ResetPasswordPage.jsx
 │   ├── UnauthorizedPage.jsx
-│   ├── VendorDashboard.jsx       # Vendor hub with real profile completeness and metrics
-│   ├── VendorProfilePage.jsx     # Stall profile setup and editing
-│   ├── VendorLocationPage.jsx    # Self-reported GPS coordinates and operating hours
-│   ├── VendorProductsPage.jsx    # Product catalogue management modal and grid
+│   ├── VendorDashboard.jsx
+│   ├── VendorProfilePage.jsx
+│   ├── VendorLocationPage.jsx
+│   ├── VendorProductsPage.jsx
 │   ├── AdminDashboardPlaceholder.jsx
 │   └── NotFoundPage.jsx
 ├── services/            # API client layers (api.js, authService, vendorService, productService)
-├── App.jsx              # React Router route hierarchy with ProtectedRoute guards
-├── index.css            # Tailwind directives and base layer styles
+├── App.jsx              # React Router route hierarchy with discovery routes and guards
+├── index.css            # Tailwind directives and Leaflet map CSS
 ├── main.jsx             # React root mount with AuthProvider and BrowserRouter
 └── setupTests.js        # DOM matchers setup for Vitest
 ```
@@ -183,11 +188,59 @@ client/src/
 
 ---
 
-## 5. Role & Route Permission Matrix
+## 5. Phase 5 Customer Discovery, Search & Interactive Map Architecture
+
+### 5.1 Geospatial Query Strategy (`$geoNear` on `2dsphere` Index)
+- Discovery by proximity utilizes MongoDB's native aggregation pipeline operator `$geoNear` as the mandatory first pipeline stage.
+- Supported by the `2dsphere` index on `VendorProfile.location`.
+- Query structure:
+  ```javascript
+  {
+    $geoNear: {
+      near: { type: 'Point', coordinates: [parsedLng, parsedLat] },
+      distanceField: 'distance', // calculated distance in meters
+      maxDistance: radiusInKm * 1000,
+      spherical: true,
+      query: { approvalStatus: 'approved', userId: { $in: activeUserIds } }
+    }
+  }
+  ```
+- Longitude and latitude bounds are validated on server (-180 to 180 for longitude, -90 to 90 for latitude). Missing or invalid inputs return HTTP `400 Bad Request`.
+- Output distances are converted to kilometers (`distanceKm`) for human-readable display on result cards and map pins.
+
+### 5.2 Product-Assisted Discovery
+- Public search accepts query string `q`.
+- In addition to regex matching across stall names, descriptions, and address fields, the backend queries `Product` documents matching `q` (`$regex: q, $options: 'i'`) and collects distinct matching `vendorId`s.
+- This ensures customers searching for "Pani Puri", "Kulhad", or "Mango" discover all nearby vendors stocking those items, even if the keyword isn't in the stall's title.
+- Each vendor result card is enriched with live product count and up to 3 sample in-stock products.
+
+### 5.3 Location Permission & Ephemeral Coordinates
+- Customer location is requested strictly upon user action ("Find Stalls Near Me" / "Use My Current Location") via standard HTML5 Geolocation.
+- Coordinates are never stored in the database, never linked to user accounts, and never transmitted to third-party trackers.
+- If permission is denied or unavailable, the user can continue seamless discovery via text-based locality/area search.
+
+### 5.4 Leaflet Interactive Map Architecture
+- Interactive map is powered by React Leaflet v4 (`leaflet@1.9.4` and `react-leaflet@4.2.1`) using OpenStreetMap standard tile servers (`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`).
+- Tiles are properly attributed: `&copy; OpenStreetMap contributors`.
+- Leaflet markers are created using custom `L.divIcon` HTML pins (avoiding missing marker asset 404s common in Vite bundlers).
+- Selecting a stall card flies the map camera to the vendor's coordinates and opens the marker popup; clicking a pin on the map synchronizes the list view.
+- Provides Split, List, and Map layout modes on desktop, with mobile-responsive view switching.
+
+### 5.5 External Directions to Published Stall Location
+- Vendor cards and public stall profiles provide a direct navigation button:
+  `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+- Coordinate order `destination=lat,lng` is verified.
+- Clear disclaimer is communicated: Directions guide shoppers to the vendor's self-reported coordinates and do not guarantee live physical presence outside their published operating schedule.
+
+---
+
+## 6. Role & Route Permission Matrix
 
 | Route Path | Allowed Roles | Unauthenticated Behavior | Unauthorized Role Behavior |
 | :--- | :--- | :--- | :--- |
 | `/` | Public | Allowed | Allowed |
+| `/explore` | Public | Allowed | Allowed |
+| `/vendors/:id` | Public / Gated | Allowed if approved (404 if pending/suspended) | Allowed if approved |
 | `/login` | Public | Allowed | Redirects to home/dashboard if already signed in |
 | `/register/customer` | Public | Allowed | Redirects to home if already signed in |
 | `/register/vendor` | Public | Allowed | Redirects to vendor dashboard if signed in |
@@ -198,20 +251,23 @@ client/src/
 | `/vendor/location` | `vendor` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
 | `/vendor/products` | `vendor` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
 | `/admin` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
-| `/api/auth/me` | Authenticated | HTTP 401 Unauthorized | Allowed |
 | `/api/categories` | Public | Allowed | Allowed |
-| `/api/vendors/:id` | Public / Gated | Returns 404 if unapproved | Returns 404 if unapproved |
+| `/api/vendors` | Public | Allowed (returns approved vendors only) | Allowed |
+| `/api/vendors/nearby` | Public | Allowed (returns approved vendors within radius) | Allowed |
+| `/api/vendors/:id` | Public / Gated | Returns 404 if unapproved/suspended | Returns 404 if unapproved/suspended |
 | `/api/vendor/*` | `vendor` | HTTP 401 Unauthorized | HTTP 403 Forbidden |
 | `/api/products/*` | `vendor` | HTTP 401 Unauthorized | HTTP 403 Forbidden |
 | `/api/admin/*` | `admin` | HTTP 401 Unauthorized | HTTP 403 Forbidden |
 
 ---
 
-## 6. Scope Boundary Compliance
+## 7. Scope Boundary Compliance
 
-Phase 4 is strictly confined to Vendor Stall Profiles, Product Catalogues, Coordinates, and Media Uploads:
-- ❌ No customer proximity radius search, Leaflet interactive discovery maps, or turn-by-turn directions (Deferred to Phase 5).
-- ❌ No customer reviews, ratings, order placement, or digital payments.
+Phase 5 is strictly confined to Customer Discovery, Search, Geospatial Queries, and Interactive Maps:
+- ❌ No online checkout, payments, or digital transactions.
+- ❌ No delivery logistics or order processing.
+- ❌ No customer reviews, ratings, or feedback forms (Deferred to Phase 6/7).
+- ❌ No customer-vendor live chat or direct messaging.
+- ❌ No continuous background GPS tracking or geofenced notifications.
 - ❌ No full administrator approval queue UI or moderation workflows (Deferred to Phase 6).
-- ❌ No continuous background GPS polling or automated geo-fencing.
-- ✅ Full stall profile management, GeoJSON Point coordinates with `locationUpdatedAt`, real calculated completeness metrics, product catalogue CRUD with optional prices, and multi-tier image uploads established and verified.
+- ✅ Full public homepage discovery, explore page with keyword, category, and radius filters, React Leaflet interactive map with custom pins, external walking directions, and approved public vendor profiles established and verified.

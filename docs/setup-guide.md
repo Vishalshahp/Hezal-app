@@ -1,6 +1,6 @@
 # Hezal Market — Local Development & Setup Guide
 
-Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 4 (Vendor Profile, Product Management, Image Uploads, and Stall Information).
+Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 5 (Customer Discovery, Search & Interactive Maps).
 
 ---
 
@@ -26,49 +26,50 @@ git --version
 
 ```
 hezal-market/
-├── client/                     # Frontend Application (React 18 + Vite + Tailwind CSS)
+├── client/                     # Frontend Application (React 18 + Vite + Tailwind CSS + Leaflet)
 │   ├── public/                 # Static public assets
 │   ├── src/
-│   │   ├── __tests__/          # Frontend component & auth navigation tests
-│   │   ├── components/         # Reusable UI components (Navbar, Footer, StatusCard, ProtectedRoute)
+│   │   ├── __tests__/          # Frontend component & discovery tests (App.test.jsx, Discovery.test.jsx)
+│   │   ├── components/         # Reusable UI (Navbar, Footer, StatusCard, ProtectedRoute, VendorCard, InteractiveMap)
 │   │   ├── context/            # React AuthContext providing user state and session management
 │   │   ├── layouts/            # Page layouts (MainLayout)
-│   │   ├── pages/              # Application pages (HomePage, LoginPage, RegisterCustomer, RegisterVendor,
-│   │   │                       #  VendorDashboard, VendorProfilePage, VendorLocationPage, VendorProductsPage)
+│   │   ├── pages/              # Application pages (HomePage, ExplorePage, PublicVendorProfilePage,
+│   │   │                       #  LoginPage, RegisterCustomer, RegisterVendor, VendorDashboard, etc.)
 │   │   ├── services/           # HTTP API client, authService, vendorService, productService
-│   │   ├── App.jsx             # React Router routing tree with role-protected route guards
-│   │   ├── index.css           # Tailwind CSS directives
+│   │   ├── App.jsx             # React Router routing tree with public discovery and protected routes
+│   │   ├── index.css           # Tailwind CSS directives & Leaflet map styling
 │   │   ├── main.jsx            # React root mount with AuthProvider
 │   │   └── setupTests.js       # Vitest DOM test setup
 │   ├── .env.example            # Environment template for frontend
 │   ├── eslint.config.js        # ESLint flat configuration
 │   ├── index.html              # HTML entry template
-│   ├── package.json            # Client dependencies and scripts
+│   ├── package.json            # Client dependencies (including leaflet & react-leaflet)
 │   ├── postcss.config.js       # PostCSS plugins
 │   ├── tailwind.config.js      # Tailwind CSS configuration with design tokens
 │   └── vite.config.js          # Vite build and test configuration
 │
 ├── server/                     # Backend REST API (Node.js + Express + Mongoose)
-│   ├── uploads/                # Local file storage for images when Cloudinary is not configured
+│   ├── uploads/                # Local file fallback when Cloudinary credentials are not set
 │   ├── src/
 │   │   ├── config/             # Environment validation and MongoDB connection
-│   │   ├── controllers/        # Request handlers (auth, health, category, vendorProfile, product)
+│   │   ├── controllers/        # Request handlers (auth, health, category, vendorProfile, product, discovery)
 │   │   ├── middleware/         # Auth verification, RBAC role guard, upload middleware, error handler
 │   │   ├── models/             # Mongoose schemas (User, Category, VendorProfile, Product)
 │   │   ├── routes/             # Modular API routes (auth, health, categories, vendor, products, public vendors)
-│   │   ├── scripts/            # Admin provisioning (seedAdmin.js) & Category taxonomy (seedCategories.js)
-│   │   ├── services/           # Image upload service (Cloudinary with local filesystem fallback)
+│   │   ├── scripts/            # Admin provisioning (seedAdmin.js), Category taxonomy (seedCategories.js),
+│   │   │                       #  and sample vendor seed (seedSampleVendors.js)
+│   │   ├── services/           # Image upload service (Cloudinary / Local fallback)
 │   │   ├── utils/              # Standardized API response format, token/cookie manager, logger
-│   │   ├── app.js              # Express application assembly and middleware chain
+│   │   ├── app.js              # Express application assembly, static uploads, and middleware chain
 │   │   └── server.js           # Server listening and graceful shutdown
-│   ├── tests/                  # Integration tests (auth, vendor/product, health, error handlers)
+│   ├── tests/                  # Integration tests (auth, vendor, discovery, health, error handlers)
 │   ├── .env.example            # Environment template for backend
 │   ├── eslint.config.js        # ESLint flat configuration
 │   ├── package.json            # Server dependencies and scripts
 │   └── vitest.config.js        # Vitest server test runner configuration
 │
 ├── docs/                       # Project documentation
-│   ├── architecture-notes.md   # Architectural decisions and Phase 4 specifications
+│   ├── architecture-notes.md   # Architectural decisions and Phase 5 specifications
 │   └── setup-guide.md          # This setup and verification guide
 │
 ├── .gitignore                  # Git exclusion rules
@@ -131,6 +132,12 @@ To seed the 8 core marketplace categories (Street Food, Fresh Produce, Beverages
 npm run seed:categories
 ```
 
+### 4.3 Sample Approved Vendors Seeding (Development & Demonstration)
+To populate 5 realistic approved stalls in Ahmedabad (Law Garden, Vastrapur Lake, CG Road, Navrangpura) with real coordinates, menus, and operating hours:
+```bash
+npm run seed:vendors
+```
+
 ---
 
 ## 5. Installing Dependencies
@@ -168,29 +175,40 @@ The client will start at `http://localhost:5173`.
 
 ---
 
-## 7. Phase 4 Endpoints & Manual Verification
+## 7. Phase 5 Endpoints & Manual Verification
 
 ### 1. Categories
-- `GET /api/categories` — Fetch all active categories.
+- `GET /api/categories` — Fetch all active marketplace taxonomy categories.
 
-### 2. Vendor Profile Management (`role: vendor`)
-- `GET /api/vendor/profile` — Fetch the authenticated vendor's stall profile and stats.
-- `PUT /api/vendor/profile` — Create or update stall name, description, stall type, categories, and public contact.
-- `PUT /api/vendor/location` — Update coordinates (`[longitude, latitude]`), stall address, landmark, and operating hours. Automatically timestamps `locationUpdatedAt`.
-- `PUT /api/vendor/availability` — Toggle manual availability status (`open`, `away`, `closed`).
-- `POST /api/vendor/upload` — Upload stall cover or photos (`multipart/form-data`, field: `image`, max 5MB).
-- `GET /api/vendor/dashboard/stats` — Retrieve profile completion %, product counts, and stock availability metrics.
+### 2. Public Vendor Discovery & Search
+- `GET /api/vendors` — Public keyword and filter search.
+  - Query parameters:
+    - `q`: Product or stall name/description search (e.g. `q=Pani Puri`).
+    - `category`: Category slug (e.g. `category=street-food`) or ObjectId.
+    - `area`: Locality / city filter (e.g. `area=Ellisbridge`).
+    - `stallType`: `fixed` | `mobile`.
+    - `availabilityStatus`: `open` | `away` | `closed`.
+    - `sort`: `newest` | `name_asc` | `name_desc` | `updated`.
+    - `page`, `limit` (default 12, max 50).
 
-### 3. Product Catalogue Management (`role: vendor`)
-- `GET /api/products/my` — Fetch all products belonging to the authenticated vendor.
-- `POST /api/products` — Create a new product (`name`, `description`, `categoryId`, optional `price`, `image`).
-- `PUT /api/products/:id` — Update product details (strictly verifies vendor ownership).
-- `DELETE /api/products/:id` — Delete a product (strictly verifies vendor ownership).
-- `PATCH /api/products/:id/availability` — Quick toggle product stock availability (`isAvailable: true/false`).
-- `POST /api/products/upload` — Upload product photo (`multipart/form-data`, field: `image`).
+### 3. Geospatial Nearby Discovery
+- `GET /api/vendors/nearby` — Bounded radial search using MongoDB `$geoNear` aggregation.
+  - Query parameters:
+    - `longitude`: -180 to 180 (required, float).
+    - `latitude`: -90 to 90 (required, float).
+    - `radius`: Distance in kilometers (default 5, min 0.1, max 50).
+    - `q`: Text search query.
+    - `category`: Category slug or ObjectId.
+    - `page`, `limit`.
 
-### 4. Public Profile Endpoint
-- `GET /api/vendors/:id` — Returns public stall details and available products for approved vendors. Returns `404 Not Found` if pending or unapproved (unless requested by the profile owner or an administrator).
+### 4. Public Stall Profile
+- `GET /api/vendors/:id` — Returns approved public stall details, operating hours, coordinates, and full active product catalogue. Returns `404 Not Found` for unapproved or suspended profiles.
+
+### 5. Vendor Management (`role: vendor`)
+- `GET /api/vendor/profile`, `PUT /api/vendor/profile`
+- `PUT /api/vendor/location`, `PUT /api/vendor/availability`
+- `POST /api/vendor/upload`
+- `GET /api/products/my`, `POST /api/products`, `PUT /api/products/:id`, `DELETE /api/products/:id`
 
 ---
 
@@ -200,12 +218,14 @@ The client will start at `http://localhost:5173`.
 ```bash
 npm run test
 ```
-Runs all 67 automated tests:
-- **59 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, and Ownership Security guards.
-- **8 client component & navigation tests** covering branding, route transitions, and role protection guards.
+Runs all **91 automated tests**:
+- **76 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, Public Search & Product Querying, and Geospatial `$geoNear` radius discovery.
+- **15 client component & navigation tests** covering branding, route transitions, role protection guards, search & category filtering, view toggles (List/Map/Split), and public stall views.
 
 ### Running All Linters (Root Workspace)
 ```bash
 npm run lint
+```
+Runs ESLint across both frontend and backend repositories with 0 errors and 0 warnings.
 ```
 Runs ESLint across both frontend and backend repositories with 0 errors and 0 warnings.

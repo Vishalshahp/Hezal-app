@@ -61,8 +61,29 @@ export const reportLimiter = rateLimit({
   }
 });
 
+/**
+ * OTP Request limiter
+ * Protects SMS API endpoints from exhaustion and phone spamming
+ */
+export const otpLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 12, // 12 OTP requests per 10 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => env.isTest,
+  message: {
+    success: false,
+    status: 'error',
+    message: 'Too many OTP requests. Please wait 10 minutes before requesting another code.',
+    error: {
+      code: 'OTP_RATE_LIMIT_EXCEEDED'
+    }
+  }
+});
+
 export default {
   generalLimiter,
   authLimiter,
-  reportLimiter
+  reportLimiter,
+  otpLimiter
 };

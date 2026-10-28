@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Store, Mail, Lock, Phone, User, AlertCircle, Loader2, Eye, EyeOff, ShieldAlert } from 'lucide-react';
+import PhoneOtpVerification from '../components/PhoneOtpVerification';
 
 export default function RegisterVendorPage() {
   const { registerVendor } = useAuth();
@@ -13,6 +14,7 @@ export default function RegisterVendorPage() {
     phone: '',
     password: '',
     confirmPassword: '',
+    verificationToken: null,
     acknowledgeLocationPublic: false,
   });
 
@@ -123,23 +125,24 @@ export default function RegisterVendorPage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Phone Number (for account verification) *
-            </label>
-            <div className="relative">
-              <Phone className="h-4 w-4 text-slate-400 absolute left-3 top-3" />
-              <input
-                type="tel"
-                name="phone"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91 98765 43210"
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
-              />
-            </div>
-          </div>
+          <PhoneOtpVerification
+            initialPhone={formData.phone}
+            required={true}
+            onVerified={({ phone, verificationToken }) => {
+              setFormData((prev) => ({
+                ...prev,
+                phone,
+                verificationToken,
+              }));
+            }}
+            onReset={() => {
+              setFormData((prev) => ({
+                ...prev,
+                phone: '',
+                verificationToken: null,
+              }));
+            }}
+          />
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">

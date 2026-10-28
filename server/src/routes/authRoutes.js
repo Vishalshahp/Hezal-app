@@ -6,12 +6,18 @@ import {
   logout,
   getMe,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  sendOtp,
+  verifyOtp
 } from '../controllers/authController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
-import { authLimiter } from '../middleware/rateLimiter.js';
+import { authLimiter, otpLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
+
+// SMS OTP Verification routes
+router.post('/otp/send', otpLimiter, sendOtp);
+router.post('/otp/verify', authLimiter, verifyOtp);
 
 // Public registration routes with rate limiting
 router.post('/register', authLimiter, registerCustomer);

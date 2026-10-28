@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    phoneVerified: {
+      type: Boolean,
+      default: false
+    },
     passwordHash: {
       type: String,
       required: [true, 'Password hash is required'],

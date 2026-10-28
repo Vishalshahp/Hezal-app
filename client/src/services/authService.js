@@ -66,6 +66,33 @@ export async function resetPassword(token, password, confirmPassword) {
   });
 }
 
+/**
+ * Request SMS OTP verification code
+ * @param {Object} data
+ * @param {string} data.phone
+ * @param {string} [data.purpose='registration']
+ */
+export async function sendOtp(data) {
+  return await fetchJson('/auth/otp/send', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Verify SMS OTP code
+ * @param {Object} data
+ * @param {string} data.phone
+ * @param {string} data.otp
+ * @param {string} [data.purpose='registration']
+ */
+export async function verifyOtp(data) {
+  return await fetchJson('/auth/otp/verify', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 export default {
   registerCustomer,
   registerVendor,
@@ -74,4 +101,6 @@ export default {
   getCurrentUser,
   forgotPassword,
   resetPassword,
+  sendOtp,
+  verifyOtp,
 };

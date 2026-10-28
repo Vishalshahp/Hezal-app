@@ -9,6 +9,7 @@ import env from './config/env.js';
 import apiRouter from './routes/index.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import errorHandler from './middleware/errorHandler.js';
+import { generalLimiter } from './middleware/rateLimiter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,9 +28,14 @@ app.use(
       // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
       if (!origin) return callback(null, true);
 
-      // Allow configured frontend origin or local Vite ports
+      // Allow configured frontend origin(s) or local Vite ports
+      const configuredOrigins = (env.FRONTEND_URL || '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+
       const allowedOrigins = [
-        env.FRONTEND_URL,
+        ...configuredOrigins,
         'http://localhost:5173',
         'http://127.0.0.1:5173'
       ];
@@ -72,6 +78,9 @@ app.get('/', (req, res) => {
     docs: '/docs'
   });
 });
+
+// Apply general rate limiting across API endpoints
+app.use('/api', generalLimiter);
 
 // Mount modular API routes under /api
 app.use('/api', apiRouter);

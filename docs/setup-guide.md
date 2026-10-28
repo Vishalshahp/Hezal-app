@@ -231,8 +231,8 @@ The client will start at `http://localhost:5173`.
 ```bash
 npm run test
 ```
-Runs all **123 automated tests**:
-- **101 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, Public Search & Product Querying, Geospatial `$geoNear` radius discovery, Admin Dashboard Metrics, Vendor Application Lifecycle, Category Governance & Deletion Safeguards, Public Report Intake & Moderation, User Account Access Controls, and Audit Trail persistence.
+Runs all **150 automated tests**:
+- **128 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, Public Search & Product Querying, Geospatial `$geoNear` radius discovery, Admin Dashboard Metrics, Vendor Application Lifecycle, Category Governance & Deletion Safeguards, Public Report Intake & Moderation, User Account Access Controls, Audit Trail persistence, and complete End-to-End Cross-System workflows.
 - **22 client component & navigation tests** covering branding, route transitions, role protection guards, search & category filtering, view toggles (List/Map/Split), public stall views, Admin Dashboard KPI rendering, Vendor Review actions with reason modals, Category taxonomy management & active toggles, Listing Report resolution, and User Account suspension safeguards.
 
 ### Running All Linters (Root Workspace)

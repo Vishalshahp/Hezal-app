@@ -25,11 +25,13 @@ export const generateToken = (user) => {
  */
 export const setAuthCookie = (res, token) => {
   const isProduction = env.isProduction;
+  const sameSite = env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+  const secure = env.COOKIE_SECURE !== undefined ? env.COOKIE_SECURE : isProduction;
 
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    secure,
+    sameSite,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/'
   });
@@ -40,11 +42,13 @@ export const setAuthCookie = (res, token) => {
  */
 export const clearAuthCookie = (res) => {
   const isProduction = env.isProduction;
+  const sameSite = env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+  const secure = env.COOKIE_SECURE !== undefined ? env.COOKIE_SECURE : isProduction;
 
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    secure,
+    sameSite,
     path: '/'
   });
 };

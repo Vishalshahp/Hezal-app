@@ -23,6 +23,7 @@ router.post('/', authenticate, authorizeRoles('vendor'), createProduct);
 router.get('/:id', getProductById);
 router.patch('/:id/availability', authenticate, authorizeRoles('vendor'), toggleAvailability);
 router.patch('/:id', authenticate, authorizeRoles('vendor'), updateProduct);
+router.put('/:id', authenticate, authorizeRoles('vendor'), updateProduct);
 router.delete('/:id', authenticate, authorizeRoles('vendor'), deleteProduct);
 
 export default router;

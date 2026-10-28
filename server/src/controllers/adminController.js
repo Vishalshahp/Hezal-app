@@ -4,6 +4,7 @@ import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import Report from '../models/Report.js';
 import AuditLog from '../models/AuditLog.js';
+import { escapeRegex } from '../utils/sanitize.js';
 
 /**
  * 1. Administrator Dashboard Metrics
@@ -111,8 +112,8 @@ export const getVendorsAdmin = async (req, res, next) => {
       filter.approvalStatus = status;
     }
 
-    if (search && search.trim()) {
-      const searchRegex = new RegExp(search.trim(), 'i');
+    if (search && typeof search === 'string' && search.trim()) {
+      const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
       filter.$or = [
         { stallName: searchRegex },
         { description: searchRegex },
@@ -872,8 +873,8 @@ export const getUsersAdmin = async (req, res, next) => {
     if (status && status !== 'all') {
       filter.accountStatus = status;
     }
-    if (search && search.trim()) {
-      const searchRegex = new RegExp(search.trim(), 'i');
+    if (search && typeof search === 'string' && search.trim()) {
+      const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
       filter.$or = [{ name: searchRegex }, { email: searchRegex }, { phone: searchRegex }];
     }
 

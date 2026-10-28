@@ -4,6 +4,7 @@ import Category from '../models/Category.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import env from '../config/env.js';
+import { escapeRegex } from '../utils/sanitize.js';
 
 const COOKIE_NAME = 'hezal_auth_token';
 
@@ -82,8 +83,9 @@ export const searchVendors = async (req, res, next) => {
     }
 
     // 4. Area / Locality filter
-    if (area && area.trim()) {
-      const areaRegex = new RegExp(area.trim(), 'i');
+    if (area && typeof area === 'string' && area.trim()) {
+      const safeArea = escapeRegex(area.trim());
+      const areaRegex = new RegExp(safeArea, 'i');
       matchCriteria['$or'] = [
         { 'address.area': areaRegex },
         { 'address.city': areaRegex },
@@ -103,8 +105,8 @@ export const searchVendors = async (req, res, next) => {
     }
 
     // 7. General text search (q)
-    if (q && q.trim()) {
-      const trimmedQ = q.trim();
+    if (q && typeof q === 'string' && q.trim()) {
+      const trimmedQ = escapeRegex(q.trim());
       const textRegex = new RegExp(trimmedQ, 'i');
 
       // Find products matching query to find vendors who sell them
@@ -344,8 +346,8 @@ export const getNearbyVendors = async (req, res, next) => {
     }
 
     // Text query (q) filter
-    if (q && q.trim()) {
-      const textRegex = new RegExp(q.trim(), 'i');
+    if (q && typeof q === 'string' && q.trim()) {
+      const textRegex = new RegExp(escapeRegex(q.trim()), 'i');
       const matchingProductVendorIds = await Product.find({
         $or: [{ name: textRegex }, { description: textRegex }],
         isAvailable: true

@@ -15,9 +15,11 @@ export function AuthProvider({ children }) {
         setUser(res.data.user);
       } else {
         setUser(null);
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('hezal_auth_token');
       }
     } catch (_err) {
       setUser(null);
+      if (typeof localStorage !== 'undefined') localStorage.removeItem('hezal_auth_token');
     } finally {
       setLoading(false);
     }
@@ -31,6 +33,9 @@ export function AuthProvider({ children }) {
     const res = await authService.login(email, password);
     if (res && res.data && res.data.user) {
       setUser(res.data.user);
+      if (res.data.token && typeof localStorage !== 'undefined') {
+        localStorage.setItem('hezal_auth_token', res.data.token);
+      }
     }
     return res;
   };
@@ -39,6 +44,9 @@ export function AuthProvider({ children }) {
     const res = await authService.registerCustomer(payload);
     if (res && res.data && res.data.user) {
       setUser(res.data.user);
+      if (res.data.token && typeof localStorage !== 'undefined') {
+        localStorage.setItem('hezal_auth_token', res.data.token);
+      }
     }
     return res;
   };
@@ -47,6 +55,9 @@ export function AuthProvider({ children }) {
     const res = await authService.registerVendor(payload);
     if (res && res.data && res.data.user) {
       setUser(res.data.user);
+      if (res.data.token && typeof localStorage !== 'undefined') {
+        localStorage.setItem('hezal_auth_token', res.data.token);
+      }
     }
     return res;
   };
@@ -56,6 +67,9 @@ export function AuthProvider({ children }) {
       await authService.logout();
     } finally {
       setUser(null);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('hezal_auth_token');
+      }
     }
   };
 

@@ -8,9 +8,12 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 export async function fetchJson(endpoint, options = {}) {
   const url = `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
 
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('hezal_auth_token') : null;
+
   const defaultHeaders = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
   const controller = new AbortController();
@@ -60,10 +63,14 @@ export async function fetchJson(endpoint, options = {}) {
  */
 export async function uploadFormData(endpoint, formData) {
   const url = `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('hezal_auth_token') : null;
 
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: formData,
   });
 

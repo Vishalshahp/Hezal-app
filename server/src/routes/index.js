@@ -5,6 +5,8 @@ import categoryRoutes from './categoryRoutes.js';
 import vendorRoutes from './vendorRoutes.js';
 import publicVendorRoutes from './publicVendorRoutes.js';
 import productRoutes from './productRoutes.js';
+import adminRoutes from './adminRoutes.js';
+import reportRoutes from './reportRoutes.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
@@ -27,6 +29,12 @@ router.use('/vendors', publicVendorRoutes);
 
 // Mount product routes under /api/products
 router.use('/products', productRoutes);
+
+// Mount administrator routes under /api/admin
+router.use('/admin', adminRoutes);
+
+// Mount public reporting routes under /api/reports
+router.use('/reports', reportRoutes);
 
 // Role verification test/placeholder routes
 router.get(

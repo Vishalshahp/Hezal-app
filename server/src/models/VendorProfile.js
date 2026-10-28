@@ -143,8 +143,8 @@ const vendorProfileSchema = new mongoose.Schema(
     approvalStatus: {
       type: String,
       enum: {
-        values: ['draft', 'pending', 'approved', 'rejected', 'suspended'],
-        message: 'Approval status must be draft, pending, approved, rejected, or suspended'
+        values: ['draft', 'pending', 'approved', 'rejected', 'changes_requested', 'suspended'],
+        message: 'Approval status must be draft, pending, approved, rejected, changes_requested, or suspended'
       },
       default: 'pending',
       index: true

@@ -251,7 +251,12 @@ client/src/
 | `/vendor/location` | `vendor` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
 | `/vendor/products` | `vendor` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
 | `/admin` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
+| `/admin/vendors` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
+| `/admin/categories` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
+| `/admin/reports` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
+| `/admin/users` | `admin` | Redirects to `/login` with `state: { from }` | Redirects to `/unauthorized` |
 | `/api/categories` | Public | Allowed | Allowed |
+| `/api/reports` | Public | Allowed (POST) | Allowed (POST) |
 | `/api/vendors` | Public | Allowed (returns approved vendors only) | Allowed |
 | `/api/vendors/nearby` | Public | Allowed (returns approved vendors within radius) | Allowed |
 | `/api/vendors/:id` | Public / Gated | Returns 404 if unapproved/suspended | Returns 404 if unapproved/suspended |
@@ -263,11 +268,49 @@ client/src/
 
 ## 7. Scope Boundary Compliance
 
-Phase 5 is strictly confined to Customer Discovery, Search, Geospatial Queries, and Interactive Maps:
-- ❌ No online checkout, payments, or digital transactions.
-- ❌ No delivery logistics or order processing.
-- ❌ No customer reviews, ratings, or feedback forms (Deferred to Phase 6/7).
-- ❌ No customer-vendor live chat or direct messaging.
-- ❌ No continuous background GPS tracking or geofenced notifications.
-- ❌ No full administrator approval queue UI or moderation workflows (Deferred to Phase 6).
-- ✅ Full public homepage discovery, explore page with keyword, category, and radius filters, React Leaflet interactive map with custom pins, external walking directions, and approved public vendor profiles established and verified.
+Phase 6 is strictly confined to Administration, Vendor Moderation, Category Governance, User Management, and Listing Moderation:
+- ❌ No online checkout, payments, or commission fee billing.
+- ❌ No delivery logistics or fulfillment dispatching.
+- ❌ No customer ratings or numerical reviews.
+- ❌ No customer-vendor live chat or continuous background GPS tracking.
+- ✅ Full administrator dashboard with real aggregated database metrics.
+- ✅ Multi-status vendor review queue (`pending`, `approved`, `changes_requested`, `suspended`, `rejected`) with reason enforcement.
+- ✅ Category management with usage counts and referential integrity protection.
+- ✅ Public community report submission and administrator adjudication with optional vendor suspension.
+- ✅ User management with suspension/restoration controls and self-lockout safeguards.
+- ✅ Immutable audit logging (`AuditLog`) for all administrative actions.
+
+---
+
+## 8. Phase 6 Administration & Listing Moderation Architecture
+
+### 8.1 Real Calculated Database Metrics
+- The `GET /api/admin/metrics` endpoint avoids static or estimated values.
+- Metrics are calculated using parallel Mongoose `countDocuments` operations across `User`, `VendorProfile`, `Product`, `Category`, and `Report` collections.
+- Accurately tracks accounts by role (`customer`, `vendor`, `admin`), stall approval states (`pending`, `approved`, `changes_requested`, `suspended`), catalog items, and unresolved complaints (`open`, `under_review`).
+
+### 8.2 Vendor Moderation Lifecycle
+- Stalls default to `approvalStatus: 'pending'` upon initial creation.
+- Pending stalls are excluded from public search and interactive maps.
+- The administrator can transition a vendor profile to:
+  - `approved`: Sets stall visible in public customer discovery.
+  - `changes_requested`: Requires mandatory explanation; informs vendor to update photos or location.
+  - `rejected`: Requires mandatory explanation; rejects incomplete or fraudulent applications.
+  - `suspended`: Requires mandatory reason; immediately unlists an active stall following reports or infractions.
+  - `restore`: Reinstates a suspended stall back to `approved`.
+- All transitions are saved to `AuditLog` with admin reference, timestamp, previous status, new status, and justification.
+
+### 8.3 Category Taxonomy Governance
+- Categories feature an `isActive` boolean flag. Toggling active state hides the category from shopper filters and discovery pills without deleting documents or breaking vendor references.
+- Category deletion (`DELETE /api/admin/categories/:id`) performs a hard dependency safeguard:
+  `VendorProfile.countDocuments({ categories: categoryId })` and `Product.countDocuments({ categoryId })`. If either count exceeds 0, deletion is blocked with HTTP 400 and an informative error message recommending deactivation.
+
+### 8.4 Community Report Intake & Adjudication
+- Public shoppers can flag issues via `POST /api/reports` without authentication.
+- Reports store target stall/product, reason code, details, reporter contact, status (`open`, `under_review`, `resolved`, `dismissed`), and admin resolution note.
+- Administrators can review the complaint in `AdminReportsPage` and optionally suspend the offending stall in a single atomic action.
+
+### 8.5 Access Control & Self-Lockout Safeguards
+- The `PATCH /api/admin/users/:id/status` endpoint prevents administrators from suspending their own active session (`req.user._id.toString() === targetUser._id.toString()`).
+- Prevents suspending the last active administrator on the platform.
+- Suspended users are denied authentication on subsequent login attempts and blocked in `authenticate` middleware.

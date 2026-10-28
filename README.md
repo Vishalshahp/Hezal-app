@@ -15,19 +15,20 @@ Hezal Market is designed to make roadside sellers, pushcart vendors, and tempora
 
 ---
 
-## 2. Current Status: Phase 5 Customer Discovery & Interactive Maps Ready
+## 2. Current Status: Phase 6 Admin Dashboard, Vendor Approvals & Moderation Ready
 
-Phase 5 establishes a complete, full-stack customer discovery experience: public keyword search, product-assisted stall matching, category browsing, ephemeral browser geolocation, manual locality search, geospatial radial querying using MongoDB `$geoNear`, interactive map exploration via React Leaflet with OpenStreetMap tiles, and walking directions to published stall locations.
+Phase 6 delivers a comprehensive, secure administration and moderation engine for marketplace operators: live KPI dashboard metrics directly aggregated from database collections, vendor application review and inspection queue with required reason logging, category taxonomy governance with referential integrity safeguards, public listing report intake and moderator adjudication, user account access controls with self-lockout prevention, and an immutable audit trail.
 
 ### Core Features Established:
-- **Public Homepage**: Dynamic hero search, popular categories grid, featured verified stalls with live backend data, quick "Near Me" detection, and vendor recruitment banner.
-- **Unified Explore Page (`/explore`)**: Debounced keyword and area search, category pills, radius selector (1km–25km), view layout toggles (Split, List, Map), and live synchronization between list cards and map pins.
-- **Geospatial Discovery (`GET /api/vendors/nearby`)**: Bounded radial search using MongoDB `$geoNear` aggregation on the `2dsphere` index with spherical distance calculation in meters.
-- **Product-Assisted Search**: Customers searching for product keywords (e.g. "Pani Puri" or "Clay Pot") discover all stalls selling those items, with sample products previewed directly on the stall card.
-- **Interactive Maps (React Leaflet)**: OpenStreetMap tile integration, custom DivIcon HTML pins with pulse/highlight effects, stall popups with thumbnail, badges, address, and profile links.
-- **External Walking Directions**: Directions buttons format coordinates `lat,lng` straight to Google Maps / navigation apps with explicit disclaimers regarding published schedules.
-- **Public Stall Profiles (`/vendors/:id`)**: Comprehensive stall presentation with banner photo, category badges, operating hours table, mini-map, and full searchable product catalogue.
-- **Automated Quality**: **91 automated tests** (76 server integration tests, 15 client component and discovery tests) and ESLint running with zero warnings across client and server.
+- **Administrative Portal (`/admin`)**: Secure interface protected by RBAC middleware requiring `role: 'admin'`. Features tab navigation with live badges for pending applications and unresolved reports.
+- **Calculated Metric KPIs**: Live database counts for shoppers, registered vendors, pending/approved/suspended stalls, listed products, active categories, and open reports.
+- **Vendor Review & Adjudication (`/admin/vendors`)**: Full application queue filtered by lifecycle status (`pending`, `approved`, `changes_requested`, `suspended`, `rejected`) with keyword search and inspection dossier showcasing stall details, address, coordinates, product catalog, and previous audit history.
+- **Moderation Action Workflows**: One-click approval, correction requests with mandatory reason prompt, stall suspension with reason prompt, stall restoration, and permanent audit logging.
+- **Category Governance (`/admin/categories`)**: Live usage counts (linked stalls & products), active/inactive status toggle without breaking references, custom icon & display ordering, and safe deletion blocked when referenced by stalls or products.
+- **Public Report Intake & Moderation (`/admin/reports`, `POST /api/reports`)**: Public shoppers can flag relocated stalls, stale listings, or misleading details. Admins can review complaints, record findings, mark as resolved or dismissed, and optionally suspend offending stalls immediately.
+- **User Account Management (`/admin/users`)**: Paginated user table (passwords omitted), role/status filters, account suspension/restoration with explicit reasons, and automated self-lockout guards.
+- **Immutable Audit Trail (`AuditLog`)**: MongoDB collection recording admin ID, action type, target entity, previous/new status, and reasons for every administrative action.
+- **Automated Quality**: **123 automated tests** (101 server integration tests, 22 client component and navigation tests) and ESLint passing with zero errors and zero warnings across the entire repository.
 
 ---
 

@@ -14,7 +14,11 @@ import VendorDashboard from './pages/VendorDashboard';
 import VendorProfilePage from './pages/VendorProfilePage';
 import VendorLocationPage from './pages/VendorLocationPage';
 import VendorProductsPage from './pages/VendorProductsPage';
-import AdminDashboardPlaceholder from './pages/AdminDashboardPlaceholder';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminVendorsPage from './pages/AdminVendorsPage';
+import AdminCategoriesPage from './pages/AdminCategoriesPage';
+import AdminReportsPage from './pages/AdminReportsPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -72,7 +76,39 @@ export default function App() {
           path="admin"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboardPlaceholder />
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/vendors"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminVendorsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/categories"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminCategoriesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/reports"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="admin/users"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminUsersPage />
             </ProtectedRoute>
           }
         />

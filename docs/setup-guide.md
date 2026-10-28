@@ -1,6 +1,6 @@
 # Hezal Market — Local Development & Setup Guide
 
-Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 5 (Customer Discovery, Search & Interactive Maps).
+Welcome to **Hezal Market**, a hyper-local vendor discovery platform engineered for small street vendors and local shoppers. This guide details everything required to configure, run, and verify the application locally for Phase 6 (Administrator Dashboard, Vendor Approvals & Listing Moderation).
 
 ---
 
@@ -29,14 +29,15 @@ hezal-market/
 ├── client/                     # Frontend Application (React 18 + Vite + Tailwind CSS + Leaflet)
 │   ├── public/                 # Static public assets
 │   ├── src/
-│   │   ├── __tests__/          # Frontend component & discovery tests (App.test.jsx, Discovery.test.jsx)
-│   │   ├── components/         # Reusable UI (Navbar, Footer, StatusCard, ProtectedRoute, VendorCard, InteractiveMap)
+│   │   ├── __tests__/          # Frontend integration tests (App.test.jsx, Discovery.test.jsx, Admin.test.jsx)
+│   │   ├── components/         # Reusable UI (Navbar, Footer, AdminNav, StatusCard, ProtectedRoute,
+│   │   │                       #  VendorCard, InteractiveMap, ReportModal)
 │   │   ├── context/            # React AuthContext providing user state and session management
 │   │   ├── layouts/            # Page layouts (MainLayout)
 │   │   ├── pages/              # Application pages (HomePage, ExplorePage, PublicVendorProfilePage,
-│   │   │                       #  LoginPage, RegisterCustomer, RegisterVendor, VendorDashboard, etc.)
-│   │   ├── services/           # HTTP API client, authService, vendorService, productService
-│   │   ├── App.jsx             # React Router routing tree with public discovery and protected routes
+│   │   │                       #  AdminDashboard, AdminVendorsPage, AdminCategoriesPage, AdminReportsPage, AdminUsersPage, etc.)
+│   │   ├── services/           # HTTP API client, authService, vendorService, productService, adminService
+│   │   ├── App.jsx             # React Router routing tree with public discovery, vendor, and admin portal routes
 │   │   ├── index.css           # Tailwind CSS directives & Leaflet map styling
 │   │   ├── main.jsx            # React root mount with AuthProvider
 │   │   └── setupTests.js       # Vitest DOM test setup
@@ -52,24 +53,24 @@ hezal-market/
 │   ├── uploads/                # Local file fallback when Cloudinary credentials are not set
 │   ├── src/
 │   │   ├── config/             # Environment validation and MongoDB connection
-│   │   ├── controllers/        # Request handlers (auth, health, category, vendorProfile, product, discovery)
+│   │   ├── controllers/        # Request handlers (auth, health, category, vendorProfile, product, discovery, admin)
 │   │   ├── middleware/         # Auth verification, RBAC role guard, upload middleware, error handler
-│   │   ├── models/             # Mongoose schemas (User, Category, VendorProfile, Product)
-│   │   ├── routes/             # Modular API routes (auth, health, categories, vendor, products, public vendors)
+│   │   ├── models/             # Mongoose schemas (User, Category, VendorProfile, Product, Report, AuditLog)
+│   │   ├── routes/             # Modular API routes (auth, health, categories, vendor, products, public vendors, admin, reports)
 │   │   ├── scripts/            # Admin provisioning (seedAdmin.js), Category taxonomy (seedCategories.js),
 │   │   │                       #  and sample vendor seed (seedSampleVendors.js)
 │   │   ├── services/           # Image upload service (Cloudinary / Local fallback)
 │   │   ├── utils/              # Standardized API response format, token/cookie manager, logger
 │   │   ├── app.js              # Express application assembly, static uploads, and middleware chain
 │   │   └── server.js           # Server listening and graceful shutdown
-│   ├── tests/                  # Integration tests (auth, vendor, discovery, health, error handlers)
+│   ├── tests/                  # Integration tests (auth, vendor, discovery, admin, health, error handlers)
 │   ├── .env.example            # Environment template for backend
 │   ├── eslint.config.js        # ESLint flat configuration
 │   ├── package.json            # Server dependencies and scripts
 │   └── vitest.config.js        # Vitest server test runner configuration
 │
 ├── docs/                       # Project documentation
-│   ├── architecture-notes.md   # Architectural decisions and Phase 5 specifications
+│   ├── architecture-notes.md   # Architectural decisions and Phase 6 specifications
 │   └── setup-guide.md          # This setup and verification guide
 │
 ├── .gitignore                  # Git exclusion rules
@@ -201,14 +202,26 @@ The client will start at `http://localhost:5173`.
     - `category`: Category slug or ObjectId.
     - `page`, `limit`.
 
-### 4. Public Stall Profile
+### 4. Public Stall Profile & Community Reports
 - `GET /api/vendors/:id` — Returns approved public stall details, operating hours, coordinates, and full active product catalogue. Returns `404 Not Found` for unapproved or suspended profiles.
+- `POST /api/reports` — Public endpoint allowing shoppers to report inaccurate locations, permanently closed stalls, or misleading listings.
 
 ### 5. Vendor Management (`role: vendor`)
 - `GET /api/vendor/profile`, `PUT /api/vendor/profile`
 - `PUT /api/vendor/location`, `PUT /api/vendor/availability`
 - `POST /api/vendor/upload`
 - `GET /api/products/my`, `POST /api/products`, `PUT /api/products/:id`, `DELETE /api/products/:id`
+
+### 6. Administration & Moderation (`role: admin`)
+- `GET /api/admin/metrics` — Dashboard counts calculated directly from MongoDB collections.
+- `GET /api/admin/vendors` — Review queue with filters (`pending`, `approved`, `changes_requested`, `suspended`, `rejected`).
+- `GET /api/admin/vendors/:id` — Vendor inspection dossier including products and audit history.
+- `PATCH /api/admin/vendors/:id/status` — Lifecycle transitions (`approve`, `reject`, `request_corrections`, `suspend`, `restore`).
+- `GET /api/admin/categories`, `POST /api/admin/categories`, `PUT /api/admin/categories/:id`
+- `PATCH /api/admin/categories/:id/toggle-status`, `DELETE /api/admin/categories/:id` (dependency-protected)
+- `GET /api/admin/reports`, `PATCH /api/admin/reports/:id` (with optional vendor suspension)
+- `GET /api/admin/users`, `PATCH /api/admin/users/:id/status` (self-lockout and last-admin protection)
+- `GET /api/admin/audit-logs` — Immutable audit trail of administrative moderation actions.
 
 ---
 
@@ -218,14 +231,12 @@ The client will start at `http://localhost:5173`.
 ```bash
 npm run test
 ```
-Runs all **91 automated tests**:
-- **76 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, Public Search & Product Querying, and Geospatial `$geoNear` radius discovery.
-- **15 client component & navigation tests** covering branding, route transitions, role protection guards, search & category filtering, view toggles (List/Map/Split), and public stall views.
+Runs all **123 automated tests**:
+- **101 server integration tests** covering Health checks, Error handlers, Authentication & RBAC, Vendor Profile CRUD, Coordinates & Availability, Product Catalogue CRUD, Image Uploads, Public Search & Product Querying, Geospatial `$geoNear` radius discovery, Admin Dashboard Metrics, Vendor Application Lifecycle, Category Governance & Deletion Safeguards, Public Report Intake & Moderation, User Account Access Controls, and Audit Trail persistence.
+- **22 client component & navigation tests** covering branding, route transitions, role protection guards, search & category filtering, view toggles (List/Map/Split), public stall views, Admin Dashboard KPI rendering, Vendor Review actions with reason modals, Category taxonomy management & active toggles, Listing Report resolution, and User Account suspension safeguards.
 
 ### Running All Linters (Root Workspace)
 ```bash
 npm run lint
-```
-Runs ESLint across both frontend and backend repositories with 0 errors and 0 warnings.
 ```
 Runs ESLint across both frontend and backend repositories with 0 errors and 0 warnings.

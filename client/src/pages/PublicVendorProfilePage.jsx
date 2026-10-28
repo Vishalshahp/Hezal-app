@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import vendorService from '../services/vendorService';
 import InteractiveMap from '../components/InteractiveMap';
+import ReportModal from '../components/ReportModal';
 import {
   Store,
   MapPin,
@@ -12,6 +13,7 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   XCircle,
   Package,
   Loader2,
@@ -28,6 +30,7 @@ export default function PublicVendorProfilePage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [productSearch, setProductSearch] = useState('');
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   useEffect(() => {
     async function loadStall() {
@@ -444,7 +447,27 @@ export default function PublicVendorProfilePage() {
             </p>
           </div>
         )}
+
+        {/* Community Moderation Footer */}
+        <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+          <span>Notice something wrong with this stall's location or listing?</span>
+          <button
+            onClick={() => setIsReportOpen(true)}
+            className="inline-flex items-center space-x-1.5 text-slate-600 hover:text-red-700 font-semibold px-3 py-1.5 rounded-lg border border-slate-200 hover:border-red-200 hover:bg-red-50 transition-colors"
+          >
+            <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
+            <span>Report Inaccurate Listing</span>
+          </button>
+        </div>
       </div>
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        targetVendorId={id}
+        stallName={profile?.stallName || 'Vendor Stall'}
+      />
     </div>
   );
 }

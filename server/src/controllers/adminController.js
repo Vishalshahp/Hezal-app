@@ -401,6 +401,7 @@ export const getCategoriesAdmin = async (_req, res, next) => {
     const [vendorUsage, productUsage] = await Promise.all([
       VendorProfile.aggregate([
         { $unwind: '$categories' },
+        { $match: { categories: { $ne: null } } },
         { $group: { _id: '$categories', count: { $sum: 1 } } }
       ]),
       Product.aggregate([
@@ -411,12 +412,16 @@ export const getCategoriesAdmin = async (_req, res, next) => {
 
     const vendorMap = {};
     for (const v of vendorUsage) {
-      vendorMap[v._id.toString()] = v.count;
+      if (v._id) {
+        vendorMap[v._id.toString()] = v.count;
+      }
     }
 
     const productMap = {};
     for (const p of productUsage) {
-      productMap[p._id.toString()] = p.count;
+      if (p._id) {
+        productMap[p._id.toString()] = p.count;
+      }
     }
 
     const formatted = categories.map((c) => ({
@@ -426,8 +431,8 @@ export const getCategoriesAdmin = async (_req, res, next) => {
       icon: c.icon,
       displayOrder: c.displayOrder,
       isActive: c.isActive,
-      vendorCount: vendorMap[c._id.toString()] || 0,
-      productCount: productMap[c._id.toString()] || 0,
+      vendorCount: c._id && vendorMap[c._id.toString()] ? vendorMap[c._id.toString()] : 0,
+      productCount: c._id && productMap[c._id.toString()] ? productMap[c._id.toString()] : 0,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt
     }));

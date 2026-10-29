@@ -203,24 +203,25 @@ export default function PhoneOtpVerification({
 
       {/* Dev Mode Demo Helper Banner */}
       {devOtp && isOtpSent && (
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 space-y-1.5 animate-fadeIn">
+        <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-2 animate-fadeIn shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="font-semibold flex items-center space-x-1">
-              <span>🧪 Demo SMS Mode:</span>
-              <span className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-mono font-bold tracking-wider">
+            <span className="font-bold flex items-center space-x-1.5 text-amber-950">
+              <span className="text-base">📱</span>
+              <span>Demo SMS Code:</span>
+              <span className="bg-amber-200 text-amber-950 px-2 py-0.5 rounded font-mono font-bold tracking-widest text-sm border border-amber-300">
                 {devOtp}
               </span>
             </span>
             <button
               type="button"
               onClick={() => setOtp(devOtp)}
-              className="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2 py-0.5 rounded font-medium transition-colors"
+              className="text-xs bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-1 rounded-md font-semibold transition-colors shadow-sm"
             >
               Auto-fill OTP
             </button>
           </div>
-          <p className="text-[11px] text-amber-700">
-            SMS Simulator active. In production, configure <code className="font-mono text-[10px]">FAST2SMS_API_KEY</code> in server <code className="font-mono text-[10px]">.env</code> for real mobile delivery.
+          <p className="text-[11px] text-amber-800 leading-relaxed">
+            <strong>Why did you see this?</strong> In development mode without a paid SMS gateway, the verification code is generated directly on screen. To send real SMS to physical mobile phones in India, add <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-[10px]">FAST2SMS_API_KEY</code> to <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-[10px]">server/.env</code>.
           </p>
         </div>
       )}

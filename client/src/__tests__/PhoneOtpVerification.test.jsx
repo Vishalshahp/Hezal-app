@@ -67,7 +67,7 @@ describe('PhoneOtpVerification Component', () => {
     // Should display Demo banner with OTP
     await waitFor(() => {
       expect(screen.getByText('582910')).toBeInTheDocument();
-      expect(screen.getByText(/Demo SMS Mode:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Demo SMS (Mode|Code):/i)).toBeInTheDocument();
     });
 
     // Click Auto-fill OTP

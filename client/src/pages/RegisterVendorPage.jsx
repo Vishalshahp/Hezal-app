@@ -60,13 +60,17 @@ export default function RegisterVendorPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="relative max-w-md mx-auto py-8">
+      {/* Decorative ambient gradient spots */}
+      <div className="absolute -top-6 -left-6 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="absolute -bottom-6 -right-6 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div className="relative bg-white rounded-3xl border border-slate-200/90 shadow-card-hover p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <div className="h-12 w-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center mx-auto shadow-md shadow-amber-500/25">
             <Store className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold font-display text-slate-900">
+          <h1 className="text-2xl font-bold font-display text-slate-900 tracking-tight">
             Register as a Local Vendor
           </h1>
           <p className="text-xs text-slate-500">
@@ -74,10 +78,10 @@ export default function RegisterVendorPage() {
           </p>
         </div>
 
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 flex items-start space-x-2">
-          <ShieldAlert className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+        <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-start space-x-2">
+          <ShieldAlert className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
           <span>
-            <strong>Phase 3 Notice:</strong> Registration creates your vendor credentials. Stall profile details, photos, coordinates, and menu items will be configured in Phase 4.
+            <strong>Vendor Onboarding:</strong> Registration creates your vendor credentials. Stall coordinates, photos, operating hours, and menu items can be updated anytime from your dashboard.
           </span>
         </div>
 
@@ -206,7 +210,7 @@ export default function RegisterVendorPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center space-x-2"
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-sm transition-all shadow-md shadow-amber-500/25 hover:shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
           >
             {loading ? (
               <>

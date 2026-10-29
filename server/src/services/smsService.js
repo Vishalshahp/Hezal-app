@@ -57,6 +57,8 @@ export async function sendSmsOtp({ phone, otp, purpose = 'registration' }) {
     throw new Error('Please enter a valid 10-digit mobile number (e.g. 9876543210).');
   }
 
+  let gatewayNotice = null;
+
   // 1. FAST2SMS GATEWAY (Indian SMS Gateway with free signup credits & OTP route)
   if (env.FAST2SMS_API_KEY && (env.SMS_PROVIDER === 'fast2sms' || env.SMS_PROVIDER === 'auto')) {
     try {
@@ -83,7 +85,9 @@ export async function sendSmsOtp({ phone, otp, purpose = 'registration' }) {
           message: `Verification code sent via SMS to ${formatPhoneDisplay(normalizedPhone)}.`
         };
       } else {
-        logger.warn(`[Fast2SMS] Gateway rejected request: ${data.message || JSON.stringify(data)}. Falling back to simulator.`);
+        const errorText = data.message || (Array.isArray(data.message) ? data.message.join(', ') : 'Gateway verification required');
+        gatewayNotice = `Fast2SMS Gateway notice: ${errorText}`;
+        logger.warn(`[Fast2SMS] Gateway rejected request: ${errorText}. Falling back to simulator.`);
       }
     } catch (err) {
       logger.error(`[Fast2SMS] Error contacting gateway: ${err.message}. Falling back to simulator.`);
@@ -152,7 +156,7 @@ export async function sendSmsOtp({ phone, otp, purpose = 'registration' }) {
     provider: 'simulator',
     isDevMode: isDevOrTest,
     devOtp: isDevOrTest ? otp : undefined,
-    message: `Verification code generated for ${formatPhoneDisplay(normalizedPhone)}.`
+    message: gatewayNotice || `Verification code generated for ${formatPhoneDisplay(normalizedPhone)}.`
   };
 }
 

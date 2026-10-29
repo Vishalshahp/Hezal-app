@@ -457,10 +457,10 @@ export default function ExplorePage() {
           <div className="flex items-center gap-2 overflow-x-auto pt-2 pb-1 scrollbar-none text-xs">
             <button
               onClick={() => handleCategoryClick('')}
-              className={`px-3 py-1.5 rounded-full font-semibold shrink-0 transition-colors cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full font-semibold shrink-0 transition-all cursor-pointer border ${
                 !selectedCategory
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-primary-600 text-white border-transparent shadow-sm shadow-primary-600/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/50'
               }`}
             >
               All Categories
@@ -472,10 +472,10 @@ export default function ExplorePage() {
                 <button
                   key={cat.id || cat._id}
                   onClick={() => handleCategoryClick(cat.slug)}
-                  className={`px-3 py-1.5 rounded-full font-semibold shrink-0 transition-colors cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-full font-semibold shrink-0 transition-all cursor-pointer border ${
                     isActive
-                      ? 'bg-primary-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-primary-600 to-teal-600 text-white border-transparent shadow-sm shadow-primary-600/25 scale-[1.02]'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/50'
                   }`}
                 >
                   {cat.name}

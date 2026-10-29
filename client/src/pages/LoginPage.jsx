@@ -47,14 +47,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-8">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="relative max-w-md mx-auto py-8">
+      {/* Decorative ambient gradient spots */}
+      <div className="absolute -top-6 -left-6 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="absolute -bottom-6 -right-6 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div className="relative bg-white rounded-3xl border border-slate-200/90 shadow-card-hover p-6 sm:p-8 space-y-6">
         {/* Brand & Header */}
         <div className="text-center space-y-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-500 text-white flex items-center justify-center mx-auto shadow-sm">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-primary-600 via-primary-500 to-teal-400 text-white flex items-center justify-center mx-auto shadow-md shadow-primary-500/25">
             <Store className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold font-display text-slate-900">
+          <h1 className="text-2xl font-bold font-display text-slate-900 tracking-tight">
             Sign In to Hezal Market
           </h1>
           <p className="text-xs text-slate-500">
@@ -126,7 +130,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center space-x-2"
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-600 via-primary-500 to-teal-500 hover:from-primary-700 hover:to-teal-600 text-white font-bold text-sm transition-all shadow-md shadow-primary-500/25 hover:shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
           >
             {loading ? (
               <>

@@ -27,8 +27,8 @@ function createCustomPin(isSelected = false, isUser = false) {
     });
   }
 
-  const bgColor = isSelected ? '#d97706' : '#2563eb'; // amber if selected, blue/primary otherwise
-  const ring = isSelected ? 'ring-4 ring-amber-300' : 'shadow-md';
+  const bgColor = isSelected ? '#ea580c' : '#059669'; // Saffron/orange if selected, Emerald green otherwise
+  const ring = isSelected ? 'ring-4 ring-orange-300 shadow-xl scale-110' : 'shadow-md border-2 border-white';
 
   return L.divIcon({
     className: 'custom-stall-marker',

@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
 
   const handleFillDemoAdmin = () => {
     setEmail('admin@hezalmarket.com');
-    setPassword('Admin@123456');
+    setPassword('AdminPassword123!');
     setErrorMsg('');
   };
 

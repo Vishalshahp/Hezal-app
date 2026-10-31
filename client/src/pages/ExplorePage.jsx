@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import vendorService from '../services/vendorService';
 import VendorCard from '../components/VendorCard';
 import InteractiveMap from '../components/InteractiveMap';
 import { filterGujaratLocations } from '../data/gujaratLocations';
 import { FAMOUS_HUBS } from '../data/marketHubs';
-import { calculateDistanceKm } from '../utils/distance';
+import { calculateDistanceKm, getNavigationUrl } from '../utils/distance';
+import { getStallCoverImage } from '../utils/stallImages';
 import {
   Search,
   MapPin,
@@ -25,7 +26,9 @@ import {
   Flame,
   Footprints,
   Compass,
-  ArrowUpDown
+  ArrowUpDown,
+  SlidersHorizontal,
+  Check,
 } from 'lucide-react';
 
 export default function ExplorePage() {
@@ -59,6 +62,7 @@ export default function ExplorePage() {
   // UI view layout mode: 'split' | 'list' | 'map'
   const [viewMode, setViewMode] = useState('split');
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [mobileFilterSheetOpen, setMobileFilterSheetOpen] = useState(false);
 
   // Data states
   const [categories, setCategories] = useState([]);
@@ -566,7 +570,7 @@ export default function ExplorePage() {
             )}
           </div>
 
-          {/* Submit Search Button */}
+          {/* Submit Search Button & Mobile Filter Sheet Trigger */}
           <div className="sm:col-span-3 flex items-center gap-2">
             <button
               type="submit"
@@ -574,6 +578,20 @@ export default function ExplorePage() {
             >
               <Search className="h-4 w-4" />
               <span>Search Stalls</span>
+            </button>
+
+            {/* Mobile Filter Sheet Button */}
+            <button
+              type="button"
+              onClick={() => setMobileFilterSheetOpen(true)}
+              className="sm:hidden py-2.5 px-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+              title="Open mobile filters"
+            >
+              <SlidersHorizontal className="h-4 w-4 text-[#16803D]" />
+              <span>Filters</span>
+              {(selectedCategory || selectedArea || selectedHub || onlyOpenNow || userLocation) && (
+                <span className="h-2 w-2 rounded-full bg-[#16803D]"></span>
+              )}
             </button>
 
             {(searchTerm || selectedCategory || selectedArea || userLocation || selectedHub || onlyOpenNow) && (
@@ -921,6 +939,270 @@ export default function ExplorePage() {
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Dynamic Mobile View Switcher (Floating Pins <-> Cards Pill) */}
+      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 z-30 lg:hidden">
+        <button
+          type="button"
+          aria-label="Toggle mobile layout display"
+          onClick={() => {
+            setViewMode((prev) => (prev === 'map' ? 'list' : 'map'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-[#14532D] text-white font-bold text-xs shadow-xl active:scale-95 border border-[#22C55E]/40 ring-4 ring-black/10 cursor-pointer transition-transform"
+        >
+          {viewMode === 'map' ? (
+            <>
+              <ListIcon className="h-4 w-4 text-[#86EFAC]" />
+              <span>Show Cards ({displayedVendors.length})</span>
+            </>
+          ) : (
+            <>
+              <MapIcon className="h-4 w-4 text-[#86EFAC]" />
+              <span>Show Pins ({displayedVendors.length})</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Floating Stall Preview Card on Pin Tap */}
+      {selectedVendor && (
+        <div className="fixed bottom-28 left-3 right-3 z-30 bg-white rounded-3xl border border-[#E5EAE5] p-4 shadow-2xl lg:hidden animate-in slide-in-from-bottom duration-200">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start space-x-3 min-w-0">
+              <div className="h-16 w-16 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-[#E5EAE5]">
+                <img
+                  src={getStallCoverImage(selectedVendor)}
+                  alt={selectedVendor.stallName}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center space-x-1.5 mb-0.5">
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      selectedVendor.availabilityStatus === 'open'
+                        ? 'bg-[#EDF7EF] text-[#16803D]'
+                        : 'bg-stone-100 text-stone-600'
+                    }`}
+                  >
+                    {selectedVendor.availabilityStatus === 'open' ? '🟢 Open Now' : 'Closed'}
+                  </span>
+                  {selectedVendor.stallType && (
+                    <span className="text-[10px] text-[#647067] font-medium truncate">
+                      • {selectedVendor.stallType === 'mobile' ? 'Mobile Thela' : 'Fixed Kiosk'}
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-extrabold text-sm text-[#17231D] truncate">
+                  {selectedVendor.stallName}
+                </h4>
+                <p className="text-xs text-[#647067] truncate">
+                  {[selectedVendor.address?.area, selectedVendor.address?.city]
+                    .filter(Boolean)
+                    .join(', ')}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedVendor(null)}
+              className="p-1.5 rounded-full text-[#647067] hover:text-[#17231D] hover:bg-[#FAFAF5]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-[#E5EAE5] grid grid-cols-2 gap-2">
+            <a
+              href={getNavigationUrl(selectedVendor.location?.coordinates, selectedVendor.address)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] hover:text-[#16803D] border border-[#E5EAE5] text-xs font-bold transition-all"
+            >
+              <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
+              <span>Navigate</span>
+            </a>
+            <Link
+              to={`/vendors/${selectedVendor.id || selectedVendor._id}`}
+              className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold transition-all shadow-xs"
+            >
+              <span>View Stall</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Filter Sheet Modal */}
+      {mobileFilterSheetOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end">
+          <div
+            onClick={() => setMobileFilterSheetOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+          />
+          <div className="relative bg-white rounded-t-3xl border-t border-[#E5EAE5] p-5 max-h-[85vh] flex flex-col shadow-2xl z-10 animate-in slide-in-from-bottom duration-250">
+            <div className="w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-3"></div>
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5EAE5]">
+              <div className="flex items-center space-x-2">
+                <SlidersHorizontal className="h-5 w-5 text-[#16803D]" />
+                <h3 className="font-extrabold font-display text-base text-[#17231D]">
+                  Filter Physical Stalls
+                </h3>
+              </div>
+              <button
+                onClick={() => setMobileFilterSheetOpen(false)}
+                className="p-1 rounded-full text-[#647067] hover:text-[#17231D]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto py-3 space-y-4">
+              {/* Toggle: Open Right Now */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#EDF7EF]/60 border border-[#D1EAD7]">
+                <div>
+                  <span className="font-bold text-xs text-[#17231D] block">🟢 Open Right Now</span>
+                  <span className="text-[11px] text-[#647067]">
+                    Only show stalls actively open right now
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOnlyOpenNow(!onlyOpenNow)}
+                  className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
+                    onlyOpenNow ? 'bg-[#16803D]' : 'bg-slate-300'
+                  }`}
+                >
+                  <span
+                    className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition-transform ${
+                      onlyOpenNow ? 'right-0.5' : 'left-0.5'
+                    }`}
+                  ></span>
+                </button>
+              </div>
+
+              {/* Distance Radius */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
+                  Search Radius: {radiusKm} km
+                </span>
+                <div className="grid grid-cols-4 gap-2 text-xs">
+                  {[1, 2, 5, 10].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRadiusKm(r)}
+                      className={`py-2 rounded-xl font-bold border transition-all ${
+                        radiusKm === r
+                          ? 'bg-[#16803D] text-white border-[#16803D]'
+                          : 'bg-[#FAFAF5] text-[#17231D] border-[#E5EAE5]'
+                      }`}
+                    >
+                      {r} km
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Major Gujarat Cities */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
+                  Gujarat Cities
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {['All Gujarat', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar'].map(
+                    (c) => {
+                      const isSel =
+                        (c === 'All Gujarat' && !selectedArea) ||
+                        selectedArea.toLowerCase() === c.toLowerCase();
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={() => setSelectedArea(c === 'All Gujarat' ? '' : c)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                            isSel
+                              ? 'bg-[#16803D] text-white'
+                              : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
+                          }`}
+                        >
+                          {c}
+                        </button>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+
+              {/* Categories */}
+              {categories.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
+                    Stall Categories
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCategory('')}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                        !selectedCategory
+                          ? 'bg-[#16803D] text-white'
+                          : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
+                      }`}
+                    >
+                      All Categories
+                    </button>
+                    {categories.map((cat) => (
+                      <button
+                        key={cat.id || cat.slug}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.slug)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                          selectedCategory === cat.slug
+                            ? 'bg-[#16803D] text-white'
+                            : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
+                        }`}
+                      >
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Actions in Sheet */}
+            <div className="pt-3 border-t border-[#E5EAE5] flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleResetFilters();
+                  setMobileFilterSheetOpen(false);
+                }}
+                className="flex-1 py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] text-xs font-bold text-[#17231D]"
+              >
+                Reset All
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileFilterSheetOpen(false);
+                  updateUrlParams({
+                    category: selectedCategory || undefined,
+                    area: selectedArea || undefined,
+                    open: onlyOpenNow ? 'true' : undefined,
+                    page: 1,
+                  });
+                }}
+                className="flex-2 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold shadow-xs"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

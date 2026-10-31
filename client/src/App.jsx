@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
 import HomePage from './pages/HomePage';
 import ExplorePage from './pages/ExplorePage';
 import PublicVendorProfilePage from './pages/PublicVendorProfilePage';
@@ -19,6 +20,7 @@ import AdminVendorsPage from './pages/AdminVendorsPage';
 import AdminCategoriesPage from './pages/AdminCategoriesPage';
 import AdminReportsPage from './pages/AdminReportsPage';
 import AdminUsersPage from './pages/AdminUsersPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -71,50 +73,27 @@ export default function App() {
           }
         />
 
-        {/* Administrator Protected Routes */}
-        <Route
-          path="admin"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="admin/vendors"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminVendorsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="admin/categories"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminCategoriesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="admin/reports"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminReportsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="admin/users"
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminUsersPage />
-            </ProtectedRoute>
-          }
-        />
-
         {/* Catch-all 404 handler */}
         <Route path="*" element={<NotFoundPage />} />
+      </Route>
+
+      {/* Dedicated Admin Sign-In Portal */}
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+
+      {/* Dedicated Administrator Operations Console (Separate Admin Layout) */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="vendors" element={<AdminVendorsPage />} />
+        <Route path="categories" element={<AdminCategoriesPage />} />
+        <Route path="reports" element={<AdminReportsPage />} />
+        <Route path="users" element={<AdminUsersPage />} />
       </Route>
     </Routes>
   );

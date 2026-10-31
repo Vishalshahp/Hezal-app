@@ -64,7 +64,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* For Sellers & Admins */}
+          {/* For Street Vendors & Sellers */}
           <div className="space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#17231D] block">
               Vendor Community
@@ -86,9 +86,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="hover:text-[#16803D] transition-colors flex items-center space-x-1">
-                  <Shield className="h-3 w-3" />
-                  <span>Admin Portal</span>
+                <Link to="/explore" className="hover:text-[#16803D] transition-colors">
+                  Browse Verified Stalls
                 </Link>
               </li>
             </ul>
@@ -98,8 +97,13 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-[#E5EAE5] flex flex-col sm:flex-row items-center justify-between text-xs text-[#647067] gap-3">
           <p>© 2026 Hezal Market. All rights reserved.</p>
-          <div className="flex items-center space-x-4 text-xs text-[#647067]">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-[#647067]">
             <span>Zero Platform Commissions • 100% Direct Vendor Discovery</span>
+            <span className="text-[#E5EAE5]">|</span>
+            <Link to="/admin/login" className="hover:text-[#17231D] text-[#647067] flex items-center space-x-1 transition-colors">
+              <Shield className="h-3 w-3 text-slate-400" />
+              <span>Staff Console</span>
+            </Link>
           </div>
         </div>
       </div>

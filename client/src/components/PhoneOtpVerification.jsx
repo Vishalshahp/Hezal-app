@@ -127,23 +127,23 @@ export default function PhoneOtpVerification({
   // State: Phone Already Verified
   if (isVerified) {
     return (
-      <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-xs transition-all animate-fadeIn">
+      <div className="p-3.5 bg-[#EDF7EF] border border-[#D1EAD7] rounded-xl flex items-center justify-between text-xs transition-all animate-fadeIn">
         <div className="flex items-center space-x-2.5">
-          <div className="h-7 w-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+          <div className="h-7 w-7 rounded-full bg-[#16803D] text-white flex items-center justify-center flex-shrink-0">
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
-            <div className="font-semibold text-emerald-900 flex items-center space-x-1.5">
+            <div className="font-semibold text-[#14532D] flex items-center space-x-1.5">
               <span>Phone Verified</span>
-              <span className="text-emerald-700 font-mono">+91 {verifiedPhone}</span>
+              <span className="text-[#16803D] font-mono">+91 {verifiedPhone}</span>
             </div>
-            <p className="text-[11px] text-emerald-600">Verification complete. Ready to register.</p>
+            <p className="text-[11px] text-[#16803D]">Verification complete. Ready to register.</p>
           </div>
         </div>
         <button
           type="button"
           onClick={handleResetVerification}
-          className="text-[11px] text-emerald-700 hover:text-emerald-900 underline font-medium ml-2"
+          className="text-[11px] text-[#16803D] hover:text-[#14532D] underline font-medium ml-2 cursor-pointer"
         >
           Change
         </button>
@@ -154,13 +154,13 @@ export default function PhoneOtpVerification({
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
+        <label className="block text-xs font-semibold text-[#17231D] mb-1">
           Mobile Number {required ? '*' : '(for SMS verification)'}
         </label>
         <div className="flex space-x-2">
           <div className="relative flex-1">
-            <div className="absolute left-3 top-2.5 flex items-center space-x-1 text-slate-500 text-xs font-medium border-r border-slate-200 pr-2">
-              <Smartphone className="h-3.5 w-3.5 text-slate-400" />
+            <div className="absolute left-3 top-2.5 flex items-center space-x-1 text-[#647067] text-xs font-medium border-r border-[#E5EAE5] pr-2">
+              <Smartphone className="h-3.5 w-3.5 text-[#647067]" />
               <span>+91</span>
             </div>
             <input
@@ -170,14 +170,14 @@ export default function PhoneOtpVerification({
               disabled={isOtpSent && cooldown > 0}
               placeholder="98765 43210"
               maxLength={10}
-              className="w-full pl-16 pr-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-colors disabled:bg-slate-50"
+              className="w-full pl-16 pr-3 py-2 text-sm bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-colors disabled:bg-[#FAFAF5]"
             />
           </div>
           <button
             type="button"
             onClick={handleSendOtp}
             disabled={loadingSend || phone.length !== 10 || cooldown > 0}
-            className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap"
+            className="px-3.5 py-2 rounded-lg bg-[#17231D] hover:bg-[#14532D] text-white font-medium text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap cursor-pointer shadow-sm"
           >
             {loadingSend ? (
               <>
@@ -201,41 +201,36 @@ export default function PhoneOtpVerification({
         </div>
       </div>
 
-      {/* Dev Mode Demo Helper Banner */}
+      {/* Demo Helper Banner */}
       {devOtp && isOtpSent && (
-        <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-2 animate-fadeIn shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="font-bold flex items-center space-x-1.5 text-amber-950">
-              <span className="text-base">📱</span>
-              <span>Demo SMS Code:</span>
-              <span className="bg-amber-200 text-amber-950 px-2 py-0.5 rounded font-mono font-bold tracking-widest text-sm border border-amber-300">
-                {devOtp}
-              </span>
+        <div className="p-3 bg-amber-50/90 border border-amber-300 rounded-xl text-xs text-amber-900 animate-fadeIn shadow-xs flex items-center justify-between">
+          <span className="font-bold flex items-center space-x-1.5 text-amber-950">
+            <span className="text-base">📱</span>
+            <span>Demo SMS Code:</span>
+            <span className="bg-amber-200 text-amber-950 px-2 py-0.5 rounded font-mono font-bold tracking-widest text-sm border border-amber-300">
+              {devOtp}
             </span>
-            <button
-              type="button"
-              onClick={() => setOtp(devOtp)}
-              className="text-xs bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-1 rounded-md font-semibold transition-colors shadow-sm"
-            >
-              Auto-fill OTP
-            </button>
-          </div>
-          <p className="text-[11px] text-amber-800 leading-relaxed">
-            <strong>Why did you see this?</strong> In development mode without a paid SMS gateway, the verification code is generated directly on screen. To send real SMS to physical mobile phones in India, add <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-[10px]">FAST2SMS_API_KEY</code> to <code className="font-mono bg-amber-100 px-1 py-0.5 rounded text-[10px]">server/.env</code>.
-          </p>
+          </span>
+          <button
+            type="button"
+            onClick={() => setOtp(devOtp)}
+            className="text-xs bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-1 rounded-md font-semibold transition-colors shadow-xs cursor-pointer"
+          >
+            Auto-fill OTP
+          </button>
         </div>
       )}
 
       {/* OTP Code Entry Section */}
       {isOtpSent && (
-        <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3 animate-fadeIn">
+        <div className="p-3.5 bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl space-y-3 animate-fadeIn">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-slate-700 flex items-center space-x-1">
-                <KeyRound className="h-3.5 w-3.5 text-primary-600" />
+              <label className="text-xs font-semibold text-[#17231D] flex items-center space-x-1">
+                <KeyRound className="h-3.5 w-3.5 text-[#16803D]" />
                 <span>Enter 6-Digit SMS Verification Code</span>
               </label>
-              <span className="text-[11px] text-slate-500">Code valid for 5 mins</span>
+              <span className="text-[11px] text-[#647067]">Code valid for 5 mins</span>
             </div>
             <div className="flex space-x-2">
               <input
@@ -244,13 +239,13 @@ export default function PhoneOtpVerification({
                 onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
                 placeholder="123456"
                 maxLength={6}
-                className="w-full text-center tracking-widest font-mono text-base font-bold py-2 px-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full text-center tracking-widest font-mono text-base font-bold py-2 px-3 bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D]"
               />
               <button
                 type="button"
                 onClick={handleVerifyOtp}
                 disabled={loadingVerify || otp.length !== 6}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap shadow-sm"
+                className="px-4 py-2 rounded-lg bg-[#16803D] hover:bg-[#14532D] text-white font-semibold text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5 whitespace-nowrap shadow-sm cursor-pointer"
               >
                 {loadingVerify ? (
                   <>
@@ -278,8 +273,8 @@ export default function PhoneOtpVerification({
       )}
 
       {successMsg && !isVerified && (
-        <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 flex items-center space-x-1.5 animate-fadeIn">
-          <CheckCircle2 className="h-3.5 w-3.5 text-blue-600 flex-shrink-0" />
+        <div className="p-2 rounded-lg bg-[#EDF7EF] border border-[#D1EAD7] text-xs text-[#16803D] flex items-center space-x-1.5 animate-fadeIn">
+          <CheckCircle2 className="h-3.5 w-3.5 text-[#16803D] flex-shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}

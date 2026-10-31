@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import VendorProfile from '../models/VendorProfile.js';
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
@@ -27,6 +28,7 @@ export const searchVendors = async (req, res, next) => {
       q,
       category,
       area,
+      city,
       stallType,
       availabilityStatus,
       sort = 'newest',
@@ -82,9 +84,10 @@ export const searchVendors = async (req, res, next) => {
       matchCriteria.categories = categoryId;
     }
 
-    // 4. Area / Locality filter
-    if (area && typeof area === 'string' && area.trim()) {
-      const safeArea = escapeRegex(area.trim());
+    // 4. Area / City / Locality filter
+    const locSearch = (area || city || '').trim();
+    if (locSearch) {
+      const safeArea = escapeRegex(locSearch);
       const areaRegex = new RegExp(safeArea, 'i');
       matchCriteria['$or'] = [
         { 'address.area': areaRegex },
@@ -522,6 +525,14 @@ export const getNearbyVendors = async (req, res, next) => {
  */
 export const getPublicStallProfile = async (req, res, next) => {
   try {
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        status: 'not_found',
+        message: 'Vendor stall not found.'
+      });
+    }
+
     const profile = await VendorProfile.findById(req.params.id)
       .populate('categories', 'name slug icon')
       .lean();

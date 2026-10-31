@@ -7,6 +7,7 @@ import publicVendorRoutes from './publicVendorRoutes.js';
 import productRoutes from './productRoutes.js';
 import adminRoutes from './adminRoutes.js';
 import reportRoutes from './reportRoutes.js';
+import locationRoutes from './locationRoutes.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
@@ -35,6 +36,9 @@ router.use('/admin', adminRoutes);
 
 // Mount public reporting routes under /api/reports
 router.use('/reports', reportRoutes);
+
+// Mount Gujarat geographic locations discovery under /api/locations
+router.use('/locations', locationRoutes);
 
 // Role verification test/placeholder routes
 router.get(

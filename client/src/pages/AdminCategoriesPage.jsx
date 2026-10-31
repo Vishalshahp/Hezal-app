@@ -184,7 +184,7 @@ export default function AdminCategoriesPage() {
             Category Administration
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Manage discovery categories, reorder display priorities, and configure taxonomy safely without breaking existing vendor stalls.
+            Manage discovery categories, reorder display priorities, and organize stall listings.
           </p>
         </div>
 
@@ -230,7 +230,7 @@ export default function AdminCategoriesPage() {
           <div className="p-12 text-center text-slate-500 space-y-2">
             <Tag className="h-10 w-10 text-slate-300 mx-auto" />
             <p className="text-sm font-semibold text-slate-700">No categories found</p>
-            <p className="text-xs text-slate-400">Click &ldquo;Add New Category&rdquo; to create your first taxonomy item.</p>
+            <p className="text-xs text-slate-400">Click &ldquo;Add New Category&rdquo; to create your first category.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

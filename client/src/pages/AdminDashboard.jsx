@@ -232,10 +232,10 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Catalog & Taxonomy Health */}
+        {/* Catalog & Categories */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900">Taxonomy & Products</h3>
+            <h3 className="text-sm font-bold text-slate-900">Categories & Products</h3>
             <Link to="/admin/categories" className="text-xs text-primary-600 font-bold hover:underline">
               Manage
             </Link>

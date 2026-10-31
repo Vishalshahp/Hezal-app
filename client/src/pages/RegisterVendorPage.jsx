@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Store, Mail, Lock, Phone, User, AlertCircle, Loader2, Eye, EyeOff, ShieldAlert } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, Loader2, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import PhoneOtpVerification from '../components/PhoneOtpVerification';
 
 export default function RegisterVendorPage() {
@@ -60,28 +60,28 @@ export default function RegisterVendorPage() {
   };
 
   return (
-    <div className="relative max-w-md mx-auto py-8">
-      {/* Decorative ambient gradient spots */}
-      <div className="absolute -top-6 -left-6 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
-      <div className="absolute -bottom-6 -right-6 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div className="relative bg-white rounded-3xl border border-slate-200/90 shadow-card-hover p-6 sm:p-8 space-y-6">
+    <div className="max-w-md mx-auto py-10 px-4">
+      <div className="bg-white rounded-2xl border border-[#E5EAE5] shadow-card p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-2">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center mx-auto shadow-md shadow-amber-500/25">
-            <Store className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-bold font-display text-slate-900 tracking-tight">
+          <Link to="/" className="inline-block">
+            <img
+              src="/logo.png"
+              alt="Hezal Market"
+              className="h-12 w-auto mx-auto object-contain hover:opacity-90 transition-opacity"
+            />
+          </Link>
+          <h1 className="text-2xl font-bold font-display text-[#17231D] tracking-tight">
             Register as a Local Vendor
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#647067]">
             Put your roadside stall or local business on the digital map and reach nearby customers.
           </p>
         </div>
 
-        <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-start space-x-2">
-          <ShieldAlert className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="p-3 bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl text-xs text-[#17231D] flex items-start space-x-2">
+          <ShieldAlert className="h-4 w-4 text-[#16803D] flex-shrink-0 mt-0.5" />
           <span>
-            <strong>Vendor Onboarding:</strong> Registration creates your vendor credentials. Stall coordinates, photos, operating hours, and menu items can be updated anytime from your dashboard.
+            <strong className="text-[#14532D]">Vendor Onboarding:</strong> Registration creates your vendor credentials. Stall coordinates, photos, operating hours, and menu items can be updated anytime from your dashboard.
           </span>
         </div>
 
@@ -94,11 +94,11 @@ export default function RegisterVendorPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-[#17231D] mb-1">
               Owner / Business Contact Name *
             </label>
             <div className="relative">
-              <User className="h-4 w-4 text-slate-400 absolute left-3 top-3" />
+              <User className="h-4 w-4 text-[#647067] absolute left-3 top-3" />
               <input
                 type="text"
                 name="name"
@@ -106,17 +106,17 @@ export default function RegisterVendorPage() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Ramesh Prajapati"
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-[#17231D] mb-1">
               Account Email Address *
             </label>
             <div className="relative">
-              <Mail className="h-4 w-4 text-slate-400 absolute left-3 top-3" />
+              <Mail className="h-4 w-4 text-[#647067] absolute left-3 top-3" />
               <input
                 type="email"
                 name="email"
@@ -124,7 +124,7 @@ export default function RegisterVendorPage() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="ramesh@example.com"
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-colors"
               />
             </div>
           </div>
@@ -149,11 +149,11 @@ export default function RegisterVendorPage() {
           />
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-[#17231D] mb-1">
               Password * (min 8 characters)
             </label>
             <div className="relative">
-              <Lock className="h-4 w-4 text-slate-400 absolute left-3 top-3" />
+              <Lock className="h-4 w-4 text-[#647067] absolute left-3 top-3" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -162,12 +162,12 @@ export default function RegisterVendorPage() {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-10 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full pl-9 pr-10 py-2 text-sm bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-2.5 text-[#647067] hover:text-[#17231D]"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -175,11 +175,11 @@ export default function RegisterVendorPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-semibold text-[#17231D] mb-1">
               Confirm Password *
             </label>
             <div className="relative">
-              <Lock className="h-4 w-4 text-slate-400 absolute left-3 top-3" />
+              <Lock className="h-4 w-4 text-[#647067] absolute left-3 top-3" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="confirmPassword"
@@ -188,7 +188,7 @@ export default function RegisterVendorPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="••••••••••••"
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E5EAE5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-colors"
               />
             </div>
           </div>
@@ -200,9 +200,9 @@ export default function RegisterVendorPage() {
               name="acknowledgeLocationPublic"
               checked={formData.acknowledgeLocationPublic}
               onChange={handleChange}
-              className="mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+              className="mt-0.5 rounded border-[#E5EAE5] text-[#16803D] focus:ring-[#16803D]"
             />
-            <label htmlFor="acknowledgeLocationPublic" className="text-xs text-slate-600 cursor-pointer">
+            <label htmlFor="acknowledgeLocationPublic" className="text-xs text-[#647067] cursor-pointer">
               I understand that when I publish my stall coordinates, they will be publicly viewable on Hezal Market.
             </label>
           </div>
@@ -210,7 +210,7 @@ export default function RegisterVendorPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-sm transition-all shadow-md shadow-amber-500/25 hover:shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer"
           >
             {loading ? (
               <>
@@ -223,16 +223,16 @@ export default function RegisterVendorPage() {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-slate-100 text-center space-y-2 text-xs">
-          <p className="text-slate-500">
+        <div className="pt-4 border-t border-[#E5EAE5] text-center space-y-2 text-xs">
+          <p className="text-[#647067]">
             Already have an account?{' '}
-            <Link to="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
+            <Link to="/login" className="text-[#16803D] hover:text-[#14532D] font-semibold">
               Sign In
             </Link>
           </p>
-          <p className="text-slate-500">
+          <p className="text-[#647067]">
             Looking for stalls instead?{' '}
-            <Link to="/register/customer" className="text-primary-600 hover:text-primary-700 font-semibold">
+            <Link to="/register/customer" className="text-[#16803D] hover:text-[#14532D] font-semibold underline underline-offset-2">
               Create Customer Account
             </Link>
           </p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import productService from '../services/productService';
 import vendorService from '../services/vendorService';
+import { getImageUrl } from '../utils/imageUrl';
 import {
   Package,
   Plus,
@@ -276,13 +277,22 @@ export default function VendorProductsPage() {
                 {/* Photo Header */}
                 <div className="h-40 w-full bg-slate-100 relative overflow-hidden flex items-center justify-center">
                   {prod.image ? (
-                    <img src={prod.image} alt={prod.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="text-slate-300 text-center">
-                      <ImageIcon className="h-10 w-10 mx-auto" />
-                      <span className="text-[11px] block text-slate-400">No image</span>
-                    </div>
-                  )}
+                    <img
+                      src={getImageUrl(prod.image)}
+                      alt={prod.name}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        if (e.target.nextElementSibling) {
+                          e.target.nextElementSibling.classList.remove('hidden');
+                        }
+                      }}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : null}
+                  <div className={`text-slate-300 text-center ${prod.image ? 'hidden' : ''}`}>
+                    <ImageIcon className="h-10 w-10 mx-auto" />
+                    <span className="text-[11px] block text-slate-400">No image</span>
+                  </div>
                   {/* Availability Badge Overlay */}
                   <div className="absolute top-2 right-2">
                     {prod.isAvailable ? (
@@ -437,28 +447,46 @@ export default function VendorProductsPage() {
 
               {/* Photo Upload */}
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
-                  Product Photo
+                <label className="block text-xs font-semibold text-[#17231D] mb-1.5">
+                  Product Photo (Optional)
                 </label>
                 <div className="flex items-center space-x-3">
-                  <div className="h-16 w-16 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="h-16 w-16 rounded-xl bg-[#FAFAF5] border border-[#E5EAE5] flex items-center justify-center overflow-hidden flex-shrink-0 relative">
                     {formData.image ? (
-                      <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
+                      <img
+                        src={getImageUrl(formData.image)}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
                     ) : (
-                      <ImageIcon className="h-6 w-6 text-slate-300" />
+                      <ImageIcon className="h-6 w-6 text-[#647067]/40" />
                     )}
                   </div>
-                  <label className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer">
-                    <Upload className="h-3.5 w-3.5" />
-                    <span>{uploadingImage ? 'Uploading...' : 'Upload Image'}</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleImageUpload}
-                      disabled={uploadingImage}
-                      className="hidden"
-                    />
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-[#EDF7EF] hover:bg-[#D1EAD7] text-[#16803D] text-xs font-semibold cursor-pointer border border-[#D1EAD7] transition-colors">
+                      <Upload className="h-3.5 w-3.5" />
+                      <span>{uploadingImage ? 'Uploading...' : formData.image ? 'Change Photo' : 'Upload Image'}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                    </label>
+                    {formData.image && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+                        className="px-2.5 py-2 rounded-xl border border-[#E5EAE5] text-[#647067] hover:text-red-600 hover:bg-red-50 text-xs font-medium transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 

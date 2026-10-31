@@ -50,7 +50,7 @@ export default function AdminNav({ metrics }) {
   ];
 
   return (
-    <div className="bg-white border-b border-slate-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 mb-6 sticky top-16 z-30 shadow-xs">
+    <div className="bg-white border-b border-[#E5EAE5] -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 mb-6 sticky top-16 z-30 shadow-card">
       <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto py-2.5">
         <div className="flex items-center space-x-1 sm:space-x-2">
           {navItems.map((item) => {
@@ -63,8 +63,8 @@ export default function AdminNav({ metrics }) {
                 className={({ isActive }) =>
                   `inline-flex items-center space-x-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-primary-50 text-primary-700 shadow-xs border border-primary-200'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-[#EDF7EF] text-[#16803D] shadow-xs border border-[#D1EAD7]'
+                      : 'text-[#647067] hover:text-[#17231D] hover:bg-[#FAFAF5]'
                   }`
                 }
               >
@@ -82,8 +82,8 @@ export default function AdminNav({ metrics }) {
           })}
         </div>
 
-        <div className="hidden md:flex items-center space-x-1 text-xs text-slate-500 font-medium shrink-0 ml-4">
-          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+        <div className="hidden md:flex items-center space-x-1 text-xs text-[#647067] font-medium shrink-0 ml-4">
+          <ShieldCheck className="h-4 w-4 text-[#16803D]" />
           <span>Moderator Console</span>
         </div>
       </div>

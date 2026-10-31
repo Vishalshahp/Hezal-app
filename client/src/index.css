@@ -6,37 +6,72 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    background-color: #FAFAF5;
+    color: #17231D;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: #17231D;
+    letter-spacing: -0.02em;
   }
 }
 
-@layer utilities {
-  .gradient-hero {
-    background: radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.25) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.20) 0%, transparent 40%),
-                linear-gradient(135deg, #064e3b 0%, #065f46 45%, #0f172a 100%);
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.shimmer-card {
+  background: linear-gradient(90deg, #FAFAF5 25%, #EDF7EF 50%, #FAFAF5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@layer components {
+  .subtle-border {
+    border-color: #E5EAE5;
   }
 
-  .gradient-badge-vendor {
-    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  .hover-lift {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
-  .gradient-badge-primary {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  }
-
-  .mesh-card-glow {
-    position: relative;
-    overflow: hidden;
-  }
-  .mesh-card-glow::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #10b981, #f59e0b, #06b6d4);
+  .hover-lift:hover {
+    transform: translateY(-3px);
   }
 }

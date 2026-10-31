@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ import {
   AlertCircle,
   XCircle
 } from 'lucide-react';
+import { MAP_LAYERS, getGoogleDirectionsUrl } from '../services/googleMapsService';
 
 // Create custom DivIcon for Leaflet markers
 function createCustomPin(isSelected = false, isUser = false) {
@@ -27,7 +28,7 @@ function createCustomPin(isSelected = false, isUser = false) {
     });
   }
 
-  const bgColor = isSelected ? '#ea580c' : '#059669'; // Saffron/orange if selected, Emerald green otherwise
+  const bgColor = isSelected ? '#ea580c' : '#16803D'; // Saffron/orange if selected, Brand green otherwise
   const ring = isSelected ? 'ring-4 ring-orange-300 shadow-xl scale-110' : 'shadow-md border-2 border-white';
 
   return L.divIcon({
@@ -94,6 +95,8 @@ export default function InteractiveMap({
   onSelectVendor,
   height = '500px'
 }) {
+  const [activeLayer, setActiveLayer] = useState('googleRoad');
+
   // Filter vendors with valid coordinates
   const validVendors = useMemo(() => {
     return vendors.filter(
@@ -121,11 +124,50 @@ export default function InteractiveMap({
   const selectedIcon = useMemo(() => createCustomPin(true), []);
   const userIcon = useMemo(() => createCustomPin(false, true), []);
 
+  const currentTileLayer = MAP_LAYERS[activeLayer] || MAP_LAYERS.googleRoad;
+
   return (
     <div
-      className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm w-full z-0"
+      className="relative rounded-2xl overflow-hidden border border-[#E5EAE5] shadow-card w-full z-0 group"
       style={{ height }}
     >
+      {/* Top Map Layer Control Overlay */}
+      <div className="absolute top-3 right-3 z-[1000] flex items-center bg-white/95 backdrop-blur-sm rounded-xl p-1 border border-[#E5EAE5] shadow-md">
+        <button
+          type="button"
+          onClick={() => setActiveLayer('googleRoad')}
+          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+            activeLayer === 'googleRoad'
+              ? 'bg-[#16803D] text-white shadow-xs'
+              : 'text-[#647067] hover:text-[#17231D]'
+          }`}
+        >
+          Google Maps
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveLayer('googleSatellite')}
+          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+            activeLayer === 'googleSatellite'
+              ? 'bg-[#16803D] text-white shadow-xs'
+              : 'text-[#647067] hover:text-[#17231D]'
+          }`}
+        >
+          Satellite
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveLayer('openStreetMap')}
+          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+            activeLayer === 'openStreetMap'
+              ? 'bg-[#16803D] text-white shadow-xs'
+              : 'text-[#647067] hover:text-[#17231D]'
+          }`}
+        >
+          Street
+        </button>
+      </div>
+
       <MapContainer
         center={defaultCenter}
         zoom={13}
@@ -133,9 +175,10 @@ export default function InteractiveMap({
         className="w-full h-full"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maxZoom={19}
+          key={activeLayer}
+          attribution={currentTileLayer.attribution}
+          url={currentTileLayer.url}
+          maxZoom={currentTileLayer.maxZoom}
         />
 
         <MapController
@@ -152,8 +195,8 @@ export default function InteractiveMap({
           >
             <Popup>
               <div className="p-1 text-center font-sans">
-                <p className="text-xs font-bold text-slate-800">Your Detected Location</p>
-                <p className="text-[11px] text-slate-500">Searching nearby stalls within radius</p>
+                <p className="text-xs font-bold text-[#17231D]">Your Detected Location</p>
+                <p className="text-[11px] text-[#647067]">Searching nearby stalls within radius</p>
               </div>
             </Popup>
           </Marker>
@@ -165,7 +208,7 @@ export default function InteractiveMap({
           const isSelected =
             selectedVendor && (selectedVendor.id === vendor.id || selectedVendor._id === vendor.id);
 
-          const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+          const directionsUrl = getGoogleDirectionsUrl(lat, lng, vendor.stallName);
 
           return (
             <Marker
@@ -182,7 +225,7 @@ export default function InteractiveMap({
                 <div className="p-1 max-w-[220px] font-sans space-y-2">
                   {/* Thumbnail */}
                   {vendor.coverPhoto && (
-                    <div className="h-20 w-full rounded-lg overflow-hidden bg-slate-100">
+                    <div className="h-20 w-full rounded-lg overflow-hidden bg-[#FAFAF5]">
                       <img
                         src={vendor.coverPhoto}
                         alt={vendor.stallName}
@@ -195,52 +238,53 @@ export default function InteractiveMap({
                     {/* Status badge */}
                     <div className="flex items-center space-x-1 mb-1">
                       {vendor.availabilityStatus === 'open' && (
-                        <span className="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                        <span className="inline-flex items-center text-[10px] font-bold text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7] px-1.5 py-0.5 rounded">
                           <CheckCircle2 className="h-2.5 w-2.5 mr-1" /> Open
                         </span>
                       )}
                       {vendor.availabilityStatus === 'away' && (
-                        <span className="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                        <span className="inline-flex items-center text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
                           <AlertCircle className="h-2.5 w-2.5 mr-1" /> Away
                         </span>
                       )}
                       {vendor.availabilityStatus === 'closed' && (
-                        <span className="inline-flex items-center text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+                        <span className="inline-flex items-center text-[10px] font-bold text-[#647067] bg-[#FAFAF5] border border-[#E5EAE5] px-1.5 py-0.5 rounded">
                           <XCircle className="h-2.5 w-2.5 mr-1" /> Closed
                         </span>
                       )}
 
                       {vendor.distanceKm !== undefined && (
-                        <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-bold text-[#16803D] bg-[#EDF7EF] px-1.5 py-0.5 rounded">
                           {vendor.distanceKm} km
                         </span>
                       )}
                     </div>
 
-                    <h4 className="font-bold text-xs text-slate-900 leading-tight">
+                    <h4 className="font-bold text-xs text-[#17231D] leading-tight">
                       {vendor.stallName}
                     </h4>
 
-                    <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                    <p className="text-[11px] text-[#647067] line-clamp-1 mt-0.5">
                       {vendor.address?.area || vendor.address?.street}
                     </p>
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px]">
+                  <div className="pt-1.5 border-t border-[#E5EAE5] flex items-center justify-between gap-1 text-[11px]">
                     <a
                       href={directionsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1 px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition-colors"
+                      className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] border border-[#E5EAE5] font-medium transition-colors"
+                      title="Open walking directions in Google Maps"
                     >
-                      <Navigation className="h-3 w-3 text-primary-600" />
+                      <Navigation className="h-3 w-3 text-[#16803D]" />
                       <span>Directions</span>
                     </a>
 
                     <Link
                       to={`/vendors/${vendor.id || vendor._id}`}
-                      className="inline-flex items-center space-x-1 px-2 py-1 rounded bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
+                      className="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-[#16803D] hover:bg-[#14532D] text-white font-medium transition-colors"
                     >
                       <span>Stall</span>
                       <ExternalLink className="h-2.5 w-2.5" />

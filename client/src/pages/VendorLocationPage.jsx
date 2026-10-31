@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import vendorService from '../services/vendorService';
+import { reverseGeocode } from '../services/googleMapsService';
+import GujaratLocationSelector from '../components/GujaratLocationSelector';
 import {
   MapPin,
   Clock,
@@ -9,7 +11,8 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
-  Navigation
+  Navigation,
+  Sparkles
 } from 'lucide-react';
 
 export default function VendorLocationPage() {
@@ -80,14 +83,36 @@ export default function VendorLocationPage() {
 
     setDetectingGps(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
+        const lat = parseFloat(position.coords.latitude.toFixed(6));
+        const lng = parseFloat(position.coords.longitude.toFixed(6));
+
+        let detectedStreet = '';
+        let detectedArea = '';
+
+        try {
+          const addr = await reverseGeocode(lat, lng);
+          if (addr) {
+            detectedStreet = addr.street || '';
+            detectedArea = addr.area || addr.city || '';
+          }
+        } catch (e) {
+          console.warn('Geocoding lookup warning:', e);
+        }
+
         setLocationData((prev) => ({
           ...prev,
-          longitude: parseFloat(position.coords.longitude.toFixed(6)),
-          latitude: parseFloat(position.coords.latitude.toFixed(6)),
+          longitude: lng,
+          latitude: lat,
+          street: prev.street || detectedStreet,
+          area: prev.area || detectedArea,
         }));
         setDetectingGps(false);
-        setSuccessMsg('Coordinates detected from current device GPS position!');
+        setSuccessMsg(
+          detectedArea
+            ? `Location detected: ${detectedArea}`
+            : 'Current location detected from your device!'
+        );
       },
       (error) => {
         setDetectingGps(false);
@@ -95,6 +120,25 @@ export default function VendorLocationPage() {
       },
       { timeout: 10000, enableHighAccuracy: true }
     );
+  };
+
+  const handleGujaratSelect = (loc) => {
+    if (loc.coordinates) {
+      setLocationData((prev) => ({
+        ...prev,
+        longitude: loc.coordinates[0],
+        latitude: loc.coordinates[1],
+        area: loc.area || prev.area,
+        street: loc.type === 'landmark' ? (prev.street || loc.area) : prev.street,
+        landmark: loc.type === 'landmark' ? loc.area : prev.landmark
+      }));
+      setSuccessMsg(`Selected: ${loc.area}, ${loc.city}`);
+    } else if (loc.city) {
+      setLocationData((prev) => ({
+        ...prev,
+        area: prev.area || loc.city
+      }));
+    }
   };
 
   const handleSaveLocation = async (e) => {
@@ -178,7 +222,7 @@ export default function VendorLocationPage() {
               Stall Location & Operating Hours
             </h1>
             <p className="text-xs text-slate-500">
-              Publish self-reported stall coordinates, street location, and regular schedule.
+              Manage your stall map location, street address, and opening schedule.
             </p>
           </div>
         </div>
@@ -203,10 +247,10 @@ export default function VendorLocationPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-100 gap-2">
           <div>
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-              1. Published Stall Coordinates
+              1. Stall Map Location
             </h2>
             <p className="text-xs text-slate-500">
-              GeoJSON Point coordinates used for customer proximity discovery and navigation.
+              Precise location used by nearby shoppers to discover and navigate to your stall.
             </p>
           </div>
 
@@ -214,17 +258,40 @@ export default function VendorLocationPage() {
             type="button"
             onClick={handleDetectGps}
             disabled={detectingGps}
-            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-xs font-semibold transition-colors disabled:opacity-50 self-start sm:self-auto"
+            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] hover:bg-[#D1EAD7] text-xs font-semibold transition-colors disabled:opacity-50 self-start sm:self-auto cursor-pointer"
           >
             <Compass className={`h-3.5 w-3.5 ${detectingGps ? 'animate-spin' : ''}`} />
-            <span>{detectingGps ? 'Detecting GPS...' : 'Detect Current GPS'}</span>
+            <span>{detectingGps ? 'Detecting Location...' : 'Use My Current Location'}</span>
           </button>
+        </div>
+
+        {/* Gujarat Locality & Landmark Auto-Fill Tool */}
+        <div className="bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl p-3.5 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="h-4 w-4 text-[#16803D]" />
+              <span className="text-xs font-bold text-[#17231D]">
+                Quick Gujarat Market & Area Selector
+              </span>
+            </div>
+            <span className="text-[10px] text-[#647067] font-medium hidden sm:inline">
+              Instant street & area auto-fill
+            </span>
+          </div>
+          <p className="text-[11px] text-[#647067]">
+            Select your city and pick your local market or street area in Gujarat (e.g., Manek Chowk, Law Garden, Piplod, Sayajigunj, Race Course). Address and location will be filled automatically.
+          </p>
+          <GujaratLocationSelector
+            selectedArea={locationData.area}
+            onSelect={handleGujaratSelect}
+            placeholder="Type your Gujarat market, street, or area..."
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Longitude (Valid range: -180 to 180) *
+              Longitude *
             </label>
             <input
               type="number"
@@ -238,7 +305,7 @@ export default function VendorLocationPage() {
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Latitude (Valid range: -90 to 90) *
+              Latitude *
             </label>
             <input
               type="number"

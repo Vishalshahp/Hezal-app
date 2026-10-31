@@ -27,7 +27,7 @@ describe('Hezal Market Client Authentication & Navigation', () => {
     });
 
     expect(screen.getAllByText(/Hezal Market/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Discover Local. Shop Nearby./i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Explore Stalls/i).length).toBeGreaterThan(0);
   });
 
   it('renders login page with email and password fields', async () => {

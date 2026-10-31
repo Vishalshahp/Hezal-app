@@ -156,7 +156,7 @@ export async function sendSmsOtp({ phone, otp, purpose = 'registration' }) {
     provider: 'simulator',
     isDevMode: isDevOrTest,
     devOtp: isDevOrTest ? otp : undefined,
-    message: gatewayNotice || `Verification code generated for ${formatPhoneDisplay(normalizedPhone)}.`
+    message: `Verification code generated for ${formatPhoneDisplay(normalizedPhone)}.`
   };
 }
 

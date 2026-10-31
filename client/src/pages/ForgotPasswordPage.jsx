@@ -47,10 +47,7 @@ export default function ForgotPasswordPage() {
                 <span>Instructions Dispatched</span>
               </div>
               <p>
-                If an account matches <span className="font-semibold">{email}</span>, password reset instructions have been generated.
-              </p>
-              <p className="text-[11px] text-emerald-700/80 pt-1">
-                Note for local development: In development mode, check your server console logs for the reset link!
+                If an account matches <span className="font-semibold">{email}</span>, password reset instructions have been sent.
               </p>
             </div>
 

@@ -59,7 +59,7 @@ export default function VendorDashboard() {
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7]">
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span>Live & Approved</span>
           </span>
@@ -80,7 +80,7 @@ export default function VendorDashboard() {
         );
       case 'suspended':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-300">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#FAFAF5] text-[#647067] border border-[#E5EAE5]">
             <AlertCircle className="h-3.5 w-3.5" />
             <span>Suspended</span>
           </span>
@@ -97,20 +97,20 @@ export default function VendorDashboard() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 py-4">
       {/* Header Banner */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E5EAE5] p-6 shadow-card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <div className="h-14 w-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-sm">
-            <Store className="h-7 w-7" />
+          <div className="h-13 w-13 rounded-2xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center p-3 shadow-sm">
+            <Store className="h-6 w-6" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold font-display text-slate-900">
+              <h1 className="text-xl sm:text-2xl font-bold font-display text-[#17231D]">
                 {stats?.hasProfile ? stats.stallName : user?.name}
               </h1>
               {stats && getApprovalBadge(stats.approvalStatus)}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Vendor Merchant Hub • {user?.email}
+            <p className="text-xs text-[#647067] mt-0.5">
+              Vendor Dashboard • {user?.email}
             </p>
           </div>
         </div>
@@ -119,14 +119,14 @@ export default function VendorDashboard() {
           <button
             onClick={fetchStats}
             disabled={loading}
-            className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-lg text-[#647067] hover:bg-[#FAFAF5] border border-[#E5EAE5] transition-colors cursor-pointer"
             title="Refresh stats"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={logout}
-            className="text-xs font-semibold px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+            className="text-xs font-semibold px-3 py-2 rounded-lg bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] border border-[#E5EAE5] transition-colors cursor-pointer"
           >
             Sign Out
           </button>
@@ -141,26 +141,26 @@ export default function VendorDashboard() {
       )}
 
       {loading && !stats ? (
-        <div className="py-12 flex flex-col items-center justify-center space-y-2 text-slate-400">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+        <div className="py-12 flex flex-col items-center justify-center space-y-2 text-[#647067]">
+          <Loader2 className="h-8 w-8 animate-spin text-[#16803D]" />
           <p className="text-xs">Loading stall operational status...</p>
         </div>
       ) : (
         <>
           {/* Missing Profile Callout */}
           {stats && !stats.hasProfile && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="bg-[#EDF7EF] border border-[#D1EAD7] rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-amber-900">
+                <h3 className="text-sm font-bold text-[#14532D]">
                   You haven&apos;t created your Stall Profile yet!
                 </h3>
-                <p className="text-xs text-amber-800">
+                <p className="text-xs text-[#16803D]">
                   Set up your business name, categories, public contact, and physical stall address to start publishing items.
                 </p>
               </div>
               <Link
                 to="/vendor/profile"
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors shadow-sm whitespace-nowrap"
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white font-semibold text-xs transition-colors shadow-sm whitespace-nowrap"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Stall Profile</span>
@@ -171,40 +171,40 @@ export default function VendorDashboard() {
           {/* Operational Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Metric 1: Completion */}
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold uppercase tracking-wider">Profile Setup</span>
-                <Layers className="h-4 w-4 text-amber-500" />
+            <div className="bg-white rounded-xl border border-[#E5EAE5] p-5 shadow-card space-y-3">
+              <div className="flex items-center justify-between text-xs text-[#647067]">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Profile Setup</span>
+                <Layers className="h-4 w-4 text-[#16803D]" />
               </div>
               <div>
-                <span className="text-2xl font-bold font-display text-slate-900">
+                <span className="text-2xl font-bold font-display text-[#17231D]">
                   {stats?.completionPercentage ?? 0}%
                 </span>
-                <span className="text-xs text-slate-500 block mt-0.5">Completion score</span>
+                <span className="text-xs text-[#647067] block mt-0.5">Completion score</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-[#FAFAF5] border border-[#E5EAE5] rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
+                  className="bg-[#16803D] h-2 rounded-full transition-all duration-500"
                   style={{ width: `${stats?.completionPercentage ?? 0}%` }}
                 />
               </div>
             </div>
 
             {/* Metric 2: Total Products */}
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold uppercase tracking-wider">Catalogue</span>
-                <Package className="h-4 w-4 text-primary-500" />
+            <div className="bg-white rounded-xl border border-[#E5EAE5] p-5 shadow-card space-y-3">
+              <div className="flex items-center justify-between text-xs text-[#647067]">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Catalogue</span>
+                <Package className="h-4 w-4 text-[#16803D]" />
               </div>
               <div>
-                <span className="text-2xl font-bold font-display text-slate-900">
+                <span className="text-2xl font-bold font-display text-[#17231D]">
                   {stats?.totalProducts ?? 0}
                 </span>
-                <span className="text-xs text-slate-500 block mt-0.5">Total menu items</span>
+                <span className="text-xs text-[#647067] block mt-0.5">Total menu items</span>
               </div>
               <Link
                 to="/vendor/products"
-                className="text-xs font-semibold text-primary-600 hover:text-primary-700 inline-flex items-center space-x-1"
+                className="text-xs font-semibold text-[#16803D] hover:text-[#14532D] inline-flex items-center space-x-1"
               >
                 <span>Manage products</span>
                 <ArrowRight className="h-3 w-3" />
@@ -212,37 +212,37 @@ export default function VendorDashboard() {
             </div>
 
             {/* Metric 3: Active Stock */}
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold uppercase tracking-wider">Availability</span>
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <div className="bg-white rounded-xl border border-[#E5EAE5] p-5 shadow-card space-y-3">
+              <div className="flex items-center justify-between text-xs text-[#647067]">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Availability</span>
+                <CheckCircle2 className="h-4 w-4 text-[#22C55E]" />
               </div>
               <div>
-                <span className="text-2xl font-bold font-display text-emerald-600">
+                <span className="text-2xl font-bold font-display text-[#16803D]">
                   {stats?.availableProducts ?? 0}
                 </span>
-                <span className="text-xs text-slate-500 block mt-0.5">
+                <span className="text-xs text-[#647067] block mt-0.5">
                   Available ({stats?.unavailableProducts ?? 0} out-of-stock)
                 </span>
               </div>
-              <span className="text-[11px] text-slate-400">Items visible to customers</span>
+              <span className="text-[11px] text-[#647067]">Items visible to customers</span>
             </div>
 
             {/* Metric 4: Real-time Operating Status */}
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold uppercase tracking-wider">Stall Status</span>
-                <Clock className="h-4 w-4 text-slate-400" />
+            <div className="bg-white rounded-xl border border-[#E5EAE5] p-5 shadow-card space-y-3">
+              <div className="flex items-center justify-between text-xs text-[#647067]">
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Stall Status</span>
+                <Clock className="h-4 w-4 text-[#647067]" />
               </div>
               <div className="flex items-center gap-1.5 pt-1">
                 <button
                   type="button"
                   onClick={() => handleQuickAvailability('open')}
                   disabled={!stats?.hasProfile || updatingStatus}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     stats?.availabilityStatus === 'open'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#16803D] text-white shadow-sm'
+                      : 'bg-[#FAFAF5] text-[#647067] hover:bg-[#EDF7EF]'
                   }`}
                 >
                   Open
@@ -251,10 +251,10 @@ export default function VendorDashboard() {
                   type="button"
                   onClick={() => handleQuickAvailability('away')}
                   disabled={!stats?.hasProfile || updatingStatus}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     stats?.availabilityStatus === 'away'
                       ? 'bg-amber-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      : 'bg-[#FAFAF5] text-[#647067] hover:bg-amber-50'
                   }`}
                 >
                   Away
@@ -263,16 +263,16 @@ export default function VendorDashboard() {
                   type="button"
                   onClick={() => handleQuickAvailability('closed')}
                   disabled={!stats?.hasProfile || updatingStatus}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
                     stats?.availabilityStatus === 'closed'
-                      ? 'bg-red-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-[#17231D] text-white shadow-sm'
+                      : 'bg-[#FAFAF5] text-[#647067] hover:bg-slate-200'
                   }`}
                 >
                   Closed
                 </button>
               </div>
-              <span className="text-[11px] text-slate-400 block">
+              <span className="text-[11px] text-[#647067] block">
                 {updatingStatus ? 'Updating status...' : 'Instant customer status'}
               </span>
             </div>
@@ -281,19 +281,19 @@ export default function VendorDashboard() {
           {/* Quick Management Hub */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Stall Profile */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="bg-white rounded-2xl border border-[#E5EAE5] p-6 shadow-card flex flex-col justify-between space-y-4 hover:border-[#16803D]/40 transition-colors">
               <div className="space-y-2">
-                <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center">
                   <Store className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-slate-900 font-display">Stall Profile</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <h3 className="font-bold text-[#17231D] font-display">Stall Profile</h3>
+                <p className="text-xs text-[#647067] leading-relaxed">
                   Update your business name, tagline, description, cover photo, and customer contact numbers.
                 </p>
               </div>
               <Link
                 to="/vendor/profile"
-                className="inline-flex items-center justify-between text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 p-3 rounded-lg transition-colors"
+                className="inline-flex items-center justify-between text-xs font-semibold text-[#16803D] bg-[#EDF7EF] hover:bg-[#E2F3E6] border border-[#D1EAD7] p-3 rounded-xl transition-colors"
               >
                 <span>{stats?.hasProfile ? 'Edit Profile' : 'Setup Profile'}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -301,19 +301,19 @@ export default function VendorDashboard() {
             </div>
 
             {/* Card 2: Products Catalogue */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="bg-white rounded-2xl border border-[#E5EAE5] p-6 shadow-card flex flex-col justify-between space-y-4 hover:border-[#16803D]/40 transition-colors">
               <div className="space-y-2">
-                <div className="h-10 w-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center">
                   <Package className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-slate-900 font-display">Product Catalogue</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <h3 className="font-bold text-[#17231D] font-display">Product Catalogue</h3>
+                <p className="text-xs text-[#647067] leading-relaxed">
                   Add products, set optional prices, upload photos, and toggle live stock availability.
                 </p>
               </div>
               <Link
                 to="/vendor/products"
-                className="inline-flex items-center justify-between text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 p-3 rounded-lg transition-colors"
+                className="inline-flex items-center justify-between text-xs font-semibold text-[#16803D] bg-[#EDF7EF] hover:bg-[#E2F3E6] border border-[#D1EAD7] p-3 rounded-xl transition-colors"
               >
                 <span>Manage Catalogue ({stats?.totalProducts ?? 0} items)</span>
                 <ArrowRight className="h-4 w-4" />
@@ -321,19 +321,19 @@ export default function VendorDashboard() {
             </div>
 
             {/* Card 3: Location & Hours */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="bg-white rounded-2xl border border-[#E5EAE5] p-6 shadow-card flex flex-col justify-between space-y-4 hover:border-[#16803D]/40 transition-colors">
               <div className="space-y-2">
-                <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center">
                   <MapPin className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-slate-900 font-display">Stall Location & Hours</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <h3 className="font-bold text-[#17231D] font-display">Stall Location & Hours</h3>
+                <p className="text-xs text-[#647067] leading-relaxed">
                   Publish your stall coordinates, operating street address, and weekly opening schedule.
                 </p>
               </div>
               <Link
                 to="/vendor/location"
-                className="inline-flex items-center justify-between text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 p-3 rounded-lg transition-colors"
+                className="inline-flex items-center justify-between text-xs font-semibold text-[#16803D] bg-[#EDF7EF] hover:bg-[#E2F3E6] border border-[#D1EAD7] p-3 rounded-xl transition-colors"
               >
                 <span>Update Location & Schedule</span>
                 <ArrowRight className="h-4 w-4" />

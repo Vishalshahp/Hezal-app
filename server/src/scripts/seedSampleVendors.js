@@ -99,9 +99,12 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Mineral Water Pani Puri (8 pcs)', description: 'Spicy mint, sweet tamarind, and garlic water.', price: 40, isAvailable: true },
-        { name: 'Sev Puri (Special Butter Masala)', description: 'Crisp puris with potatoes, chutneys, and nylon sev.', price: 60, isAvailable: true },
-        { name: 'Dahi Puri Royal', description: 'Sweetened curd, pomegranate, and chaat masala.', price: 70, isAvailable: true }
+        { name: 'Special Mineral Water Pani Puri (8 pcs)',
+          image: 'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=600&q=80', description: 'Spicy mint, sweet tamarind, and garlic water.', price: 40, isAvailable: true },
+        { name: 'Sev Puri (Special Butter Masala)',
+          image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80', description: 'Crisp puris with potatoes, chutneys, and nylon sev.', price: 60, isAvailable: true },
+        { name: 'Dahi Puri Royal',
+          image: 'https://images.unsplash.com/photo-1606471191009-63994c53433b?auto=format&fit=crop&w=600&q=80', description: 'Sweetened curd, pomegranate, and chaat masala.', price: 70, isAvailable: true }
       ]
     },
     {
@@ -144,9 +147,12 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Amul Butter Gwalior Dosa', description: 'Loaded with melted butter and spicy potato roast.', price: 120, isAvailable: true },
-        { name: 'Cheese Chocolate Grilled Sandwich', description: 'Hershey chocolate spread with double mozzarella cheese.', price: 140, isAvailable: true },
-        { name: 'Kesar Malai Matka Kulfi', description: 'Rich saffron condensed milk kulfi on stick.', price: 50, isAvailable: true }
+        { name: 'Amul Butter Gwalior Dosa',
+          image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=600&q=80', description: 'Loaded with melted butter and spicy potato roast.', price: 120, isAvailable: true },
+        { name: 'Cheese Chocolate Grilled Sandwich',
+          image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=80', description: 'Hershey chocolate spread with double mozzarella cheese.', price: 140, isAvailable: true },
+        { name: 'Kesar Malai Matka Kulfi',
+          image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80', description: 'Rich saffron condensed milk kulfi on stick.', price: 50, isAvailable: true }
       ]
     },
     {
@@ -189,8 +195,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Hand Embroidered Chaniya Choli Set', description: 'Kutchi mirror-work with gamthi border and bandhej dupatta.', price: 1800, isAvailable: true },
-        { name: 'Kutchi Mirror Work Ethnic Jacket', description: 'Colorful thread embroidery jacket for festive wear.', price: 650, isAvailable: true }
+        { name: 'Hand Embroidered Chaniya Choli Set',
+          image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80', description: 'Kutchi mirror-work with gamthi border and bandhej dupatta.', price: 1800, isAvailable: true },
+        { name: 'Kutchi Mirror Work Ethnic Jacket',
+          image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80', description: 'Colorful thread embroidery jacket for festive wear.', price: 650, isAvailable: true }
       ]
     },
     {
@@ -233,9 +241,12 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Natural Clay Water Matka (10L)', description: 'Traditional porous cooling pot with clay tap.', price: 250, isAvailable: true },
-        { name: 'Terracotta Handi Cookware with Lid', description: 'Unbleached natural clay cooking pot.', price: 350, isAvailable: true },
-        { name: 'Hand-Painted Floral Diyas (Set of 6)', description: 'Decorative festival earthen lamps.', price: 120, isAvailable: true }
+        { name: 'Natural Clay Water Matka (10L)',
+          image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80', description: 'Traditional porous cooling pot with clay tap.', price: 250, isAvailable: true },
+        { name: 'Terracotta Handi Cookware with Lid',
+          image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80', description: 'Unbleached natural clay cooking pot.', price: 350, isAvailable: true },
+        { name: 'Hand-Painted Floral Diyas (Set of 6)',
+          image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=600&q=80', description: 'Decorative festival earthen lamps.', price: 120, isAvailable: true }
       ]
     },
     {
@@ -278,9 +289,12 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Kashmiri Royal Delicious Apples (1 kg)', description: 'Sweet, crisp mountain apples.', price: 140, isAvailable: true },
-        { name: 'Nagpur Sweet Oranges (1 Dozen)', description: 'Juicy, rich citrus oranges.', price: 90, isAvailable: true },
-        { name: 'Fresh Anar / Pomegranates (1 kg)', description: 'Ruby-red sweet seeds.', price: 160, isAvailable: true }
+        { name: 'Kashmiri Royal Delicious Apples (1 kg)',
+          image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80', description: 'Sweet, crisp mountain apples.', price: 140, isAvailable: true },
+        { name: 'Nagpur Sweet Oranges (1 Dozen)',
+          image: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&w=600&q=80', description: 'Juicy, rich citrus oranges.', price: 90, isAvailable: true },
+        { name: 'Fresh Anar / Pomegranates (1 kg)',
+          image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=600&q=80', description: 'Ruby-red sweet seeds.', price: 160, isAvailable: true }
       ]
     },
     {
@@ -323,8 +337,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Large Tender Coconut Water (Fresh Cut)', description: 'Electrolyte-rich water with soft tender coconut malai.', price: 60, isAvailable: true },
-        { name: 'Cold-Pressed Sugarcane Juice with Ginger & Mint', description: 'Freshly extracted with zero added ice or sugar.', price: 30, isAvailable: true }
+        { name: 'Large Tender Coconut Water (Fresh Cut)',
+          image: 'https://images.unsplash.com/photo-1544681280-d25a782adc9b?auto=format&fit=crop&w=600&q=80', description: 'Electrolyte-rich water with soft tender coconut malai.', price: 60, isAvailable: true },
+        { name: 'Cold-Pressed Sugarcane Juice with Ginger & Mint',
+          image: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=600&q=80', description: 'Freshly extracted with zero added ice or sugar.', price: 30, isAvailable: true }
       ]
     },
     {
@@ -367,8 +383,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Standard Brass Key Duplication', description: 'Instant cutting for Godrej and household door locks.', price: 50, isAvailable: true },
-        { name: 'Computerized Dimple / Laser Key Copy', description: 'High-security dimple keys for main gates.', price: 150, isAvailable: true }
+        { name: 'Standard Brass Key Duplication',
+          image: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&q=80', description: 'Instant cutting for Godrej and household door locks.', price: 50, isAvailable: true },
+        { name: 'Computerized Dimple / Laser Key Copy',
+          image: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=600&q=80', description: 'High-security dimple keys for main gates.', price: 150, isAvailable: true }
       ]
     },
     {
@@ -411,8 +429,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Fresh Yellow Marigold Garland (Medium)', description: 'Handmade fresh daily temple garland.', price: 40, isAvailable: true },
-        { name: 'Pooja Rose Flowers & Tulsi Basket', description: 'Assortment of red roses and fragrant tulsi leaves.', price: 50, isAvailable: true }
+        { name: 'Fresh Yellow Marigold Garland (Medium)',
+          image: 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?auto=format&fit=crop&w=600&q=80', description: 'Handmade fresh daily temple garland.', price: 40, isAvailable: true },
+        { name: 'Pooja Rose Flowers & Tulsi Basket',
+          image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80', description: 'Assortment of red roses and fragrant tulsi leaves.', price: 50, isAvailable: true }
       ]
     },
     {
@@ -455,8 +475,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Trouser / Jeans Length Shortening', description: 'Professional chain stitch alteration in 15 mins.', price: 60, isAvailable: true },
-        { name: 'Heavy Duty Zip Replacement', description: 'Brass YKK zip replacement for pants or jackets.', price: 100, isAvailable: true }
+        { name: 'Trouser / Jeans Length Shortening',
+          image: 'https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?auto=format&fit=crop&w=600&q=80', description: 'Professional chain stitch alteration in 15 mins.', price: 60, isAvailable: true },
+        { name: 'Heavy Duty Zip Replacement',
+          image: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=600&q=80', description: 'Brass YKK zip replacement for pants or jackets.', price: 100, isAvailable: true }
       ]
     },
     {
@@ -499,8 +521,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Adrak Elaichi Kulhad Chai', description: 'Brewed with fresh organic ginger and whole green cardamom.', price: 25, isAvailable: true },
-        { name: 'Amul Butter Bun Maska', description: 'Fresh toasted soft bun loaded with real Amul butter.', price: 40, isAvailable: true }
+        { name: 'Adrak Elaichi Kulhad Chai',
+          image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80', description: 'Brewed with fresh organic ginger and whole green cardamom.', price: 25, isAvailable: true },
+        { name: 'Amul Butter Bun Maska',
+          image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80', description: 'Fresh toasted soft bun loaded with real Amul butter.', price: 40, isAvailable: true }
       ]
     },
 
@@ -547,9 +571,12 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Amul Butter Surti Locho', description: 'Steaming hot savory gram flour snack with fresh butter and sev.', price: 60, isAvailable: true },
-        { name: 'Cheese Burst Masala Locho', description: 'Topped with generous grated cheese, locho masala, and chillies.', price: 90, isAvailable: true },
-        { name: 'Spicy Surti Sev Khamani (250g)', description: 'Crushed steamed chana dal tempered with mustard and pomegranate.', price: 70, isAvailable: true }
+        { name: 'Special Amul Butter Surti Locho',
+          image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80', description: 'Steaming hot savory gram flour snack with fresh butter and sev.', price: 60, isAvailable: true },
+        { name: 'Cheese Burst Masala Locho',
+          image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80', description: 'Topped with generous grated cheese, locho masala, and chillies.', price: 90, isAvailable: true },
+        { name: 'Spicy Surti Sev Khamani (250g)',
+          image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80', description: 'Crushed steamed chana dal tempered with mustard and pomegranate.', price: 70, isAvailable: true }
       ]
     },
     {
@@ -592,8 +619,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Charcoal Roasted Masala Lemon Bhutta', description: 'Tender sweet corn roasted on live coals with spices and lime.', price: 40, isAvailable: true },
-        { name: 'Hot Sweet Corn Bhajia (Plate)', description: 'Crispy sweet corn fritters served with tangy garlic chutney.', price: 70, isAvailable: true }
+        { name: 'Charcoal Roasted Masala Lemon Bhutta',
+          image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=600&q=80', description: 'Tender sweet corn roasted on live coals with spices and lime.', price: 40, isAvailable: true },
+        { name: 'Hot Sweet Corn Bhajia (Plate)',
+          image: 'https://images.unsplash.com/photo-1567337710282-00832b415979?auto=format&fit=crop&w=600&q=80', description: 'Crispy sweet corn fritters served with tangy garlic chutney.', price: 70, isAvailable: true }
       ]
     },
     {
@@ -636,8 +665,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Pure Cotton Bandhani Dupatta', description: 'Traditional multi-color dot tie-dye with golden zari border.', price: 350, isAvailable: true },
-        { name: 'Jaipuri Leheriya Cotton Kurti Fabric', description: 'Breathable summer cotton fabric (2.5 meters).', price: 450, isAvailable: true }
+        { name: 'Pure Cotton Bandhani Dupatta',
+          image: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=600&q=80', description: 'Traditional multi-color dot tie-dye with golden zari border.', price: 350, isAvailable: true },
+        { name: 'Jaipuri Leheriya Cotton Kurti Fabric',
+          image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', description: 'Breathable summer cotton fabric (2.5 meters).', price: 450, isAvailable: true }
       ]
     },
     {
@@ -680,8 +711,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Rander Special Dum Biryani', description: 'Flavored with whole spices, saffron, and tender chicken.', price: 160, isAvailable: true },
-        { name: 'Tawa Seekh Kebab (4 pcs)', description: 'Juicy spiced minced kebabs served with onion rings and lemon.', price: 120, isAvailable: true }
+        { name: 'Rander Special Dum Biryani',
+          image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80', description: 'Flavored with whole spices, saffron, and tender chicken.', price: 160, isAvailable: true },
+        { name: 'Tawa Seekh Kebab (4 pcs)',
+          image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80', description: 'Juicy spiced minced kebabs served with onion rings and lemon.', price: 120, isAvailable: true }
       ]
     },
     {
@@ -724,8 +757,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Surti Kesar Pista Ghari (250g)', description: 'Condensed milk mawa sweet bathed in pure cow ghee.', price: 220, isAvailable: true },
-        { name: 'Crispy Hot Fafda (250g)', description: 'Gram flour crisps served with papaya sambharo and fried chillies.', price: 110, isAvailable: true }
+        { name: 'Surti Kesar Pista Ghari (250g)',
+          image: 'https://images.unsplash.com/photo-1505253758473-96b3d5ebcd96?auto=format&fit=crop&w=600&q=80', description: 'Condensed milk mawa sweet bathed in pure cow ghee.', price: 220, isAvailable: true },
+        { name: 'Crispy Hot Fafda (250g)',
+          image: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=600&q=80', description: 'Gram flour crisps served with papaya sambharo and fried chillies.', price: 110, isAvailable: true }
       ]
     },
     {
@@ -768,8 +803,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Royal Kesar Pista Falooda', description: 'Rose syrup, basil seeds, vermicelli, and vanilla ice cream.', price: 90, isAvailable: true },
-        { name: 'Thick Alphonso Mango Milkshake', description: 'Fresh Ratnagiri mango pulp with rich full-cream milk.', price: 80, isAvailable: true }
+        { name: 'Royal Kesar Pista Falooda',
+          image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80', description: 'Rose syrup, basil seeds, vermicelli, and vanilla ice cream.', price: 90, isAvailable: true },
+        { name: 'Thick Alphonso Mango Milkshake',
+          image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80', description: 'Fresh Ratnagiri mango pulp with rich full-cream milk.', price: 80, isAvailable: true }
       ]
     },
     {
@@ -812,8 +849,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Traditional Embroidered Wedding Mojdi', description: 'Fine golden embroidery on premium buffalo leather.', price: 650, isAvailable: true },
-        { name: 'Genuine Kolhapuri Leather Chappals', description: 'Hand-braided straps with durable leather sole.', price: 500, isAvailable: true }
+        { name: 'Traditional Embroidered Wedding Mojdi',
+          image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80', description: 'Fine golden embroidery on premium buffalo leather.', price: 650, isAvailable: true },
+        { name: 'Genuine Kolhapuri Leather Chappals',
+          image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80', description: 'Hand-braided straps with durable leather sole.', price: 500, isAvailable: true }
       ]
     },
     {
@@ -856,8 +895,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: '7-Compartment Stainless Steel Masala Dabba', description: 'Airtight spice container with transparent lid and spoons.', price: 280, isAvailable: true },
-        { name: 'Insulated Hot Pot Food Casserole (1.5L)', description: 'Stainless steel interior keeps rotis piping hot for 6 hours.', price: 340, isAvailable: true }
+        { name: '7-Compartment Stainless Steel Masala Dabba',
+          image: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=600&q=80', description: 'Airtight spice container with transparent lid and spoons.', price: 280, isAvailable: true },
+        { name: 'Insulated Hot Pot Food Casserole (1.5L)',
+          image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80', description: 'Stainless steel interior keeps rotis piping hot for 6 hours.', price: 340, isAvailable: true }
       ]
     },
 
@@ -904,8 +945,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Mahakali Sev Usal with Bun Pav', description: 'Fiery pea curry with crispy sev, spring onion, and lime.', price: 70, isAvailable: true },
-        { name: 'Cheese Burst Sev Usal', description: 'Topped with double shredded mozzarella and extra tari.', price: 100, isAvailable: true }
+        { name: 'Special Mahakali Sev Usal with Bun Pav',
+          image: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?auto=format&fit=crop&w=600&q=80', description: 'Fiery pea curry with crispy sev, spring onion, and lime.', price: 70, isAvailable: true },
+        { name: 'Cheese Burst Sev Usal',
+          image: 'https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=600&q=80', description: 'Topped with double shredded mozzarella and extra tari.', price: 100, isAvailable: true }
       ]
     },
     {
@@ -948,8 +991,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Flared Kutchi Embroidered Ghagra Set', description: 'Full circle flare with mirror work and contrast blouse.', price: 1650, isAvailable: true },
-        { name: 'Oxidized Silver Choker Necklace & Jhumkas', description: 'Traditional tribal metal festive set.', price: 350, isAvailable: true }
+        { name: 'Flared Kutchi Embroidered Ghagra Set',
+          image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80', description: 'Full circle flare with mirror work and contrast blouse.', price: 1650, isAvailable: true },
+        { name: 'Oxidized Silver Choker Necklace & Jhumkas',
+          image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80', description: 'Traditional tribal metal festive set.', price: 350, isAvailable: true }
       ]
     },
     {
@@ -992,8 +1037,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Desi Masala Chai in Kulhad', description: 'Fresh ginger, clove, and cardamom black tea with milk.', price: 20, isAvailable: true },
-        { name: 'Toasted Bun Maska with Jam', description: 'Freshly baked soft bun toasted with salted butter.', price: 35, isAvailable: true }
+        { name: 'Desi Masala Chai in Kulhad',
+          image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=600&q=80', description: 'Fresh ginger, clove, and cardamom black tea with milk.', price: 20, isAvailable: true },
+        { name: 'Toasted Bun Maska with Jam',
+          image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80', description: 'Freshly baked soft bun toasted with salted butter.', price: 35, isAvailable: true }
       ]
     },
     {
@@ -1036,8 +1083,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Fresh Exotic Fruit Salad Bowl', description: 'Pineapple, kiwi, pomegranate, and seasonal berries.', price: 100, isAvailable: true },
-        { name: 'Cold-Pressed Pomegranate Juice', description: '100% natural, freshly extracted without water or sugar.', price: 90, isAvailable: true }
+        { name: 'Fresh Exotic Fruit Salad Bowl',
+          image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=crop&w=600&q=80', description: 'Pineapple, kiwi, pomegranate, and seasonal berries.', price: 100, isAvailable: true },
+        { name: 'Cold-Pressed Pomegranate Juice',
+          image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=600&q=80', description: '100% natural, freshly extracted without water or sugar.', price: 90, isAvailable: true }
       ]
     },
     {
@@ -1080,8 +1129,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Gujarati Mini Bhakharwadi (500g)', description: 'Crisp spiral savoury snacks with spicy coconut filling.', price: 160, isAvailable: true },
-        { name: 'Dry Fruit Mini Kachori (500g)', description: 'Crunchy pastry balls filled with dry spices and raisins.', price: 180, isAvailable: true }
+        { name: 'Special Gujarati Mini Bhakharwadi (500g)',
+          image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80', description: 'Crisp spiral savoury snacks with spicy coconut filling.', price: 160, isAvailable: true },
+        { name: 'Dry Fruit Mini Kachori (500g)',
+          image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80', description: 'Crunchy pastry balls filled with dry spices and raisins.', price: 180, isAvailable: true }
       ]
     },
     {
@@ -1124,8 +1175,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Hand-Molded Clay Garden Planter (12-inch)', description: 'Porous breathable pot ideal for healthy plant roots.', price: 180, isAvailable: true },
-        { name: 'Hanging Terracotta Orchid Pot', description: 'With rustic jute rope for balcony gardens.', price: 150, isAvailable: true }
+        { name: 'Hand-Molded Clay Garden Planter (12-inch)',
+          image: 'https://images.unsplash.com/photo-1598188306155-25e400eb5078?auto=format&fit=crop&w=600&q=80', description: 'Porous breathable pot ideal for healthy plant roots.', price: 180, isAvailable: true },
+        { name: 'Hanging Terracotta Orchid Pot',
+          image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=600&q=80', description: 'With rustic jute rope for balcony gardens.', price: 150, isAvailable: true }
       ]
     },
 
@@ -1172,8 +1225,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Fresh Steaming Vanela Gathiya (250g)', description: 'Melt-in-mouth soft besan gathiya with spicy papaya sambharo.', price: 90, isAvailable: true },
-        { name: 'Crispy Desi Ghee Jalebi (250g)', description: 'Golden spirals soaked in fragrant saffron sugar syrup.', price: 120, isAvailable: true }
+        { name: 'Fresh Steaming Vanela Gathiya (250g)',
+          image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=600&q=80', description: 'Melt-in-mouth soft besan gathiya with spicy papaya sambharo.', price: 90, isAvailable: true },
+        { name: 'Crispy Desi Ghee Jalebi (250g)',
+          image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=600&q=80', description: 'Golden spirals soaked in fragrant saffron sugar syrup.', price: 120, isAvailable: true }
       ]
     },
     {
@@ -1216,8 +1271,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Kutchi Mirror Work Sleeveless Jacket', description: 'Traditional colorful mirror embroidered waist-length jacket.', price: 550, isAvailable: true },
-        { name: 'Handmade Door Hanging Toran', description: 'Artisan cotton toran with bells and beads for auspicious entry.', price: 280, isAvailable: true }
+        { name: 'Kutchi Mirror Work Sleeveless Jacket',
+          image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80', description: 'Traditional colorful mirror embroidered waist-length jacket.', price: 550, isAvailable: true },
+        { name: 'Handmade Door Hanging Toran',
+          image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=600&q=80', description: 'Artisan cotton toran with bells and beads for auspicious entry.', price: 280, isAvailable: true }
       ]
     },
     {
@@ -1260,8 +1317,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Rajwadi Dry Fruit Ice Dish', description: 'Crushed ice drenched in rose, pineapple, topped with rabdi and nuts.', price: 120, isAvailable: true },
-        { name: 'Tangy Kala Khatta Ice Gola on Stick', description: 'Traditional tangy blackberry gola with chaat masala.', price: 40, isAvailable: true }
+        { name: 'Special Rajwadi Dry Fruit Ice Dish',
+          image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=600&q=80', description: 'Crushed ice drenched in rose, pineapple, topped with rabdi and nuts.', price: 120, isAvailable: true },
+        { name: 'Tangy Kala Khatta Ice Gola on Stick',
+          image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=600&q=80', description: 'Traditional tangy blackberry gola with chaat masala.', price: 40, isAvailable: true }
       ]
     },
     {
@@ -1304,8 +1363,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Amul Butter Kutchi Dabeli', description: 'Toasted pav with rich spiced potato, pomegranate, and crunchy peanuts.', price: 40, isAvailable: true },
-        { name: 'Mumbai Style Hot Vada Pav', description: 'Spiced potato fritter with dry garlic chutney in soft pav.', price: 35, isAvailable: true }
+        { name: 'Special Amul Butter Kutchi Dabeli',
+          image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80', description: 'Toasted pav with rich spiced potato, pomegranate, and crunchy peanuts.', price: 40, isAvailable: true },
+        { name: 'Mumbai Style Hot Vada Pav',
+          image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=600&q=80', description: 'Spiced potato fritter with dry garlic chutney in soft pav.', price: 35, isAvailable: true }
       ]
     },
     {
@@ -1348,8 +1409,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Fresh Country Methi Greens (1 Bunch)', description: 'Tender aromatic fenugreek leaves harvested this morning.', price: 20, isAvailable: true },
-        { name: 'Fresh Desi Okra / Bhindi (1 kg)', description: 'Crisp green tender ladyfingers for stir fry.', price: 50, isAvailable: true }
+        { name: 'Fresh Country Methi Greens (1 Bunch)',
+          image: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=600&q=80', description: 'Tender aromatic fenugreek leaves harvested this morning.', price: 20, isAvailable: true },
+        { name: 'Fresh Desi Okra / Bhindi (1 kg)',
+          image: 'https://images.unsplash.com/photo-1525607551316-4a8e16d1f9ba?auto=format&fit=crop&w=600&q=80', description: 'Crisp green tender ladyfingers for stir fry.', price: 50, isAvailable: true }
       ]
     },
 
@@ -1396,8 +1459,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Rajwadi Masala Khichdi & Kadhi Bowl', description: 'Slow-cooked spiced rice & moong dal simmered with pure ghee and vegetables.', price: 90, isAvailable: true },
-        { name: 'Special Kathiyawadi Dal Baati Thali', description: '3 oven-roasted baatis dipped in ghee, rich spicy dal, churma, and fiery garlic chutney.', price: 150, isAvailable: true }
+        { name: 'Rajwadi Masala Khichdi & Kadhi Bowl',
+          image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=600&q=80', description: 'Slow-cooked spiced rice & moong dal simmered with pure ghee and vegetables.', price: 90, isAvailable: true },
+        { name: 'Special Kathiyawadi Dal Baati Thali',
+          image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=600&q=80', description: '3 oven-roasted baatis dipped in ghee, rich spicy dal, churma, and fiery garlic chutney.', price: 150, isAvailable: true }
       ]
     },
     {
@@ -1440,8 +1505,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Mysore Masala Butter Dosa', description: 'Red garlic chutney spread with mashed potato masala.', price: 100, isAvailable: true },
-        { name: 'Steaming Rice Idli Sambar (4 pcs)', description: 'Soft fluffy idlis served with hot drumstick sambar.', price: 50, isAvailable: true }
+        { name: 'Mysore Masala Butter Dosa',
+          image: 'https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80', description: 'Red garlic chutney spread with mashed potato masala.', price: 100, isAvailable: true },
+        { name: 'Steaming Rice Idli Sambar (4 pcs)',
+          image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80', description: 'Soft fluffy idlis served with hot drumstick sambar.', price: 50, isAvailable: true }
       ]
     },
     {
@@ -1484,8 +1551,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Double Cheese Peri-Peri Maggi', description: 'Buttery noodles tossed with vegetables and loaded with cheese.', price: 80, isAvailable: true },
-        { name: 'Cold Bournvita Thick Shake', description: 'Rich chocolate malt milk with crushed cookies.', price: 60, isAvailable: true }
+        { name: 'Double Cheese Peri-Peri Maggi',
+          image: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=600&q=80', description: 'Buttery noodles tossed with vegetables and loaded with cheese.', price: 80, isAvailable: true },
+        { name: 'Cold Bournvita Thick Shake',
+          image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=600&q=80', description: 'Rich chocolate malt milk with crushed cookies.', price: 60, isAvailable: true }
       ]
     },
 
@@ -1532,8 +1601,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Traditional Bhavnagri Gathiya (250g)', description: 'Thick crunchy black pepper gathiya with tangy sweet kadhi.', price: 80, isAvailable: true },
-        { name: 'Kadhi Samosa Plate', description: 'Golden potato samosa served immersed in piping hot Gujarati kadhi.', price: 50, isAvailable: true }
+        { name: 'Traditional Bhavnagri Gathiya (250g)',
+          image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80', description: 'Thick crunchy black pepper gathiya with tangy sweet kadhi.', price: 80, isAvailable: true },
+        { name: 'Kadhi Samosa Plate',
+          image: 'https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=600&q=80', description: 'Golden potato samosa served immersed in piping hot Gujarati kadhi.', price: 50, isAvailable: true }
       ]
     },
     {
@@ -1576,8 +1647,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Masala Lemon Goti Soda', description: 'Effervescent vintage bottle soda with rock salt and lemon.', price: 25, isAvailable: true },
-        { name: 'Fresh Mint Sugarcane Juice (Tall Glass)', description: 'Chilled cold pressed juice with crushed ice and ginger.', price: 30, isAvailable: true }
+        { name: 'Masala Lemon Goti Soda',
+          image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80', description: 'Effervescent vintage bottle soda with rock salt and lemon.', price: 25, isAvailable: true },
+        { name: 'Fresh Mint Sugarcane Juice (Tall Glass)',
+          image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80', description: 'Chilled cold pressed juice with crushed ice and ginger.', price: 30, isAvailable: true }
       ]
     },
 
@@ -1624,8 +1697,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Special Dry Fruit Kachori Box (500g)', description: 'Crisp kachoris filled with cashew, raisins, and aromatic spices.', price: 180, isAvailable: true },
-        { name: 'Live Hot Hing Kachori with Kadhi (Plate)', description: 'Steaming asafoetida spiced kachoris served with warm kadhi.', price: 50, isAvailable: true }
+        { name: 'Special Dry Fruit Kachori Box (500g)',
+          image: 'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?auto=format&fit=crop&w=600&q=80', description: 'Crisp kachoris filled with cashew, raisins, and aromatic spices.', price: 180, isAvailable: true },
+        { name: 'Live Hot Hing Kachori with Kadhi (Plate)',
+          image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80', description: 'Steaming asafoetida spiced kachoris served with warm kadhi.', price: 50, isAvailable: true }
       ]
     },
     {
@@ -1668,8 +1743,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Solid Brass Temple Bell with Peacock Handle', description: 'Resonant acoustic chime crafted in pure brass.', price: 450, isAvailable: true },
-        { name: 'Traditional Brass Samai / Stand Diya (14-inch)', description: 'Tall oil lamp for festive celebration and pooja.', price: 750, isAvailable: true }
+        { name: 'Solid Brass Temple Bell with Peacock Handle',
+          image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=600&q=80', description: 'Resonant acoustic chime crafted in pure brass.', price: 450, isAvailable: true },
+        { name: 'Traditional Brass Samai / Stand Diya (14-inch)',
+          image: 'https://images.unsplash.com/photo-1514517521153-1be72277b32f?auto=format&fit=crop&w=600&q=80', description: 'Tall oil lamp for festive celebration and pooja.', price: 750, isAvailable: true }
       ]
     },
 
@@ -1716,8 +1793,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: '100% Pure Wild Girnar Forest Honey (500g)', description: 'Unprocessed, unfiltered natural floral honey.', price: 320, isAvailable: true },
-        { name: 'Spiced Dried Amla Candy (250g)', description: 'Natural vitamin C chewable digestive amla.', price: 100, isAvailable: true }
+        { name: '100% Pure Wild Girnar Forest Honey (500g)',
+          image: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=600&q=80', description: 'Unprocessed, unfiltered natural floral honey.', price: 320, isAvailable: true },
+        { name: 'Spiced Dried Amla Candy (250g)',
+          image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80', description: 'Natural vitamin C chewable digestive amla.', price: 100, isAvailable: true }
       ]
     },
 
@@ -1764,8 +1843,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Kesar Pista Malai Kulfi on Stick', description: 'Rich condensed whole milk kulfi with almond shavings.', price: 40, isAvailable: true },
-        { name: 'Earthen Bowl Thick Rabdi (150g)', description: 'Chilled thickened milk with saffron threads.', price: 70, isAvailable: true }
+        { name: 'Kesar Pista Malai Kulfi on Stick',
+          image: 'https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=600&q=80', description: 'Rich condensed whole milk kulfi with almond shavings.', price: 40, isAvailable: true },
+        { name: 'Earthen Bowl Thick Rabdi (150g)',
+          image: 'https://images.unsplash.com/photo-1571867424488-4565932edb41?auto=format&fit=crop&w=600&q=80', description: 'Chilled thickened milk with saffron threads.', price: 70, isAvailable: true }
       ]
     },
 
@@ -1812,8 +1893,10 @@ const seedSampleVendors = async () => {
         ]
       },
       products: [
-        { name: 'Original Mandvi Double Roti Dabeli', description: 'Secret blend of 18 spices with roasted masala peanuts.', price: 35, isAvailable: true },
-        { name: 'Handcrafted Kutchi Lippan Mud Mirror Panel (10x10)', description: 'Traditional camel dung & clay mirror craft for walls.', price: 450, isAvailable: true }
+        { name: 'Original Mandvi Double Roti Dabeli',
+          image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80', description: 'Secret blend of 18 spices with roasted masala peanuts.', price: 35, isAvailable: true },
+        { name: 'Handcrafted Kutchi Lippan Mud Mirror Panel (10x10)',
+          image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80', description: 'Traditional camel dung & clay mirror craft for walls.', price: 450, isAvailable: true }
       ]
     }
   ];
@@ -1856,7 +1939,14 @@ const seedSampleVendors = async () => {
       console.log(`- Updated existing vendor stall: ${profile.stallName}`);
     }
 
-    // Insert sample products
+    // Clean up outdated / duplicate products for this vendor
+    const validProductNames = item.products.map(p => p.name);
+    await Product.deleteMany({
+      vendorId: profile._id,
+      name: { $nin: validProductNames }
+    });
+
+    // Upsert canonical sample products with explicit real images
     for (const prod of item.products) {
       const existingProd = await Product.findOne({ vendorId: profile._id, name: prod.name });
       if (!existingProd) {
@@ -1865,6 +1955,19 @@ const seedSampleVendors = async () => {
           vendorId: profile._id,
           categoryId: profile.categories[0] || null
         });
+      } else {
+        await Product.updateOne(
+          { _id: existingProd._id },
+          {
+            $set: {
+              image: prod.image,
+              price: prod.price,
+              description: prod.description,
+              isAvailable: prod.isAvailable,
+              categoryId: profile.categories[0] || null
+            }
+          }
+        );
       }
     }
   }

@@ -1,0 +1,612 @@
+[
+  {
+    "stall": "Ramesh Famous Chaat & Pani Puri",
+    "products": [
+      {
+        "name": "Special Mineral Water Pani Puri (8 pcs)",
+        "description": "Spicy mint, sweet tamarind, and garlic water.",
+        "price": 40
+      },
+      {
+        "name": "Sev Puri (Special Butter Masala)",
+        "description": "Crisp puris with potatoes, chutneys, and nylon sev.",
+        "price": 60
+      },
+      {
+        "name": "Dahi Puri Royal",
+        "description": "Sweetened curd, pomegranate, and chaat masala.",
+        "price": 70
+      }
+    ]
+  },
+  {
+    "stall": "Manek Chowk Midnight Dosa & Sandwich",
+    "products": [
+      {
+        "name": "Amul Butter Gwalior Dosa",
+        "description": "Loaded with melted butter and spicy potato roast.",
+        "price": 120
+      },
+      {
+        "name": "Cheese Chocolate Grilled Sandwich",
+        "description": "Hershey chocolate spread with double mozzarella cheese.",
+        "price": 140
+      },
+      {
+        "name": "Kesar Malai Matka Kulfi",
+        "description": "Rich saffron condensed milk kulfi on stick.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Law Garden Traditional Chaniya Choli & Handcrafts",
+    "products": [
+      {
+        "name": "Hand Embroidered Chaniya Choli Set",
+        "description": "Kutchi mirror-work with gamthi border and bandhej dupatta.",
+        "price": 1800
+      },
+      {
+        "name": "Kutchi Mirror Work Ethnic Jacket",
+        "description": "Colorful thread embroidery jacket for festive wear.",
+        "price": 650
+      }
+    ]
+  },
+  {
+    "stall": "Geeta Traditional Terracotta & Pottery",
+    "products": [
+      {
+        "name": "Natural Clay Water Matka (10L)",
+        "description": "Traditional porous cooling pot with clay tap.",
+        "price": 250
+      },
+      {
+        "name": "Terracotta Handi Cookware with Lid",
+        "description": "Unbleached natural clay cooking pot.",
+        "price": 350
+      },
+      {
+        "name": "Hand-Painted Floral Diyas (Set of 6)",
+        "description": "Decorative festival earthen lamps.",
+        "price": 120
+      }
+    ]
+  },
+  {
+    "stall": "Kishanlal Seasonal Organic Fruits",
+    "products": [
+      {
+        "name": "Kashmiri Royal Delicious Apples (1 kg)",
+        "description": "Sweet, crisp mountain apples.",
+        "price": 140
+      },
+      {
+        "name": "Nagpur Sweet Oranges (1 Dozen)",
+        "description": "Juicy, rich citrus oranges.",
+        "price": 90
+      },
+      {
+        "name": "Fresh Anar / Pomegranates (1 kg)",
+        "description": "Ruby-red sweet seeds.",
+        "price": 160
+      }
+    ]
+  },
+  {
+    "stall": "Green Oasis Tender Coconut Water",
+    "products": [
+      {
+        "name": "Large Tender Coconut Water (Fresh Cut)",
+        "description": "Electrolyte-rich water with soft tender coconut malai.",
+        "price": 60
+      },
+      {
+        "name": "Cold-Pressed Sugarcane Juice with Ginger & Mint",
+        "description": "Freshly extracted with zero added ice or sugar.",
+        "price": 30
+      }
+    ]
+  },
+  {
+    "stall": "Master Duplicate Key & Locksmith Stall",
+    "products": [
+      {
+        "name": "Standard Brass Key Duplication",
+        "description": "Instant cutting for Godrej and household door locks.",
+        "price": 50
+      },
+      {
+        "name": "Computerized Dimple / Laser Key Copy",
+        "description": "High-security dimple keys for main gates.",
+        "price": 150
+      }
+    ]
+  },
+  {
+    "stall": "Shree Ram Florist & Pooja Essentials",
+    "products": [
+      {
+        "name": "Fresh Yellow Marigold Garland (Medium)",
+        "description": "Handmade fresh daily temple garland.",
+        "price": 40
+      },
+      {
+        "name": "Pooja Rose Flowers & Tulsi Basket",
+        "description": "Assortment of red roses and fragrant tulsi leaves.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Old City Tailoring & Fast Alteration Stall",
+    "products": [
+      {
+        "name": "Trouser / Jeans Length Shortening",
+        "description": "Professional chain stitch alteration in 15 mins.",
+        "price": 60
+      },
+      {
+        "name": "Heavy Duty Zip Replacement",
+        "description": "Brass YKK zip replacement for pants or jackets.",
+        "price": 100
+      }
+    ]
+  },
+  {
+    "stall": "Sindhu Bhavan Chai Adda & Bun Maska",
+    "products": [
+      {
+        "name": "Adrak Elaichi Kulhad Chai",
+        "description": "Brewed with fresh organic ginger and whole green cardamom.",
+        "price": 25
+      },
+      {
+        "name": "Amul Butter Bun Maska",
+        "description": "Fresh toasted soft bun loaded with real Amul butter.",
+        "price": 40
+      }
+    ]
+  },
+  {
+    "stall": "Jani Surti Butter Locho & Khaman",
+    "products": [
+      {
+        "name": "Special Amul Butter Surti Locho",
+        "description": "Steaming hot savory gram flour snack with fresh butter and sev.",
+        "price": 60
+      },
+      {
+        "name": "Cheese Burst Masala Locho",
+        "description": "Topped with generous grated cheese, locho masala, and chillies.",
+        "price": 90
+      },
+      {
+        "name": "Spicy Surti Sev Khamani (250g)",
+        "description": "Crushed steamed chana dal tempered with mustard and pomegranate.",
+        "price": 70
+      }
+    ]
+  },
+  {
+    "stall": "Dumas Beach Sweet Corn & Roasted Bhutta",
+    "products": [
+      {
+        "name": "Charcoal Roasted Masala Lemon Bhutta",
+        "description": "Tender sweet corn roasted on live coals with spices and lime.",
+        "price": 40
+      },
+      {
+        "name": "Hot Sweet Corn Bhajia (Plate)",
+        "description": "Crispy sweet corn fritters served with tangy garlic chutney.",
+        "price": 70
+      }
+    ]
+  },
+  {
+    "stall": "Chauta Bazar Bandhani & Dupatta Bazaar",
+    "products": [
+      {
+        "name": "Pure Cotton Bandhani Dupatta",
+        "description": "Traditional multi-color dot tie-dye with golden zari border.",
+        "price": 350
+      },
+      {
+        "name": "Jaipuri Leheriya Cotton Kurti Fabric",
+        "description": "Breathable summer cotton fabric (2.5 meters).",
+        "price": 450
+      }
+    ]
+  },
+  {
+    "stall": "Rander Al-Burhan Street Biryani & Tawa Kebab",
+    "products": [
+      {
+        "name": "Rander Special Dum Biryani",
+        "description": "Flavored with whole spices, saffron, and tender chicken.",
+        "price": 160
+      },
+      {
+        "name": "Tawa Seekh Kebab (4 pcs)",
+        "description": "Juicy spiced minced kebabs served with onion rings and lemon.",
+        "price": 120
+      }
+    ]
+  },
+  {
+    "stall": "Adajan Royal Ghari & Traditional Farsan",
+    "products": [
+      {
+        "name": "Surti Kesar Pista Ghari (250g)",
+        "description": "Condensed milk mawa sweet bathed in pure cow ghee.",
+        "price": 220
+      },
+      {
+        "name": "Crispy Hot Fafda (250g)",
+        "description": "Gram flour crisps served with papaya sambharo and fried chillies.",
+        "price": 110
+      }
+    ]
+  },
+  {
+    "stall": "Varachha Diamond Circle Fresh Juice & Shakes",
+    "products": [
+      {
+        "name": "Royal Kesar Pista Falooda",
+        "description": "Rose syrup, basil seeds, vermicelli, and vanilla ice cream.",
+        "price": 90
+      },
+      {
+        "name": "Thick Alphonso Mango Milkshake",
+        "description": "Fresh Ratnagiri mango pulp with rich full-cream milk.",
+        "price": 80
+      }
+    ]
+  },
+  {
+    "stall": "Gopipura Handmade Mojdi & Leather Chappals",
+    "products": [
+      {
+        "name": "Traditional Embroidered Wedding Mojdi",
+        "description": "Fine golden embroidery on premium buffalo leather.",
+        "price": 650
+      },
+      {
+        "name": "Genuine Kolhapuri Leather Chappals",
+        "description": "Hand-braided straps with durable leather sole.",
+        "price": 500
+      }
+    ]
+  },
+  {
+    "stall": "Ring Road Wholesale Household Goods & Plastics",
+    "products": [
+      {
+        "name": "7-Compartment Stainless Steel Masala Dabba",
+        "description": "Airtight spice container with transparent lid and spoons.",
+        "price": 280
+      },
+      {
+        "name": "Insulated Hot Pot Food Casserole (1.5L)",
+        "description": "Stainless steel interior keeps rotis piping hot for 6 hours.",
+        "price": 340
+      }
+    ]
+  },
+  {
+    "stall": "Mahakali Special Sev Usal",
+    "products": [
+      {
+        "name": "Special Mahakali Sev Usal with Bun Pav",
+        "description": "Fiery pea curry with crispy sev, spring onion, and lime.",
+        "price": 70
+      },
+      {
+        "name": "Cheese Burst Sev Usal",
+        "description": "Topped with double shredded mozzarella and extra tari.",
+        "price": 100
+      }
+    ]
+  },
+  {
+    "stall": "Mandvi Gate Chaniya Choli & Traditional Attire",
+    "products": [
+      {
+        "name": "Flared Kutchi Embroidered Ghagra Set",
+        "description": "Full circle flare with mirror work and contrast blouse.",
+        "price": 1650
+      },
+      {
+        "name": "Oxidized Silver Choker Necklace & Jhumkas",
+        "description": "Traditional tribal metal festive set.",
+        "price": 350
+      }
+    ]
+  },
+  {
+    "stall": "Fatehgunj University Chai & Bun Omelette Stall",
+    "products": [
+      {
+        "name": "Desi Masala Chai in Kulhad",
+        "description": "Fresh ginger, clove, and cardamom black tea with milk.",
+        "price": 20
+      },
+      {
+        "name": "Toasted Bun Maska with Jam",
+        "description": "Freshly baked soft bun toasted with salted butter.",
+        "price": 35
+      }
+    ]
+  },
+  {
+    "stall": "Alkapuri Seasonal Fresh Juice & Fruit Bowl",
+    "products": [
+      {
+        "name": "Fresh Exotic Fruit Salad Bowl",
+        "description": "Pineapple, kiwi, pomegranate, and seasonal berries.",
+        "price": 100
+      },
+      {
+        "name": "Cold-Pressed Pomegranate Juice",
+        "description": "100% natural, freshly extracted without water or sugar.",
+        "price": 90
+      }
+    ]
+  },
+  {
+    "stall": "Raopura Pyarelal Farsan & Bhakharwadi",
+    "products": [
+      {
+        "name": "Special Gujarati Mini Bhakharwadi (500g)",
+        "description": "Crisp spiral savoury snacks with spicy coconut filling.",
+        "price": 160
+      },
+      {
+        "name": "Dry Fruit Mini Kachori (500g)",
+        "description": "Crunchy pastry balls filled with dry spices and raisins.",
+        "price": 180
+      }
+    ]
+  },
+  {
+    "stall": "Karelibaug Pottery & Terracotta Plant Pots",
+    "products": [
+      {
+        "name": "Hand-Molded Clay Garden Planter (12-inch)",
+        "description": "Porous breathable pot ideal for healthy plant roots.",
+        "price": 180
+      },
+      {
+        "name": "Hanging Terracotta Orchid Pot",
+        "description": "With rustic jute rope for balcony gardens.",
+        "price": 150
+      }
+    ]
+  },
+  {
+    "stall": "Saurashtra Real Vanela Gathiya & Jalebi",
+    "products": [
+      {
+        "name": "Fresh Steaming Vanela Gathiya (250g)",
+        "description": "Melt-in-mouth soft besan gathiya with spicy papaya sambharo.",
+        "price": 90
+      },
+      {
+        "name": "Crispy Desi Ghee Jalebi (250g)",
+        "description": "Golden spirals soaked in fragrant saffron sugar syrup.",
+        "price": 120
+      }
+    ]
+  },
+  {
+    "stall": "Dharmendra Road Kutchi Embroidery & Traditional Wear",
+    "products": [
+      {
+        "name": "Kutchi Mirror Work Sleeveless Jacket",
+        "description": "Traditional colorful mirror embroidered waist-length jacket.",
+        "price": 550
+      },
+      {
+        "name": "Handmade Door Hanging Toran",
+        "description": "Artisan cotton toran with bells and beads for auspicious entry.",
+        "price": 280
+      }
+    ]
+  },
+  {
+    "stall": "Trikon Baug Famous Rajkot Ice Dish Gola",
+    "products": [
+      {
+        "name": "Special Rajwadi Dry Fruit Ice Dish",
+        "description": "Crushed ice drenched in rose, pineapple, topped with rabdi and nuts.",
+        "price": 120
+      },
+      {
+        "name": "Tangy Kala Khatta Ice Gola on Stick",
+        "description": "Traditional tangy blackberry gola with chaat masala.",
+        "price": 40
+      }
+    ]
+  },
+  {
+    "stall": "Kalawad Road Royal Dabeli & Jumbo Vada Pav",
+    "products": [
+      {
+        "name": "Special Amul Butter Kutchi Dabeli",
+        "description": "Toasted pav with rich spiced potato, pomegranate, and crunchy peanuts.",
+        "price": 40
+      },
+      {
+        "name": "Mumbai Style Hot Vada Pav",
+        "description": "Spiced potato fritter with dry garlic chutney in soft pav.",
+        "price": 35
+      }
+    ]
+  },
+  {
+    "stall": "Gundawadi Fresh Vegetable & Organic Greens",
+    "products": [
+      {
+        "name": "Fresh Country Methi Greens (1 Bunch)",
+        "description": "Tender aromatic fenugreek leaves harvested this morning.",
+        "price": 20
+      },
+      {
+        "name": "Fresh Desi Okra / Bhindi (1 kg)",
+        "description": "Crisp green tender ladyfingers for stir fry.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Capital Desi Dal Baati & Rajwadi Khichdi",
+    "products": [
+      {
+        "name": "Rajwadi Masala Khichdi & Kadhi Bowl",
+        "description": "Slow-cooked spiced rice & moong dal simmered with pure ghee and vegetables.",
+        "price": 90
+      },
+      {
+        "name": "Special Kathiyawadi Dal Baati Thali",
+        "description": "3 oven-roasted baatis dipped in ghee, rich spicy dal, churma, and fiery garlic chutney.",
+        "price": 150
+      }
+    ]
+  },
+  {
+    "stall": "Sector 7 Khau Gali Live Dosa & Mysore Masala",
+    "products": [
+      {
+        "name": "Mysore Masala Butter Dosa",
+        "description": "Red garlic chutney spread with mashed potato masala.",
+        "price": 100
+      },
+      {
+        "name": "Steaming Rice Idli Sambar (4 pcs)",
+        "description": "Soft fluffy idlis served with hot drumstick sambar.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Infocity Late Night Chai, Maggi & Coffee Point",
+    "products": [
+      {
+        "name": "Double Cheese Peri-Peri Maggi",
+        "description": "Buttery noodles tossed with vegetables and loaded with cheese.",
+        "price": 80
+      },
+      {
+        "name": "Cold Bournvita Thick Shake",
+        "description": "Rich chocolate malt milk with crushed cookies.",
+        "price": 60
+      }
+    ]
+  },
+  {
+    "stall": "Bhavnagar Crescent Famous Gathiya & Kadhi",
+    "products": [
+      {
+        "name": "Traditional Bhavnagri Gathiya (250g)",
+        "description": "Thick crunchy black pepper gathiya with tangy sweet kadhi.",
+        "price": 80
+      },
+      {
+        "name": "Kadhi Samosa Plate",
+        "description": "Golden potato samosa served immersed in piping hot Gujarati kadhi.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Ghogha Circle Fresh Sugarcane & Lemon Soda",
+    "products": [
+      {
+        "name": "Masala Lemon Goti Soda",
+        "description": "Effervescent vintage bottle soda with rock salt and lemon.",
+        "price": 25
+      },
+      {
+        "name": "Fresh Mint Sugarcane Juice (Tall Glass)",
+        "description": "Chilled cold pressed juice with crushed ice and ginger.",
+        "price": 30
+      }
+    ]
+  },
+  {
+    "stall": "Bedi Gate Authentic Jamnagari Dry Fruit Kachori",
+    "products": [
+      {
+        "name": "Special Dry Fruit Kachori Box (500g)",
+        "description": "Crisp kachoris filled with cashew, raisins, and aromatic spices.",
+        "price": 180
+      },
+      {
+        "name": "Live Hot Hing Kachori with Kadhi (Plate)",
+        "description": "Steaming asafoetida spiced kachoris served with warm kadhi.",
+        "price": 50
+      }
+    ]
+  },
+  {
+    "stall": "Chandi Bazar Brass & Metal Artifacts",
+    "products": [
+      {
+        "name": "Solid Brass Temple Bell with Peacock Handle",
+        "description": "Resonant acoustic chime crafted in pure brass.",
+        "price": 450
+      },
+      {
+        "name": "Traditional Brass Samai / Stand Diya (14-inch)",
+        "description": "Tall oil lamp for festive celebration and pooja.",
+        "price": 750
+      }
+    ]
+  },
+  {
+    "stall": "Girnar Foothills Pure Herbal Honey & Forest Ayurveda",
+    "products": [
+      {
+        "name": "100% Pure Wild Girnar Forest Honey (500g)",
+        "description": "Unprocessed, unfiltered natural floral honey.",
+        "price": 320
+      },
+      {
+        "name": "Spiced Dried Amla Candy (250g)",
+        "description": "Natural vitamin C chewable digestive amla.",
+        "price": 100
+      }
+    ]
+  },
+  {
+    "stall": "Amul Dairy Road Kulfi & Rabdi Stall",
+    "products": [
+      {
+        "name": "Kesar Pista Malai Kulfi on Stick",
+        "description": "Rich condensed whole milk kulfi with almond shavings.",
+        "price": 40
+      },
+      {
+        "name": "Earthen Bowl Thick Rabdi (150g)",
+        "description": "Chilled thickened milk with saffron threads.",
+        "price": 70
+      }
+    ]
+  },
+  {
+    "stall": "Shroff Bazar Kutchi Dabeli & Mud Art Work",
+    "products": [
+      {
+        "name": "Original Mandvi Double Roti Dabeli",
+        "description": "Secret blend of 18 spices with roasted masala peanuts.",
+        "price": 35
+      },
+      {
+        "name": "Handcrafted Kutchi Lippan Mud Mirror Panel (10x10)",
+        "description": "Traditional camel dung & clay mirror craft for walls.",
+        "price": 450
+      }
+    ]
+  }
+]

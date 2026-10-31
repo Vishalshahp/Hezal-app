@@ -459,7 +459,8 @@ export default function PublicVendorProfilePage() {
                         src={prod.image ? getImageUrl(prod.image) : getProductCoverImage(prod)}
                         alt={prod.name}
                         onError={(e) => {
-                          e.target.parentElement.style.display = 'none';
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=600&q=80';
                         }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                       />

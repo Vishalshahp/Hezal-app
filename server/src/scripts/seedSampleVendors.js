@@ -43,6 +43,15 @@ const seedSampleVendors = async () => {
   for (const c of categories) {
     categoryMap[c.slug] = c._id;
   }
+  // Aliases ensuring every stall category references canonical Category ObjectId in DB
+  categoryMap['street-food'] = categoryMap['street-food-chaat'];
+  categoryMap['fresh-produce'] = categoryMap['fruits-vegetables'];
+  categoryMap['beverages-juices'] = categoryMap['beverages-chai'];
+  categoryMap['flowers-plants'] = categoryMap['flowers-puja'];
+  categoryMap['clothing'] = categoryMap['tailoring-alterations'];
+  categoryMap['handcrafts'] = categoryMap['repairs-services'];
+  categoryMap['household-essentials'] = categoryMap['repairs-services'];
+  categoryMap['repair-services'] = categoryMap['repairs-services'];
 
   const hashedPassword = await bcrypt.hash('SampleVendor123!', 10);
 
@@ -66,7 +75,7 @@ const seedSampleVendors = async () => {
         tagline: 'Authentic Ahmedabad Khau Gali Pani Puri & Dahi Puri',
         description:
           'Operating in Law Garden since 2012. Known for hygienic mineral water preparations, crispy handmade puris, and 3 distinct spicy, sweet, and garlic waters.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543201', whatsapp: '+919876543201' },
         address: {
           street: 'Law Garden Khau Gali Stall #4',
@@ -111,7 +120,7 @@ const seedSampleVendors = async () => {
         tagline: 'Iconic Butter Gwalior Dosa, Chocolate Cheese Sandwich & Kulfi',
         description:
           'The soul of Old Ahmedabad nighttime food. Legendary street stall serving golden crisp butter dosas, pineapple cheese sandwiches, and malai kulfi till 2 AM.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['fast-food-meals']],
         contactPublic: { phone: '+919876543202', whatsapp: '+919876543202' },
         address: {
           street: 'Manek Chowk Jewelers Market Square',
@@ -156,7 +165,7 @@ const seedSampleVendors = async () => {
         tagline: 'Authentic Gujarati mirror-work ghagras, bandhani kurtas & torans',
         description:
           'Generations of artisan craftsmanship in Law Garden. Exquisite Navratri attire, embroidered cotton jackets, oxidized silver jewellery, and bohemian home decor.',
-        categories: [categoryMap['clothing'], categoryMap['handcrafts']],
+                categories: [categoryMap['tailoring-alterations'], categoryMap['handcrafts']],
         contactPublic: { phone: '+919876543203', whatsapp: '+919876543203' },
         address: {
           street: 'Law Garden Handicrafts Lane Stall #18',
@@ -200,7 +209,7 @@ const seedSampleVendors = async () => {
         tagline: 'Handmade terracotta cookware, matkas, and festival diyas',
         description:
           'Local artisan stall specializing in natural earthenware, water cooling pots, painted clay diyas, and authentic hand-molded clay cookware for healthy cooking.',
-        categories: [categoryMap['handcrafts'], categoryMap['household-essentials']],
+                categories: [categoryMap['repairs-services'], categoryMap['household-essentials']],
         contactPublic: { phone: '+919876543204', whatsapp: '+919876543204' },
         address: {
           street: 'Vastrapur Lake Art Promenade Stall #12',
@@ -245,7 +254,7 @@ const seedSampleVendors = async () => {
         tagline: 'Farm-fresh Nagpur Oranges, Kashmiri Apples & Seasonal Mangoes',
         description:
           'Daily morning pushcart offering fresh orchard fruits, natural handpicked pomegranates, bananas, and certified chemical-free seasonal arrivals.',
-        categories: [categoryMap['fresh-produce']],
+                categories: [categoryMap['fruits-vegetables']],
         contactPublic: { phone: '+919876543205', whatsapp: '+919876543205' },
         address: {
           street: 'University Road Pushcart Zone',
@@ -290,7 +299,7 @@ const seedSampleVendors = async () => {
         tagline: 'Chilled Malabar tender coconuts and freshly crushed sugarcane',
         description:
           'Pure, unadulterated hydration right on CG Road. Freshly cut Kerala tender coconuts full of sweet water and soft malai, alongside hygienic cold-pressed sugarcane juice.',
-        categories: [categoryMap['beverages-juices']],
+                categories: [categoryMap['beverages-chai']],
         contactPublic: { phone: '+919876543206', whatsapp: '+919876543206' },
         address: {
           street: 'C.G. Road Corner Kiosk',
@@ -334,7 +343,7 @@ const seedSampleVendors = async () => {
         tagline: 'Instant computerized key duplication and lock repairs in 3 minutes',
         description:
           'Experienced roadside locksmith stall on Nehru Bridge corner. We duplicate motorcycle, car, Godrej, computerised dimple keys, and repair jammed locks on the spot.',
-        categories: [categoryMap['repair-services']],
+                categories: [categoryMap['repairs-services']],
         contactPublic: { phone: '+919876543207', whatsapp: '+919876543207' },
         address: {
           street: 'Nehru Bridge East End Kiosk',
@@ -378,7 +387,7 @@ const seedSampleVendors = async () => {
         tagline: 'Fresh marigold garlands, lotus, tulsi plants and daily pooja flowers',
         description:
           'Daily morning flower stall outside Ashram Road temple. Supplying freshly hand-strung marigold garlands, fragrant roses, bilva patra, and sacred pooja samagri.',
-        categories: [categoryMap['flowers-plants']],
+                categories: [categoryMap['flowers-puja']],
         contactPublic: { phone: '+919876543208', whatsapp: '+919876543208' },
         address: {
           street: 'Ashram Road Temple Lane',
@@ -422,7 +431,7 @@ const seedSampleVendors = async () => {
         tagline: 'Instant pant shortening, suit alterations, and button fixing in 15 mins',
         description:
           'Expert sewing and garment alteration service right on Relief Road. We handle jeans tapering, zip replacement, curtain hemming, and formal fitting quickly.',
-        categories: [categoryMap['repair-services']],
+                categories: [categoryMap['tailoring-alterations']],
         contactPublic: { phone: '+919876543209', whatsapp: '+919876543209' },
         address: {
           street: 'Relief Road Market Arcade',
@@ -466,7 +475,7 @@ const seedSampleVendors = async () => {
         tagline: 'Special Kadak Ginger Chai, Maska Bun, and Hot Onion Samosas',
         description:
           'Vibrant street corner adda on Bodakdev Sindhu Bhavan Road. Serving cardamom and ginger tea in traditional earthenware kulhads, buttery maska buns, and warm snacks.',
-        categories: [categoryMap['beverages-juices'], categoryMap['street-food']],
+                categories: [categoryMap['beverages-chai'], categoryMap['street-food']],
         contactPublic: { phone: '+919876543210', whatsapp: '+919876543210' },
         address: {
           street: 'Sindhu Bhavan Road Promenade',
@@ -514,7 +523,7 @@ const seedSampleVendors = async () => {
         tagline: 'World-famous authentic Surti Locho, Sev Khamani & Green Chutney',
         description:
           'The crowning glory of Surat street food. Steaming hot chana dal locho drizzled with pure Amul butter, special locho masala, spicy green chutney, and fine nylon sev.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543211', whatsapp: '+919876543211' },
         address: {
           street: 'Piplod Main Road Stall #8',
@@ -559,7 +568,7 @@ const seedSampleVendors = async () => {
         tagline: 'Charcoal roasted spicy lemon bhutta and crispy sweet corn pakodas',
         description:
           'A trip to Dumas Beach is incomplete without our famous coal-roasted corn on the cob rubbed with fresh lime, black salt, and chili powder.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543212', whatsapp: '+919876543212' },
         address: {
           street: 'Dumas Beach Promenade',
@@ -603,7 +612,7 @@ const seedSampleVendors = async () => {
         tagline: 'Authentic Surti tie-and-dye bandhani dupattas, sarees and dress materials',
         description:
           'Surat oldest textile market stall. Offering direct weavers bandhani, leheriya dupattas, cotton block prints, and festival dress fabrics at wholesale street rates.',
-        categories: [categoryMap['clothing']],
+                categories: [categoryMap['tailoring-alterations']],
         contactPublic: { phone: '+919876543213', whatsapp: '+919876543213' },
         address: {
           street: 'Chauta Bazar Cloth Lane Stall #24',
@@ -647,7 +656,7 @@ const seedSampleVendors = async () => {
         tagline: 'Traditional wood-cooked Randeri spiced dum biryani and seekh kebabs',
         description:
           'Centuries-old Rander recipe cooked in giant copper cauldrons over firewood. Aromatic basmati rice, tender meat, fried onions, and fresh mint raita.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['fast-food-meals']],
         contactPublic: { phone: '+919876543214', whatsapp: '+919876543214' },
         address: {
           street: 'Rander Main Bazar Street Corner',
@@ -691,7 +700,7 @@ const seedSampleVendors = async () => {
         tagline: 'Authentic pure ghee Surti Mawa Ghari, Fafda, and Masala Sing',
         description:
           'Chandi Padvo celebration favorite year-round. Pure mawa ghari drenched in pure desi ghee with pistachios and almonds, plus freshly fried crunchy fafda.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['bakery-sweets']],
         contactPublic: { phone: '+919876543215', whatsapp: '+919876543215' },
         address: {
           street: 'Adajan Gam Road Stall #14',
@@ -735,7 +744,7 @@ const seedSampleVendors = async () => {
         tagline: 'Fresh Alphonso mango shakes, dry fruit falooda and cold juices',
         description:
           'Bustling evening refreshment stall in the heart of Varachha diamond district. Thick fruit shakes with ice cream scoops and rich vermicelli falooda.',
-        categories: [categoryMap['beverages-juices']],
+                categories: [categoryMap['beverages-chai']],
         contactPublic: { phone: '+919876543216', whatsapp: '+919876543216' },
         address: {
           street: 'Varachha Main Road Circle Kiosk',
@@ -779,7 +788,7 @@ const seedSampleVendors = async () => {
         tagline: 'Hand-stitched leather mojdis, wedding juttis & comfortable sandals',
         description:
           'Generations-old cobbler family hand-crafting durable leather mojdis with intricate thread patterns and soft cushioned soles for wedding and daily wear.',
-        categories: [categoryMap['clothing'], categoryMap['handcrafts']],
+                categories: [categoryMap['repairs-services'], categoryMap['handcrafts']],
         contactPublic: { phone: '+919876543217', whatsapp: '+919876543217' },
         address: {
           street: 'Gopipura Footwear Market Lane',
@@ -823,7 +832,7 @@ const seedSampleVendors = async () => {
         tagline: 'Stainless steel dabbas, storage boxes, and kitchenware essentials',
         description:
           'Budget-friendly household stall on Ring Road. Stainless steel masala boxes, insulated water bottles, storage containers, and kitchen utilities.',
-        categories: [categoryMap['household-essentials']],
+                categories: [categoryMap['repairs-services']],
         contactPublic: { phone: '+919876543218', whatsapp: '+919876543218' },
         address: {
           street: 'Ring Road Flyover Market',
@@ -871,7 +880,7 @@ const seedSampleVendors = async () => {
         tagline: 'Iconic Baroda Tari Sev Usal, buttery bun pav, and extra spicy oil',
         description:
           'Vadodara signature street food legacy since decades. Dried green peas cooked in fiery gravy, loaded with spicy nylon sev, spring onions, and butter pav.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543219', whatsapp: '+919876543219' },
         address: {
           street: 'Sayajigunj Food Street Stall #3',
@@ -915,7 +924,7 @@ const seedSampleVendors = async () => {
         tagline: 'Festive Navratri ghagras, bandhej dupattas & oxidized silver jewelry',
         description:
           'Historical heritage market stall under the arches of Mandvi Gate. Famous for vibrant handcrafted chaniya choli with real mirror work and festive accessories.',
-        categories: [categoryMap['clothing'], categoryMap['handcrafts']],
+                categories: [categoryMap['tailoring-alterations'], categoryMap['handcrafts']],
         contactPublic: { phone: '+919876543220', whatsapp: '+919876543220' },
         address: {
           street: 'Mandvi Gate Archway Bazar',
@@ -959,7 +968,7 @@ const seedSampleVendors = async () => {
         tagline: 'Student hangout for strong ginger masala chai and hot bun maska',
         description:
           'Beloved spot outside MS University campus. Piping hot ginger-infused tea served in earthen kulhads, buttery maska buns, and warm samosas.',
-        categories: [categoryMap['beverages-juices'], categoryMap['street-food']],
+                categories: [categoryMap['beverages-chai'], categoryMap['street-food']],
         contactPublic: { phone: '+919876543221', whatsapp: '+919876543221' },
         address: {
           street: 'Fatehgunj University Road Kiosk',
@@ -1003,7 +1012,7 @@ const seedSampleVendors = async () => {
         tagline: 'Cold-pressed pomegranate, kiwi-strawberry bowls & seasonal juices',
         description:
           'High quality health stall in posh Alkapuri area. Freshly cut fruit salads, exotic dragon fruit bowls, and pure cold pressed fruit juices with zero preservatives.',
-        categories: [categoryMap['fresh-produce'], categoryMap['beverages-juices']],
+                categories: [categoryMap['fruits-vegetables'], categoryMap['beverages-chai'], categoryMap['beverages-juices']],
         contactPublic: { phone: '+919876543222', whatsapp: '+919876543222' },
         address: {
           street: 'Alkapuri RC Dutt Road Kiosk',
@@ -1047,7 +1056,7 @@ const seedSampleVendors = async () => {
         tagline: 'Crispy mini bhakharwadi, spicy dry kachori, and ratlami sev',
         description:
           'Famous historical farsan makers in old Raopura. World renowned mini bhakharwadis spiral stuffed with sweet-spicy coconut and sesame filling.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['bakery-sweets']],
         contactPublic: { phone: '+919876543223', whatsapp: '+919876543223' },
         address: {
           street: 'Raopura Main Road Stall #16',
@@ -1091,7 +1100,7 @@ const seedSampleVendors = async () => {
         tagline: 'Glazed terracotta garden planters, bonsai pots & ceramic vases',
         description:
           'Open-air roadside nursery and pottery stall on Karelibaug road. Handcrafted clay planters, hanging baskets, and decorative terracotta garden artifacts.',
-        categories: [categoryMap['handcrafts'], categoryMap['flowers-plants']],
+                categories: [categoryMap['repairs-services'], categoryMap['flowers-plants']],
         contactPublic: { phone: '+919876543224', whatsapp: '+919876543224' },
         address: {
           street: 'Karelibaug Main Road Roadside Nursery',
@@ -1139,7 +1148,7 @@ const seedSampleVendors = async () => {
         tagline: 'Steaming Vanela Gathiya, raw papaya sambharo & hot saffron jalebis',
         description:
           'Rajkot iconic breakfast institution on Yagnik Road. Freshly rolled and fried vanela gathiya made from pure besan and black pepper, served with spicy shredded raw papaya and fried green chillies.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['bakery-sweets'], categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543225', whatsapp: '+919876543225' },
         address: {
           street: 'Yagnik Road Stall #5',
@@ -1183,7 +1192,7 @@ const seedSampleVendors = async () => {
         tagline: 'Kutchi mirror jackets, ethnic bandhani kurtas, and festival wall torans',
         description:
           'Located in Rajkot oldest shopping street. Vibrant ethnic apparel, Rabari needlework, handcrafted tote bags, and traditional festive wear directly from Kutch artisans.',
-        categories: [categoryMap['clothing'], categoryMap['handcrafts']],
+                categories: [categoryMap['tailoring-alterations'], categoryMap['handcrafts']],
         contactPublic: { phone: '+919876543226', whatsapp: '+919876543226' },
         address: {
           street: 'Dharmendra Road Cloth Bazar',
@@ -1227,7 +1236,7 @@ const seedSampleVendors = async () => {
         tagline: 'Legendary Rajkot ice dish gola, dry fruit rabdi, and kala khatta',
         description:
           'Rajkot hot summer night savior at Trikon Baug. Shaved ice mountain platters covered with natural fruit syrups, mawa, cashew nuts, and thick condensed rabdi.',
-        categories: [categoryMap['street-food'], categoryMap['beverages-juices']],
+                categories: [categoryMap['bakery-sweets'], categoryMap['street-food-chaat'], categoryMap['beverages-juices']],
         contactPublic: { phone: '+919876543227', whatsapp: '+919876543227' },
         address: {
           street: 'Trikon Baug Promenade Stall #9',
@@ -1271,7 +1280,7 @@ const seedSampleVendors = async () => {
         tagline: 'Buttery roasted Kutchi dabeli loaded with masala peanuts & nylon sev',
         description:
           'Spicy potato masala packed into pav buns with sweet tamarind chutney, spicy garlic dip, roasted peanuts, pomegranate pearls, and toasted on butter.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543228', whatsapp: '+919876543228' },
         address: {
           street: 'Kalawad Road Fast Food Line',
@@ -1315,7 +1324,7 @@ const seedSampleVendors = async () => {
         tagline: 'Farm-picked methi, palak, coriander, ginger and fresh green vegetables',
         description:
           'Wholesale quality retail vegetable stall in Gundawadi market. Direct from local farmers: fresh fenugreek greens, tender okra, tindora, and seasonal vegetables.',
-        categories: [categoryMap['fresh-produce']],
+                categories: [categoryMap['fruits-vegetables']],
         contactPublic: { phone: '+919876543229', whatsapp: '+919876543229' },
         address: {
           street: 'Gundawadi Main Mandi Stall #11',
@@ -1363,7 +1372,7 @@ const seedSampleVendors = async () => {
         tagline: 'Pure ghee wood-fire roasted Dal Baati thali, Kadhi, and Churma',
         description:
           'Beloved evening eating stall in Gandhinagar Sector 21 market. Serving pure cow ghee Rajwadi khichdi, traditional Gujarati Kadhi, and wood-roasted Dal Baati with garlic chutney.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['fast-food-meals']],
         contactPublic: { phone: '+919876543230', whatsapp: '+919876543230' },
         address: {
           street: 'Sector 21 Market Stall #19',
@@ -1407,7 +1416,7 @@ const seedSampleVendors = async () => {
         tagline: 'Crisp butter paper dosa, cheese blast dosa, and steaming idli sambar',
         description:
           'Long-standing evening stall in Sector 7 shopping centre. Authentic fermented batter roasted on hot tawa with fresh coconut chutney and sambar.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['fast-food-meals']],
         contactPublic: { phone: '+919876543231', whatsapp: '+919876543231' },
         address: {
           street: 'Sector 7 Shopping Centre Food Court',
@@ -1451,7 +1460,7 @@ const seedSampleVendors = async () => {
         tagline: '24/7 IT corridor adda for kulhad chai, cheese peri-peri maggi & cold coffee',
         description:
           'Tech workers and students favorite round-the-clock hangout at Infocity. Quick snacks, strong filter coffee, and piping hot noodles.',
-        categories: [categoryMap['beverages-juices'], categoryMap['street-food']],
+                categories: [categoryMap['fast-food-meals'], categoryMap['beverages-chai'], categoryMap['street-food']],
         contactPublic: { phone: '+919876543232', whatsapp: '+919876543232' },
         address: {
           street: 'Infocity Commercial Arcade',
@@ -1499,7 +1508,7 @@ const seedSampleVendors = async () => {
         tagline: 'Authentic Bhavnagri thick pepper gathiya with piping hot yellow kadhi',
         description:
           'The historical origin of Bhavnagri gathiya at Crescent Circle. Coarse gram flour gathiya seasoned with whole black peppercorns and ajwain.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543233', whatsapp: '+919876543233' },
         address: {
           street: 'Crescent Circle Corner Stall #2',
@@ -1543,7 +1552,7 @@ const seedSampleVendors = async () => {
         tagline: 'Fizzy fresh lemon sodas, ginger sugarcane juice, and masala shikanji',
         description:
           'Refreshing street stall at Ghogha Circle. Classic marble soda bottles, fresh mint lemonades, and sugarcane juice extracted on-demand.',
-        categories: [categoryMap['beverages-juices']],
+                categories: [categoryMap['beverages-chai']],
         contactPublic: { phone: '+919876543234', whatsapp: '+919876543234' },
         address: {
           street: 'Ghogha Circle Kiosk Zone',
@@ -1591,7 +1600,7 @@ const seedSampleVendors = async () => {
         tagline: 'World-renowned crunchy dry fruit spiced kachoris with sweet chutney',
         description:
           'Jamnagar famous export quality dry fruit kachoris at Bedi Gate. Made with cashews, raisins, cloves, cinnamon, and savory gram flour in crisp pastry shells.',
-        categories: [categoryMap['street-food']],
+                categories: [categoryMap['bakery-sweets'], categoryMap['street-food-chaat']],
         contactPublic: { phone: '+919876543235', whatsapp: '+919876543235' },
         address: {
           street: 'Bedi Gate Historical Lane Stall #7',
@@ -1635,7 +1644,7 @@ const seedSampleVendors = async () => {
         tagline: 'Handmade brass pooja bells, oil diyas, and traditional home ornaments',
         description:
           'Jamnagar Brass City heritage stall. Direct manufacture brass lamps, ornate temple bells, antique polished urli bowls, and bronze utensils.',
-        categories: [categoryMap['handcrafts'], categoryMap['household-essentials']],
+                categories: [categoryMap['repairs-services'], categoryMap['household-essentials']],
         contactPublic: { phone: '+919876543236', whatsapp: '+919876543236' },
         address: {
           street: 'Chandi Bazar Metal Arcade',
@@ -1683,7 +1692,7 @@ const seedSampleVendors = async () => {
         tagline: 'Raw Girnar forest honey, wild amla candy, and herbal forest tea',
         description:
           'Located at the starting base of Mount Girnar. Sourcing unheated wild forest honey from tribal gatherers, alongside amla murabba, shilajit, and natural Ayurvedic roots.',
-        categories: [categoryMap['fresh-produce'], categoryMap['household-essentials']],
+                categories: [categoryMap['repairs-services'], categoryMap['household-essentials']],
         contactPublic: { phone: '+919876543237', whatsapp: '+919876543237' },
         address: {
           street: 'Bhavnath Taleti Pilgrim Road',
@@ -1731,7 +1740,7 @@ const seedSampleVendors = async () => {
         tagline: 'Slow-churned pure milk mawa kulfi on wooden sticks and thick kesar rabdi',
         description:
           'In the milk capital of India. Using pure fresh Buffalo milk from Anand dairies, slow boiled for 6 hours with saffron, pistachios, and green cardamom.',
-        categories: [categoryMap['street-food'], categoryMap['beverages-juices']],
+                categories: [categoryMap['bakery-sweets'], categoryMap['beverages-juices']],
         contactPublic: { phone: '+919876543238', whatsapp: '+919876543238' },
         address: {
           street: 'Amul Dairy Road Promenade',
@@ -1779,7 +1788,7 @@ const seedSampleVendors = async () => {
         tagline: 'Original Mandvi double-roti Dabeli and Kutchi lippan art wall decor',
         description:
           'Located in Bhuj historic Shroff Bazar. Serving the true birthplace recipe of Kutchi dabeli roasted in peanut oil alongside beautiful white clay mud-mirror lippan wall panels.',
-        categories: [categoryMap['street-food'], categoryMap['handcrafts']],
+                categories: [categoryMap['street-food-chaat'], categoryMap['repairs-services'], categoryMap['handcrafts']],
         contactPublic: { phone: '+919876543239', whatsapp: '+919876543239' },
         address: {
           street: 'Shroff Bazar Heritage Lane Stall #4',
@@ -1837,7 +1846,7 @@ const seedSampleVendors = async () => {
             availabilityStatus: 'open',
             address: item.profile.address,
             location: item.profile.location,
-            categories: item.profile.categories,
+            categories: (item.profile.categories || []).filter(Boolean),
             tagline: item.profile.tagline,
             description: item.profile.description
           }

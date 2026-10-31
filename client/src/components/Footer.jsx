@@ -37,8 +37,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/explore?category=street-food-snacks" className="hover:text-[#16803D] transition-colors">
-                  Street Food & Snacks
+                <Link to="/explore?category=street-food-chaat" className="hover:text-[#16803D] transition-colors">
+                  Street Food & Chaat
                 </Link>
               </li>
               <li>
@@ -47,8 +47,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/explore?category=chai-beverages" className="hover:text-[#16803D] transition-colors">
-                  Chai & Refreshments
+                <Link to="/explore?category=beverages-chai" className="hover:text-[#16803D] transition-colors">
+                  Beverages & Chai
+                </Link>
+              </li>
+              <li>
+                <Link to="/explore?category=bakery-sweets" className="hover:text-[#16803D] transition-colors">
+                  Bakery & Sweets
+                </Link>
+              </li>
+              <li>
+                <Link to="/explore?category=fast-food-meals" className="hover:text-[#16803D] transition-colors">
+                  Fast Food & Meals
                 </Link>
               </li>
             </ul>

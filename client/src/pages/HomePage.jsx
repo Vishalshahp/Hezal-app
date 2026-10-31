@@ -21,8 +21,11 @@ import {
   Palette,
   Shirt,
   Flower2,
-  HeartHandshake
+  HeartHandshake,
+  Flame,
+  Footprints
 } from 'lucide-react';
+import { FAMOUS_HUBS } from '../data/marketHubs';
 
 // Category icon helper
 function getCategoryIcon(slug = '', name = '') {
@@ -407,6 +410,67 @@ export default function HomePage() {
             No categories available yet.
           </div>
         )}
+      </section>
+
+      {/* 2.5 Section: Famous Gujarat Food Streets & Market Hubs */}
+      <section className="space-y-6">
+        <div className="flex items-end justify-between">
+          <div>
+            <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">
+              <Flame className="h-3.5 w-3.5" />
+              <span>Gujarat Street Food Culture</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-[#17231D] tracking-tight">
+              Famous Khau Galis & Street Hubs
+            </h2>
+            <p className="text-xs sm:text-sm text-[#647067] mt-0.5">
+              Iconic food streets and walking markets where Gujarat’s best street stalls assemble
+            </p>
+          </div>
+
+          <Link
+            to="/explore"
+            className="text-xs sm:text-sm font-bold text-[#16803D] hover:text-[#14532D] inline-flex items-center space-x-1 transition-colors group"
+          >
+            <span>Explore on Map</span>
+            <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {FAMOUS_HUBS.map((hub) => (
+            <div
+              key={hub.id}
+              onClick={() => navigate(`/explore?hub=${hub.id}&area=${encodeURIComponent(hub.areaKeyword)}`)}
+              className="group p-5 rounded-3xl bg-white border border-[#E5EAE5] hover:border-[#16803D] hover:shadow-card-hover hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer space-y-3"
+            >
+              <div className="flex items-start justify-between">
+                <span className="text-3xl p-2 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] group-hover:scale-110 transition-transform">
+                  {hub.icon}
+                </span>
+                <span className="text-[11px] font-bold text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7] px-2.5 py-0.5 rounded-full">
+                  {hub.city}
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <h3 className="font-extrabold text-base text-[#17231D] group-hover:text-[#16803D] transition-colors leading-snug">
+                  {hub.name}
+                </h3>
+                <p className="text-xs text-[#647067] line-clamp-1 leading-relaxed">
+                  {hub.subtitle}
+                </p>
+              </div>
+
+              <div className="pt-2.5 border-t border-[#E5EAE5] flex items-center justify-between text-xs text-[#16803D] font-bold">
+                <span className="text-[11px] text-[#647067] font-normal">{hub.stallCountHint}</span>
+                <span className="group-hover:translate-x-1 transition-transform flex items-center">
+                  Explore Stalls →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* 3. Section B — Nearby / Verified Vendors */}

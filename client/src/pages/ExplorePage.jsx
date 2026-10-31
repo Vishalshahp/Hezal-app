@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import vendorService from '../services/vendorService';
 import VendorCard from '../components/VendorCard';
 import InteractiveMap from '../components/InteractiveMap';
 import { filterGujaratLocations } from '../data/gujaratLocations';
+import { FAMOUS_HUBS } from '../data/marketHubs';
+import { calculateDistanceKm } from '../utils/distance';
 import {
   Search,
   MapPin,
@@ -19,7 +21,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Building2,
-  Sparkles
+  Sparkles,
+  Flame,
+  Footprints,
+  Compass,
+  ArrowUpDown
 } from 'lucide-react';
 
 export default function ExplorePage() {
@@ -29,6 +35,8 @@ export default function ExplorePage() {
   const qParam = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || '';
   const areaParam = searchParams.get('area') || '';
+  const hubParam = searchParams.get('hub') || '';
+  const openParam = searchParams.get('open') === 'true';
   const latParam = searchParams.get('lat') ? parseFloat(searchParams.get('lat')) : null;
   const lngParam = searchParams.get('lng') ? parseFloat(searchParams.get('lng')) : null;
   const radiusParam = searchParams.get('radius') ? parseFloat(searchParams.get('radius')) : 5;
@@ -37,6 +45,9 @@ export default function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState(qParam);
   const [selectedCategory, setSelectedCategory] = useState(categoryParam);
   const [selectedArea, setSelectedArea] = useState(areaParam);
+  const [selectedHub, setSelectedHub] = useState(hubParam);
+  const [onlyOpenNow, setOnlyOpenNow] = useState(openParam);
+  const [sortByNearest, setSortByNearest] = useState(false);
   const [radiusKm, setRadiusKm] = useState(radiusParam);
   const [page, setPage] = useState(pageParam);
 
@@ -93,10 +104,13 @@ export default function ExplorePage() {
     setSearchTerm(qParam);
     setSelectedCategory(categoryParam);
     setSelectedArea(areaParam);
+    setSelectedHub(hubParam);
+    setOnlyOpenNow(openParam);
     if (latParam && lngParam) {
       setUserLocation({ latitude: latParam, longitude: lngParam });
+      setSortByNearest(true);
     }
-  }, [qParam, categoryParam, areaParam, latParam, lngParam]);
+  }, [qParam, categoryParam, areaParam, hubParam, openParam, latParam, lngParam]);
 
   // Update URL search parameters
   const updateUrlParams = useCallback(
@@ -132,7 +146,7 @@ export default function ExplorePage() {
           q: searchTerm.trim() || undefined,
           category: selectedCategory || undefined,
           page,
-          limit: 12
+          limit: 18
         });
       } else {
         // Standard Discovery / Area Search
@@ -141,7 +155,7 @@ export default function ExplorePage() {
           category: selectedCategory || undefined,
           area: selectedArea.trim() || undefined,
           page,
-          limit: 12
+          limit: 18
         });
       }
 
@@ -182,6 +196,7 @@ export default function ExplorePage() {
         const { latitude, longitude } = position.coords;
         const coords = { latitude, longitude };
         setUserLocation(coords);
+        setSortByNearest(true);
         setPage(1);
 
         updateUrlParams({
@@ -210,6 +225,7 @@ export default function ExplorePage() {
   // Clear Location (Switch back to general discovery)
   const handleClearLocation = () => {
     setUserLocation(null);
+    setSortByNearest(false);
     setGeoNotice(null);
     setPage(1);
 
@@ -234,7 +250,10 @@ export default function ExplorePage() {
     setSearchTerm('');
     setSelectedCategory('');
     setSelectedArea('');
+    setSelectedHub('');
+    setOnlyOpenNow(false);
     setUserLocation(null);
+    setSortByNearest(false);
     setRadiusKm(5);
     setPage(1);
     setGeoNotice(null);
@@ -250,6 +269,49 @@ export default function ExplorePage() {
     updateUrlParams({ category: nextCat || undefined, page: 1 });
   };
 
+  // Famous Street Hub chip toggle
+  const handleHubClick = (hub) => {
+    if (selectedHub === hub.id) {
+      setSelectedHub('');
+      setSelectedArea('');
+      updateUrlParams({ hub: undefined, area: undefined, page: 1 });
+    } else {
+      setSelectedHub(hub.id);
+      setSelectedArea(hub.areaKeyword);
+      setPage(1);
+      updateUrlParams({ hub: hub.id, area: hub.areaKeyword, page: 1 });
+    }
+  };
+
+  // Filter & Sort Vendors in memory
+  const displayedVendors = useMemo(() => {
+    let list = [...vendors];
+
+    // Filter by Open Now
+    if (onlyOpenNow) {
+      list = list.filter((v) => v.availabilityStatus === 'open');
+    }
+
+    // Sort by nearest distance if enabled & userLocation known
+    if (sortByNearest && userLocation?.latitude && userLocation?.longitude) {
+      list.sort((a, b) => {
+        const aCoords = a.location?.coordinates;
+        const bCoords = b.location?.coordinates;
+        const distA =
+          aCoords && aCoords.length === 2
+            ? calculateDistanceKm(userLocation.latitude, userLocation.longitude, aCoords[1], aCoords[0])
+            : 999999;
+        const distB =
+          bCoords && bCoords.length === 2
+            ? calculateDistanceKm(userLocation.latitude, userLocation.longitude, bCoords[1], bCoords[0])
+            : 999999;
+        return distA - distB;
+      });
+    }
+
+    return list;
+  }, [vendors, onlyOpenNow, sortByNearest, userLocation]);
+
   // Handle Vendor Card selection
   const handleVendorSelect = (vendor) => {
     setSelectedVendor(vendor);
@@ -261,15 +323,15 @@ export default function ExplorePage() {
       <div className="bg-white rounded-3xl border border-[#E5EAE5] p-5 sm:p-7 shadow-card space-y-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-1.5 text-xs font-semibold text-[#16803D] uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#16803D] uppercase tracking-wider mb-1">
               <Store className="h-3.5 w-3.5" />
-              <span>Hyperlocal Stalls & Carts</span>
+              <span>Hyperlocal In-Person Discovery</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-[#17231D] tracking-tight">
               Explore Local Stalls
             </h1>
             <p className="text-xs sm:text-sm text-[#647067] mt-0.5">
-              Browse approved roadside vendors, discover nearby products, and get direct directions.
+              Check physical stall areas, live opening hours, menu prices, and get direct turn-by-turn walking directions.
             </p>
           </div>
 
@@ -314,15 +376,61 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* Gujarat City Hub Quick Filters */}
+        {/* Famous Street Hubs / Khau Galis Filter Strip */}
+        <div className="pt-1 border-t border-[#E5EAE5]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#17231D] uppercase tracking-wider flex items-center">
+              <Flame className="h-3.5 w-3.5 mr-1 text-orange-500" /> Famous Food Streets & Market Hubs:
+            </span>
+            {selectedHub && (
+              <button
+                onClick={() => {
+                  setSelectedHub('');
+                  setSelectedArea('');
+                  updateUrlParams({ hub: undefined, area: undefined, page: 1 });
+                }}
+                className="text-[11px] text-[#16803D] hover:underline font-bold"
+              >
+                Clear Hub
+              </button>
+            )}
+          </div>
+          <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+            {FAMOUS_HUBS.map((hub) => {
+              const isSelected = selectedHub === hub.id;
+              return (
+                <button
+                  key={hub.id}
+                  type="button"
+                  onClick={() => handleHubClick(hub)}
+                  className={`px-3.5 py-2 rounded-2xl font-bold transition-all shrink-0 cursor-pointer flex items-center space-x-1.5 border ${
+                    isSelected
+                      ? 'bg-[#14532D] text-white border-[#14532D] shadow-xs scale-102 ring-2 ring-[#22C55E]/40'
+                      : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5] hover:border-[#16803D]/40'
+                  }`}
+                >
+                  <span className="text-base">{hub.icon}</span>
+                  <div className="text-left">
+                    <span className="block leading-tight">{hub.name}</span>
+                    <span className={`block text-[10px] font-normal leading-tight ${isSelected ? 'text-[#86EFAC]' : 'text-[#647067]'}`}>
+                      {hub.city} • {hub.stallCountHint}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Gujarat City Quick Filters */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none text-xs pt-1">
           <span className="text-[#647067] font-bold text-[11px] uppercase tracking-wider shrink-0 mr-1 flex items-center">
-            <Building2 className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> Gujarat Hubs:
+            <Building2 className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> Major Cities:
           </span>
-          {['All Gujarat', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar'].map((c) => {
+          {['All Gujarat', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar', 'Bhavnagar', 'Jamnagar', 'Junagadh', 'Anand', 'Bhuj'].map((c) => {
             const isSelected =
               selectedArea.toLowerCase() === c.toLowerCase() ||
-              (c === 'All Gujarat' && !selectedArea);
+              (c === 'All Gujarat' && !selectedArea && !selectedHub);
             return (
               <button
                 key={c}
@@ -330,10 +438,11 @@ export default function ExplorePage() {
                 onClick={() => {
                   const targetArea = c === 'All Gujarat' ? '' : c;
                   setSelectedArea(targetArea);
+                  setSelectedHub('');
                   setPage(1);
-                  updateUrlParams({ area: targetArea || undefined, page: 1 });
+                  updateUrlParams({ area: targetArea || undefined, hub: undefined, page: 1 });
                 }}
-                className={`px-3.5 py-1.5 rounded-full font-semibold transition-all shrink-0 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full font-semibold transition-all shrink-0 cursor-pointer ${
                   isSelected
                     ? 'bg-[#16803D] text-white shadow-xs'
                     : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border border-[#E5EAE5] hover:border-[#A3D5AF]'
@@ -357,7 +466,7 @@ export default function ExplorePage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search product, stall name, item..."
+              placeholder="Search product, stall name, item (pani puri, locho...)"
               className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5]/50 focus:bg-white text-xs sm:text-sm text-[#17231D] placeholder:text-[#647067] focus:outline-none focus:border-[#16803D] focus:ring-2 focus:ring-[#16803D]/20 transition-all"
             />
             {searchTerm && (
@@ -390,7 +499,7 @@ export default function ExplorePage() {
                   updateUrlParams({ area: selectedArea.trim() || undefined, page: 1 });
                 }, 200);
               }}
-              placeholder="Locality (e.g. Navrangpura, Vastrapur)..."
+              placeholder="Locality / Landmark (e.g. Law Garden)..."
               className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5]/50 focus:bg-white text-xs sm:text-sm text-[#17231D] placeholder:text-[#647067] focus:outline-none focus:border-[#16803D] focus:ring-2 focus:ring-[#16803D]/20 transition-all"
             />
             {selectedArea && (
@@ -398,7 +507,8 @@ export default function ExplorePage() {
                 type="button"
                 onClick={() => {
                   setSelectedArea('');
-                  updateUrlParams({ area: undefined, page: 1 });
+                  setSelectedHub('');
+                  updateUrlParams({ area: undefined, hub: undefined, page: 1 });
                 }}
                 className="absolute right-3 top-3.5 text-[#647067] hover:text-[#17231D]"
               >
@@ -463,10 +573,10 @@ export default function ExplorePage() {
               className="flex-1 py-2.5 sm:py-3 px-4 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <Search className="h-4 w-4" />
-              <span>Search</span>
+              <span>Search Stalls</span>
             </button>
 
-            {(searchTerm || selectedCategory || selectedArea || userLocation) && (
+            {(searchTerm || selectedCategory || selectedArea || userLocation || selectedHub || onlyOpenNow) && (
               <button
                 type="button"
                 onClick={handleResetFilters}
@@ -479,13 +589,14 @@ export default function ExplorePage() {
           </div>
         </form>
 
-        {/* Location & Radius Action Row */}
+        {/* Location, Distance & Open Now Row */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* GPS Location Pill */}
             {userLocation ? (
               <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#EDF7EF] border border-[#D1EAD7] text-[#16803D]">
-                <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
-                <span className="font-bold">Location Active</span>
+                <Footprints className="h-3.5 w-3.5 text-[#16803D]" />
+                <span className="font-bold">Your Location Detected</span>
                 <div className="flex items-center space-x-1 pl-2 border-l border-[#D1EAD7]">
                   <span className="text-[#647067]">Within:</span>
                   <select
@@ -498,7 +609,7 @@ export default function ExplorePage() {
                     }}
                     className="bg-transparent font-bold text-[#14532D] focus:outline-none cursor-pointer"
                   >
-                    <option value={1}>1 km</option>
+                    <option value={1}>1 km (Walking)</option>
                     <option value={2}>2 km</option>
                     <option value={5}>5 km</option>
                     <option value={10}>10 km</option>
@@ -518,29 +629,60 @@ export default function ExplorePage() {
                 type="button"
                 onClick={handleRequestLocation}
                 disabled={geoLoading}
-                className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border border-[#E5EAE5] hover:border-[#16803D] bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] hover:text-[#16803D] font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-2xs"
+                aria-label="Use My Current Location"
+                title="Use My Current Location"
+                className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border border-[#E5EAE5] hover:border-[#16803D] bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] hover:text-[#16803D] font-bold transition-all disabled:opacity-50 cursor-pointer shadow-2xs"
               >
                 {geoLoading ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-[#16803D]" />
                 ) : (
                   <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
                 )}
-                <span>{geoLoading ? 'Detecting coordinates...' : 'Use My Current Location'}</span>
+                <span>{geoLoading ? 'Detecting your spot...' : 'Stalls Near Me'}</span>
               </button>
             )}
 
-            {/* Area fallback indicator */}
-            {selectedArea && (
-              <span className="inline-flex items-center px-3 py-1 rounded-xl bg-[#FAFAF5] border border-[#E5EAE5] text-[#17231D] font-medium text-xs">
-                <MapPin className="h-3 w-3 mr-1 text-[#16803D]" />
-                Area: {selectedArea}
+            {/* "Open Right Now" Toggle Switch */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = !onlyOpenNow;
+                setOnlyOpenNow(next);
+                updateUrlParams({ open: next ? 'true' : undefined, page: 1 });
+              }}
+              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                onlyOpenNow
+                  ? 'bg-[#16803D] text-white border-[#16803D] shadow-xs'
+                  : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5]'
+              }`}
+            >
+              <span className="relative flex h-2 w-2 mr-0.5">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${onlyOpenNow ? 'bg-white' : 'bg-[#22C55E]'}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${onlyOpenNow ? 'bg-white' : 'bg-[#16803D]'}`}></span>
               </span>
+              <span>Open Right Now</span>
+            </button>
+
+            {/* Sort by Nearest Toggle */}
+            {userLocation && (
+              <button
+                type="button"
+                onClick={() => setSortByNearest(!sortByNearest)}
+                className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                  sortByNearest
+                    ? 'bg-[#14532D] text-white border-[#14532D]'
+                    : 'bg-[#FAFAF5] text-[#17231D] border-[#E5EAE5]'
+                }`}
+              >
+                <ArrowUpDown className="h-3.5 w-3.5" />
+                <span>{sortByNearest ? 'Sorted: Nearest First' : 'Sort: Distance'}</span>
+              </button>
             )}
           </div>
 
           {/* Results Count */}
           <div className="text-[#647067] font-medium text-xs">
-            Found <span className="font-bold text-[#17231D]">{pagination.total}</span> local stall{pagination.total === 1 ? '' : 's'}
+            Showing <span className="font-bold text-[#17231D]">{displayedVendors.length}</span> stall{displayedVendors.length === 1 ? '' : 's'}
           </div>
         </div>
 
@@ -599,7 +741,7 @@ export default function ExplorePage() {
         <div className="h-96 rounded-3xl bg-white border border-[#E5EAE5] flex flex-col items-center justify-center space-y-3 shadow-subtle">
           <Loader2 className="h-8 w-8 animate-spin text-[#16803D]" />
           <span className="text-xs font-semibold text-[#647067]">
-            Discovering verified vendor stalls...
+            Locating verified physical vendor stalls...
           </span>
         </div>
       ) : errorMsg ? (
@@ -618,19 +760,29 @@ export default function ExplorePage() {
             </button>
           </div>
         </div>
-      ) : vendors.length === 0 ? (
+      ) : displayedVendors.length === 0 ? (
         <div className="rounded-3xl bg-white border border-[#E5EAE5] p-10 sm:p-16 text-center space-y-4 shadow-subtle">
           <div className="h-16 w-16 rounded-2xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center mx-auto">
             <Store className="h-8 w-8" />
           </div>
           <h3 className="font-extrabold text-xl font-display text-[#17231D]">No Matching Stalls Found</h3>
           <p className="text-xs sm:text-sm text-[#647067] max-w-md mx-auto leading-relaxed">
-            We couldn't find any vendors matching your current search criteria or distance. Try expanding your search distance, selecting a different category, or resetting filters.
+            {onlyOpenNow
+              ? 'There are no stalls open right now under your selected filters. Try unchecking "Open Right Now" to see operating hours and plan a visit.'
+              : "We couldn't find any vendor stalls matching your search criteria. Try selecting a famous street hub or clearing filters."}
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap justify-center gap-2">
+            {onlyOpenNow && (
+              <button
+                onClick={() => setOnlyOpenNow(false)}
+                className="px-5 py-2.5 rounded-xl bg-[#16803D] text-white text-xs font-bold shadow-xs hover:bg-[#14532D] transition-all cursor-pointer"
+              >
+                Show All Hours
+              </button>
+            )}
             <button
               onClick={handleResetFilters}
-              className="px-6 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] hover:bg-white text-xs font-bold text-[#17231D] transition-all cursor-pointer"
             >
               Reset Filters
             </button>
@@ -644,10 +796,11 @@ export default function ExplorePage() {
               {/* Left Column: Vendor Cards List */}
               <div className="lg:col-span-6 space-y-5">
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                  {vendors.map((vendor) => (
+                  {displayedVendors.map((vendor) => (
                     <VendorCard
                       key={vendor.id}
                       vendor={vendor}
+                      userLocation={userLocation}
                       isSelected={selectedVendor && selectedVendor.id === vendor.id}
                       onSelect={() => handleVendorSelect(vendor)}
                     />
@@ -691,7 +844,7 @@ export default function ExplorePage() {
               {/* Right Column: Sticky Interactive Map */}
               <div className="lg:col-span-6 lg:sticky lg:top-24 rounded-2xl overflow-hidden border border-[#E5EAE5] shadow-card">
                 <InteractiveMap
-                  vendors={vendors}
+                  vendors={displayedVendors}
                   userLocation={userLocation}
                   selectedVendor={selectedVendor}
                   onSelectVendor={handleVendorSelect}
@@ -705,10 +858,11 @@ export default function ExplorePage() {
           {viewMode === 'list' && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vendors.map((vendor) => (
+                {displayedVendors.map((vendor) => (
                   <VendorCard
                     key={vendor.id}
                     vendor={vendor}
+                    userLocation={userLocation}
                     isSelected={selectedVendor && selectedVendor.id === vendor.id}
                     onSelect={() => handleVendorSelect(vendor)}
                   />
@@ -755,7 +909,7 @@ export default function ExplorePage() {
             <div className="space-y-3">
               <div className="rounded-3xl overflow-hidden border border-[#E5EAE5] shadow-card">
                 <InteractiveMap
-                  vendors={vendors}
+                  vendors={displayedVendors}
                   userLocation={userLocation}
                   selectedVendor={selectedVendor}
                   onSelectVendor={handleVendorSelect}
@@ -763,7 +917,7 @@ export default function ExplorePage() {
                 />
               </div>
               <p className="text-[11px] text-center text-[#647067]">
-                Click any stall pin on the map to view stall name, status, categories, and direct walking directions.
+                Click any stall pin on the map to view live opening status, address landmark, and get walking directions.
               </p>
             </div>
           )}

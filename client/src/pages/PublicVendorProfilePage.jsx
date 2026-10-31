@@ -23,7 +23,11 @@ import {
   Search,
   ShieldCheck,
   Truck,
-  Sparkles
+  Sparkles,
+  Car,
+  QrCode,
+  Compass,
+  Footprints
 } from 'lucide-react';
 
 export default function PublicVendorProfilePage() {
@@ -48,63 +52,26 @@ export default function PublicVendorProfilePage() {
           setErrorMsg(res.message || 'Vendor stall not found.');
         }
       } catch (err) {
-        console.error('Failed to load vendor stall profile:', err);
-        setErrorMsg(
-          err.message || 'This vendor stall is currently not publicly available or pending review.'
-        );
+        console.error('Failed to load public stall profile:', err);
+        setErrorMsg(err.message || 'Failed to retrieve vendor details.');
       } finally {
         setLoading(false);
       }
     }
+
     loadStall();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="h-96 rounded-3xl bg-white border border-[#E5EAE5] flex flex-col items-center justify-center space-y-3 shadow-card">
-        <Loader2 className="h-8 w-8 animate-spin text-[#16803D]" />
-        <span className="text-xs font-semibold text-[#647067]">
-          Loading vendor stall details...
-        </span>
-      </div>
-    );
-  }
-
-  if (errorMsg || !profile) {
-    return (
-      <div className="max-w-2xl mx-auto my-12 rounded-3xl bg-white border border-[#E5EAE5] p-10 sm:p-14 text-center space-y-4 shadow-card">
-        <div className="h-16 w-16 rounded-2xl bg-[#FAFAF5] text-[#647067] border border-[#E5EAE5] flex items-center justify-center mx-auto">
-          <Store className="h-8 w-8" />
-        </div>
-        <h2 className="text-xl sm:text-2xl font-bold font-display text-[#17231D]">
-          Vendor Stall Unavailable
-        </h2>
-        <p className="text-xs sm:text-sm text-[#647067] leading-relaxed max-w-md mx-auto">
-          {errorMsg || 'The requested vendor stall profile is not available or has not yet been approved.'}
-        </p>
-        <div className="pt-2">
-          <Link
-            to="/explore"
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#16803D] text-white text-xs sm:text-sm font-semibold hover:bg-[#14532D] shadow-xs transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Explore Stalls</span>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Directions URL
+  // Turn-by-turn navigation URL for Google Maps
   const getDirectionsUrl = () => {
-    if (profile.location?.coordinates && profile.location.coordinates.length === 2) {
+    if (profile?.location?.coordinates && profile.location.coordinates.length === 2) {
       const [lng, lat] = profile.location.coordinates;
-      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
     }
-    const addressStr = [profile.address?.street, profile.address?.area, profile.address?.city]
+    const addressStr = [profile?.address?.street, profile?.address?.area, profile?.address?.city]
       .filter(Boolean)
       .join(', ');
-    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressStr)}`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressStr)}&travelmode=walking`;
   };
 
   const formatLastUpdated = (dateStr) => {
@@ -119,32 +86,88 @@ export default function PublicVendorProfilePage() {
     return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
   };
 
-  // Check today's day of week
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const todayStr = daysOfWeek[new Date().getDay()];
-
-  // Filter products by keyword
-  const filteredProducts = products.filter((p) => {
-    if (!productSearch.trim()) return true;
-    const q = productSearch.toLowerCase();
-    return (
-      p.name?.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q) ||
-      p.category?.name?.toLowerCase().includes(q)
+  const getTodaySchedule = () => {
+    if (!profile?.openingHours || profile.openingHours.length === 0) return null;
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const currentDay = days[new Date().getDay()];
+    return profile.openingHours.find(
+      (h) => h.day?.toLowerCase().startsWith(currentDay.toLowerCase()) || currentDay.toLowerCase().startsWith(h.day?.toLowerCase() || '')
     );
-  });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-[500px] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-[#16803D]" />
+        <p className="text-xs font-semibold text-[#647067]">
+          Loading verified street stall profile...
+        </p>
+      </div>
+    );
+  }
+
+  if (errorMsg || !profile) {
+    return (
+      <div className="max-w-xl mx-auto my-12 bg-white rounded-3xl border border-[#E5EAE5] p-8 sm:p-12 text-center space-y-4 shadow-card">
+        <div className="h-16 w-16 rounded-2xl bg-red-50 text-red-600 border border-red-200 flex items-center justify-center mx-auto">
+          <AlertTriangle className="h-8 w-8" />
+        </div>
+        <h2 className="text-2xl font-extrabold font-display text-[#17231D]">
+          Vendor Stall Unavailable
+        </h2>
+        <p className="text-xs sm:text-sm text-[#647067] leading-relaxed">
+          {errorMsg || 'This vendor stall is currently not publicly available or pending review.'}
+        </p>
+        <div className="pt-2">
+          <Link
+            to="/explore"
+            className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Explore Stalls</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const todaySchedule = getTodaySchedule();
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayStr = days[new Date().getDay()];
+
+  // WhatsApp visit inquiry message
+  const whatsappVisitUrl = profile.contactPublic?.whatsapp
+    ? `https://wa.me/${profile.contactPublic.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+        `Namaste ${profile.stallName}! I am planning to visit your stall at ${profile.address?.area || 'your area'}. Are you open right now?`
+      )}`
+    : null;
+
+  // Filter products by search
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+      (p.description && p.description.toLowerCase().includes(productSearch.toLowerCase()))
+  );
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Top Navigation Back Link */}
-      <div>
+      {/* Breadcrumb Back Button */}
+      <div className="flex items-center justify-between">
         <Link
           to="/explore"
-          className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#647067] hover:text-[#16803D] transition-colors"
+          className="inline-flex items-center space-x-2 text-xs sm:text-sm font-bold text-[#647067] hover:text-[#16803D] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>Back to Explore</span>
+          <span>Back to Explore Local Stalls</span>
         </Link>
+
+        <button
+          onClick={() => setIsReportOpen(true)}
+          className="text-xs font-semibold text-[#647067] hover:text-red-600 transition-colors flex items-center space-x-1"
+        >
+          <AlertCircle className="h-3.5 w-3.5" />
+          <span>Report incorrect location or closed stall</span>
+        </button>
       </div>
 
       {/* 1. Stall Hero & Identification Card */}
@@ -215,12 +238,12 @@ export default function PublicVendorProfilePage() {
                 {profile.stallType === 'mobile' ? (
                   <>
                     <Truck className="h-3.5 w-3.5 mr-1.5 text-[#22C55E]" />
-                    Mobile Pushcart / Stall
+                    Mobile Pushcart / Thela
                   </>
                 ) : (
                   <>
                     <Store className="h-3.5 w-3.5 mr-1.5 text-[#22C55E]" />
-                    Fixed Kiosk / Stand
+                    Fixed Street Kiosk
                   </>
                 )}
               </span>
@@ -228,7 +251,7 @@ export default function PublicVendorProfilePage() {
 
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur border border-white/30 text-white">
               <ShieldCheck className="h-3.5 w-3.5 mr-1.5 text-[#22C55E]" />
-              Verified Vendor
+              Verified Community Spot
             </span>
           </div>
         </div>
@@ -266,7 +289,7 @@ export default function PublicVendorProfilePage() {
               </p>
             </div>
 
-            {/* Quick Actions (Directions & Contact) */}
+            {/* Quick Actions (In-Person Directions & Contact) */}
             <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0 min-w-[240px]">
               <a
                 href={getDirectionsUrl()}
@@ -279,15 +302,15 @@ export default function PublicVendorProfilePage() {
                 <ExternalLink className="h-3.5 w-3.5 text-white/70" />
               </a>
 
-              {profile.contactPublic?.whatsapp && (
+              {whatsappVisitUrl && (
                 <a
-                  href={`https://wa.me/${profile.contactPublic.whatsapp.replace(/[^0-9]/g, '')}`}
+                  href={whatsappVisitUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border border-[#D1EAD7] bg-[#EDF7EF] text-[#16803D] hover:bg-[#D1EAD7]/60 text-xs sm:text-sm font-bold transition-all"
                 >
                   <MessageCircle className="h-4 w-4 text-[#16803D]" />
-                  <span>WhatsApp Inquiry</span>
+                  <span>Check If Open (WhatsApp)</span>
                 </a>
               )}
 
@@ -305,7 +328,73 @@ export default function PublicVendorProfilePage() {
         </div>
       </div>
 
-      {/* 2. Grid: Location & Schedule */}
+      {/* 2. Physical In-Person Visiting Guide & Area Features */}
+      <div className="bg-white rounded-3xl border border-[#E5EAE5] p-6 sm:p-8 space-y-5 shadow-card">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2.5">
+            <div className="h-8 w-8 rounded-xl bg-[#EDF7EF] text-[#16803D] flex items-center justify-center border border-[#D1EAD7]">
+              <Compass className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-base sm:text-lg text-[#17231D] font-display">
+                Physical Visiting & Area Guide
+              </h3>
+              <p className="text-xs text-[#647067]">
+                Practical tips and street cues before you walk or drive to this stall
+              </p>
+            </div>
+          </div>
+          <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7]">
+            <Footprints className="h-3 w-3 mr-1" /> Walk-In Welcome
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+          {/* Parking Card */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-[#16803D]">
+              <Car className="h-4 w-4 mr-1.5" /> Parking Advice
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              Street two-wheeler parking available along the road. Pedestrian-friendly evening market zone.
+            </p>
+          </div>
+
+          {/* Setup & Seating */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-[#16803D]">
+              <Store className="h-4 w-4 mr-1.5" /> Physical Setup
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              {profile.stallType === 'mobile'
+                ? 'Mobile pushcart street setup with standing counter.'
+                : 'Roadside fixed counter with shaded ordering counter.'}
+            </p>
+          </div>
+
+          {/* Payment */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-[#16803D]">
+              <QrCode className="h-4 w-4 mr-1.5" /> Direct Payment
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              UPI QR Code (GPay, PhonePe, Paytm) & Cash accepted directly at counter. 0% middleman fees.
+            </p>
+          </div>
+
+          {/* Best Time to Visit */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-[#16803D]">
+              <Sparkles className="h-4 w-4 mr-1.5" /> Best Time to Visit
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              Evenings 6:30 PM – 10:30 PM for fresh hot preparations and lively local street crowd.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Grid: Location & Schedule */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Interactive Map & Physical Stall Location */}
         <div className="lg:col-span-7 space-y-4">
@@ -322,7 +411,7 @@ export default function PublicVendorProfilePage() {
 
               {profile.locationUpdatedAt && (
                 <span className="text-[11px] text-[#647067] font-medium">
-                  Updated: {formatLastUpdated(profile.locationUpdatedAt)}
+                  Confirmed: {formatLastUpdated(profile.locationUpdatedAt)}
                 </span>
               )}
             </div>
@@ -335,7 +424,7 @@ export default function PublicVendorProfilePage() {
                 {profile.address?.postalCode}
               </p>
               {profile.address?.landmark && (
-                <p className="text-[#16803D] font-medium flex items-center">
+                <p className="text-[#16803D] font-medium flex items-center pt-0.5">
                   <Sparkles className="h-3 w-3 mr-1" /> Landmark: {profile.address.landmark}
                 </p>
               )}
@@ -352,7 +441,7 @@ export default function PublicVendorProfilePage() {
                   />
                 </div>
                 <p className="text-[11px] text-[#647067] text-center">
-                  Walking directions open directly in your device Google Maps app.
+                  Use navigation controls above to guide yourself turn-by-turn to this exact spot.
                 </p>
               </div>
             )}
@@ -413,7 +502,7 @@ export default function PublicVendorProfilePage() {
         </div>
       </div>
 
-      {/* 3. Product Catalogue Section */}
+      {/* 4. Product Catalogue Section (Counter Menu Preview) */}
       <div className="bg-white rounded-3xl border border-[#E5EAE5] p-6 sm:p-8 lg:p-10 space-y-6 shadow-card">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -422,11 +511,11 @@ export default function PublicVendorProfilePage() {
                 <Package className="h-4 w-4" />
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-display text-[#17231D]">
-                Stall Product Catalogue
+                Counter Menu & Item Prices
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-[#647067] mt-1">
-              Browse available items currently offered at this stall
+              Check in-person specialties and prices before you visit • Pay directly at the stall
             </p>
           </div>
 
@@ -438,7 +527,7 @@ export default function PublicVendorProfilePage() {
                 type="text"
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                placeholder="Search products..."
+                placeholder="Search counter menu items..."
                 className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] text-xs text-[#17231D] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D] transition-all"
               />
             </div>
@@ -473,7 +562,7 @@ export default function PublicVendorProfilePage() {
 
                   <div className="flex items-center justify-between pt-1">
                     <span className="inline-flex items-center text-[10px] font-bold text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7] px-2.5 py-0.5 rounded-full">
-                      <CheckCircle2 className="h-2.5 w-2.5 mr-1" /> In Stock
+                      <CheckCircle2 className="h-2.5 w-2.5 mr-1" /> Available at Stall
                     </span>
 
                     {prod.category?.name && (
@@ -483,7 +572,7 @@ export default function PublicVendorProfilePage() {
                     )}
                   </div>
 
-                  <h4 className="font-bold text-base text-[#17231D] leading-tight font-display">
+                  <h4 className="font-extrabold text-base text-[#17231D] line-clamp-1 leading-snug">
                     {prod.name}
                   </h4>
 
@@ -495,48 +584,47 @@ export default function PublicVendorProfilePage() {
                 </div>
 
                 <div className="pt-3 border-t border-[#E5EAE5] flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#647067]">Price</span>
-                  {prod.price !== null && prod.price !== undefined ? (
-                    <span className="font-bold text-lg text-[#16803D]">₹{prod.price}</span>
-                  ) : (
-                    <span className="text-xs font-medium text-[#647067] italic">
-                      Price on request / variable
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-[#647067] block">
+                      Counter Price
                     </span>
-                  )}
+                    <span className="text-lg font-extrabold text-[#16803D]">
+                      ₹{prod.price}
+                    </span>
+                  </div>
+
+                  <a
+                    href={getDirectionsUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1 text-xs font-bold px-3 py-1.5 rounded-lg bg-[#FAFAF5] border border-[#E5EAE5] text-[#17231D] hover:bg-[#EDF7EF] hover:text-[#16803D] transition-colors"
+                  >
+                    <Navigation className="h-3 w-3" />
+                    <span>Navigate</span>
+                  </a>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="p-10 text-center bg-[#FAFAF5] rounded-2xl border border-[#E5EAE5] space-y-2">
-            <Package className="h-8 w-8 text-[#647067]/40 mx-auto" />
-            <p className="text-xs text-[#647067]">
+          <div className="text-center py-12 text-[#647067] space-y-2">
+            <Package className="h-8 w-8 mx-auto text-[#647067]/60" />
+            <p className="text-sm font-semibold">No menu items found</p>
+            <p className="text-xs">
               {productSearch
-                ? `No products match "${productSearch}".`
-                : 'This vendor has not published any active items to their catalogue yet.'}
+                ? `No products match "${productSearch}". Try another keyword.`
+                : 'This vendor has not published specific item prices yet. You can visit the stall directly!'}
             </p>
           </div>
         )}
-
-        {/* Community Moderation Footer */}
-        <div className="pt-6 border-t border-[#E5EAE5] flex flex-col sm:flex-row items-center justify-between text-xs text-[#647067] gap-3">
-          <span>Notice something wrong with this stall's location or listing?</span>
-          <button
-            onClick={() => setIsReportOpen(true)}
-            className="inline-flex items-center space-x-1.5 text-[#17231D] hover:text-red-700 font-semibold px-3 py-1.5 rounded-lg border border-[#E5EAE5] hover:border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
-          >
-            <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
-            <span>Report Inaccurate Listing</span>
-          </button>
-        </div>
       </div>
 
       {/* Report Modal */}
       <ReportModal
         isOpen={isReportOpen}
         onClose={() => setIsReportOpen(false)}
-        targetVendorId={id}
-        stallName={profile?.stallName || 'Vendor Stall'}
+        vendorId={profile.id}
+        vendorName={profile.stallName}
       />
     </div>
   );

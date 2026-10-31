@@ -61,6 +61,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Ramesh Famous Chaat & Pani Puri',
+        coverPhoto: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=900&q=80',
         stallType: 'mobile',
         tagline: 'Authentic Ahmedabad Khau Gali Pani Puri & Dahi Puri',
         description:
@@ -105,6 +106,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Manek Chowk Midnight Dosa & Sandwich',
+        coverPhoto: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Iconic Butter Gwalior Dosa, Chocolate Cheese Sandwich & Kulfi',
         description:
@@ -149,6 +151,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Law Garden Traditional Chaniya Choli & Handcrafts',
+        coverPhoto: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Authentic Gujarati mirror-work ghagras, bandhani kurtas & torans',
         description:
@@ -192,6 +195,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Geeta Traditional Terracotta & Pottery',
+        coverPhoto: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Handmade terracotta cookware, matkas, and festival diyas',
         description:
@@ -236,6 +240,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Kishanlal Seasonal Organic Fruits',
+        coverPhoto: 'https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=900&q=80',
         stallType: 'mobile',
         tagline: 'Farm-fresh Nagpur Oranges, Kashmiri Apples & Seasonal Mangoes',
         description:
@@ -280,6 +285,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Green Oasis Tender Coconut Water',
+        coverPhoto: 'https://images.unsplash.com/photo-1544681280-d25a782adc9b?auto=format&fit=crop&w=900&q=80',
         stallType: 'mobile',
         tagline: 'Chilled Malabar tender coconuts and freshly crushed sugarcane',
         description:
@@ -323,6 +329,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Master Duplicate Key & Locksmith Stall',
+        coverPhoto: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Instant computerized key duplication and lock repairs in 3 minutes',
         description:
@@ -366,6 +373,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Shree Ram Florist & Pooja Essentials',
+        coverPhoto: 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Fresh marigold garlands, lotus, tulsi plants and daily pooja flowers',
         description:
@@ -409,6 +417,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Old City Tailoring & Fast Alteration Stall',
+        coverPhoto: 'https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Instant pant shortening, suit alterations, and button fixing in 15 mins',
         description:
@@ -452,6 +461,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Sindhu Bhavan Chai Adda & Bun Maska',
+        coverPhoto: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Special Kadak Ginger Chai, Maska Bun, and Hot Onion Samosas',
         description:
@@ -499,6 +509,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Jani Surti Butter Locho & Khaman',
+        coverPhoto: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'World-famous authentic Surti Locho, Sev Khamani & Green Chutney',
         description:
@@ -543,6 +554,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Dumas Beach Sweet Corn & Roasted Bhutta',
+        coverPhoto: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=900&q=80',
         stallType: 'mobile',
         tagline: 'Charcoal roasted spicy lemon bhutta and crispy sweet corn pakodas',
         description:
@@ -586,6 +598,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Chauta Bazar Bandhani & Dupatta Bazaar',
+        coverPhoto: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Authentic Surti tie-and-dye bandhani dupattas, sarees and dress materials',
         description:
@@ -629,6 +642,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Rander Al-Burhan Street Biryani & Tawa Kebab',
+        coverPhoto: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Traditional wood-cooked Randeri spiced dum biryani and seekh kebabs',
         description:
@@ -672,6 +686,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Adajan Royal Ghari & Traditional Farsan',
+        coverPhoto: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Authentic pure ghee Surti Mawa Ghari, Fafda, and Masala Sing',
         description:
@@ -715,6 +730,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Varachha Diamond Circle Fresh Juice & Shakes',
+        coverPhoto: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Fresh Alphonso mango shakes, dry fruit falooda and cold juices',
         description:
@@ -758,6 +774,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Gopipura Handmade Mojdi & Leather Chappals',
+        coverPhoto: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Hand-stitched leather mojdis, wedding juttis & comfortable sandals',
         description:
@@ -801,6 +818,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Ring Road Wholesale Household Goods & Plastics',
+        coverPhoto: 'https://images.unsplash.com/photo-1584992236310-6edddc08acff?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Stainless steel dabbas, storage boxes, and kitchenware essentials',
         description:
@@ -848,6 +866,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Mahakali Special Sev Usal',
+        coverPhoto: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Iconic Baroda Tari Sev Usal, buttery bun pav, and extra spicy oil',
         description:
@@ -891,6 +910,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Mandvi Gate Chaniya Choli & Traditional Attire',
+        coverPhoto: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Festive Navratri ghagras, bandhej dupattas & oxidized silver jewelry',
         description:
@@ -934,6 +954,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Fatehgunj University Chai & Bun Omelette Stall',
+        coverPhoto: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Student hangout for strong ginger masala chai and hot bun maska',
         description:
@@ -977,6 +998,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Alkapuri Seasonal Fresh Juice & Fruit Bowl',
+        coverPhoto: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Cold-pressed pomegranate, kiwi-strawberry bowls & seasonal juices',
         description:
@@ -1020,6 +1042,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Raopura Pyarelal Farsan & Bhakharwadi',
+        coverPhoto: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Crispy mini bhakharwadi, spicy dry kachori, and ratlami sev',
         description:
@@ -1063,6 +1086,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Karelibaug Pottery & Terracotta Plant Pots',
+        coverPhoto: 'https://images.unsplash.com/photo-1598188306155-25e400eb5078?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Glazed terracotta garden planters, bonsai pots & ceramic vases',
         description:
@@ -1110,6 +1134,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Saurashtra Real Vanela Gathiya & Jalebi',
+        coverPhoto: 'https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Steaming Vanela Gathiya, raw papaya sambharo & hot saffron jalebis',
         description:
@@ -1153,6 +1178,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Dharmendra Road Kutchi Embroidery & Traditional Wear',
+        coverPhoto: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Kutchi mirror jackets, ethnic bandhani kurtas, and festival wall torans',
         description:
@@ -1196,6 +1222,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Trikon Baug Famous Rajkot Ice Dish Gola',
+        coverPhoto: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Legendary Rajkot ice dish gola, dry fruit rabdi, and kala khatta',
         description:
@@ -1239,6 +1266,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Kalawad Road Royal Dabeli & Jumbo Vada Pav',
+        coverPhoto: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Buttery roasted Kutchi dabeli loaded with masala peanuts & nylon sev',
         description:
@@ -1282,6 +1310,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Gundawadi Fresh Vegetable & Organic Greens',
+        coverPhoto: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Farm-picked methi, palak, coriander, ginger and fresh green vegetables',
         description:
@@ -1329,6 +1358,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Capital Desi Dal Baati & Rajwadi Khichdi',
+        coverPhoto: 'https://images.unsplash.com/photo-1567337710282-00832b415979?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Pure ghee wood-fire roasted Dal Baati thali, Kadhi, and Churma',
         description:
@@ -1372,6 +1402,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Sector 7 Khau Gali Live Dosa & Mysore Masala',
+        coverPhoto: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Crisp butter paper dosa, cheese blast dosa, and steaming idli sambar',
         description:
@@ -1415,6 +1446,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Infocity Late Night Chai, Maggi & Coffee Point',
+        coverPhoto: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: '24/7 IT corridor adda for kulhad chai, cheese peri-peri maggi & cold coffee',
         description:
@@ -1462,6 +1494,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Bhavnagar Crescent Famous Gathiya & Kadhi',
+        coverPhoto: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Authentic Bhavnagri thick pepper gathiya with piping hot yellow kadhi',
         description:
@@ -1505,6 +1538,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Ghogha Circle Fresh Sugarcane & Lemon Soda',
+        coverPhoto: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=900&q=80',
         stallType: 'mobile',
         tagline: 'Fizzy fresh lemon sodas, ginger sugarcane juice, and masala shikanji',
         description:
@@ -1552,6 +1586,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Bedi Gate Authentic Jamnagari Dry Fruit Kachori',
+        coverPhoto: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'World-renowned crunchy dry fruit spiced kachoris with sweet chutney',
         description:
@@ -1595,6 +1630,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Chandi Bazar Brass & Metal Artifacts',
+        coverPhoto: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Handmade brass pooja bells, oil diyas, and traditional home ornaments',
         description:
@@ -1642,6 +1678,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Girnar Foothills Pure Herbal Honey & Forest Ayurveda',
+        coverPhoto: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Raw Girnar forest honey, wild amla candy, and herbal forest tea',
         description:
@@ -1689,6 +1726,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Amul Dairy Road Kulfi & Rabdi Stall',
+        coverPhoto: 'https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Slow-churned pure milk mawa kulfi on wooden sticks and thick kesar rabdi',
         description:
@@ -1736,6 +1774,7 @@ const seedSampleVendors = async () => {
       },
       profile: {
         stallName: 'Shroff Bazar Kutchi Dabeli & Mud Art Work',
+        coverPhoto: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=80',
         stallType: 'fixed',
         tagline: 'Original Mandvi double-roti Dabeli and Kutchi lippan art wall decor',
         description:
@@ -1793,6 +1832,7 @@ const seedSampleVendors = async () => {
         { _id: profile._id },
         {
           $set: {
+            coverPhoto: item.profile.coverPhoto,
             approvalStatus: 'approved',
             availabilityStatus: 'open',
             address: item.profile.address,

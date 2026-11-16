@@ -1,4 +1,18 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+export function getApiBaseUrl() {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    // When accessing from phone or another device on the local network (e.g. 192.168.1.9)
+    if (host && host !== 'localhost' && host !== '127.0.0.1' && !host.endsWith('vercel.app')) {
+      return `http://${host}:5000/api`;
+    }
+  }
+  return 'http://localhost:5000/api';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 /**
  * Reusable JSON fetch wrapper with HttpOnly cookie support
@@ -6,7 +20,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
  * @param {RequestInit} [options] - Fetch configuration options
  */
 export async function fetchJson(endpoint, options = {}) {
-  const url = `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
 
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('hezal_auth_token') : null;
 
@@ -62,7 +77,8 @@ export async function fetchJson(endpoint, options = {}) {
  * Upload multipart form-data (e.g. image files) with HttpOnly cookie support
  */
 export async function uploadFormData(endpoint, formData) {
-  const url = `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('hezal_auth_token') : null;
 
   const response = await fetch(url, {

@@ -411,7 +411,7 @@ export default function ExplorePage() {
         <div className="pt-1 border-t border-[#E5EAE5]">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-[#17231D] uppercase tracking-wider flex items-center">
-              <Flame className="h-3.5 w-3.5 mr-1 text-orange-500" /> Famous Food Streets & Market Hubs:
+              <Flame className="h-3.5 w-3.5 mr-1 text-orange-500" /> {t('famous_hubs_title')}
             </span>
             {selectedHub && (
               <button
@@ -785,7 +785,7 @@ export default function ExplorePage() {
                   : 'bg-white border-[#E5EAE5] text-[#17231D] hover:bg-[#EDF7EF] hover:border-[#D1EAD7]'
               }`}
             >
-              All Categories
+              {t('all_categories')}
             </button>
 
             {categories.map((cat) => {
@@ -800,7 +800,7 @@ export default function ExplorePage() {
                       : 'bg-white border-[#E5EAE5] text-[#17231D] hover:bg-[#EDF7EF] hover:border-[#D1EAD7]'
                   }`}
                 >
-                  {cat.name}
+                  {tCategory(cat.slug, cat.name)}
                 </button>
               );
             })}
@@ -1220,7 +1220,7 @@ export default function ExplorePage() {
                             : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
                         }`}
                       >
-                        {tCategory(cat.slug || cat.name)}
+                        {tCategory(cat.slug, cat.name)}
                       </button>
                     ))}
                   </div>

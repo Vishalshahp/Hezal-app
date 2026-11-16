@@ -168,12 +168,12 @@ export default function VendorCard({
               {vendor.stallType === 'mobile' ? (
                 <>
                   <Truck className="h-3.5 w-3.5 mr-1 text-[#22C55E]" />
-                  Mobile Thela
+                  {t('mobile_thela')}
                 </>
               ) : (
                 <>
                   <Store className="h-3.5 w-3.5 mr-1 text-[#22C55E]" />
-                  Fixed Spot
+                  {t('fixed_spot')}
                 </>
               )}
             </span>
@@ -195,10 +195,10 @@ export default function VendorCard({
         {/* Bottom In-Image Cue: Physical Visiting Features */}
         <div className="absolute bottom-3 left-3.5 right-3.5 flex items-center justify-between pointer-events-none z-10 text-[11px] text-white/90">
           <span className="inline-flex items-center bg-black/45 backdrop-blur-sm px-2.5 py-0.5 rounded-md font-medium">
-            <QrCode className="h-3 w-3 mr-1 text-[#86EFAC]" /> UPI & Cash
+            <QrCode className="h-3 w-3 mr-1 text-[#86EFAC]" /> {t('upi_cash')}
           </span>
           <span className="inline-flex items-center bg-black/45 backdrop-blur-sm px-2.5 py-0.5 rounded-md font-medium">
-            <Car className="h-3 w-3 mr-1 text-[#86EFAC]" /> Street Parking
+            <Car className="h-3 w-3 mr-1 text-[#86EFAC]" /> {t('street_parking')}
           </span>
         </div>
       </div>

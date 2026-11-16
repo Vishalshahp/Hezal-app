@@ -99,6 +99,10 @@ export const TRANSLATIONS = {
     jain_badge: 'Jain Available',
     amul_butter_badge: 'Amul Butter',
     stool_seating_badge: 'Stool Seating',
+    mobile_thela: 'Mobile Thela',
+    fixed_spot: 'Fixed Spot',
+    upi_cash: 'UPI & Cash',
+    street_parking: 'Street Parking',
     navigate: 'Navigate',
     stall_details: 'Stall Details',
     walking_directions: 'Get Walking Directions',
@@ -212,6 +216,10 @@ export const TRANSLATIONS = {
     jain_badge: 'જૈન ઉપલબ્ધ',
     amul_butter_badge: 'અમૂલ બટર',
     stool_seating_badge: 'બેસવાની વ્યવસ્થા',
+    mobile_thela: 'મોબાઈલ લારી',
+    fixed_spot: 'કાયમી જગ્યા',
+    upi_cash: 'UPI અને રોકડ',
+    street_parking: 'પાર્કિંગ સુવિધા',
     navigate: 'રસ્તો જુઓ',
     stall_details: 'વિગતો જુઓ',
     walking_directions: 'ચાલવાનો રસ્તો',
@@ -325,6 +333,10 @@ export const TRANSLATIONS = {
     jain_badge: 'जैन विकल्प उपलब्ध',
     amul_butter_badge: 'अमूल बटर',
     stool_seating_badge: 'बैठने की व्यवस्था',
+    mobile_thela: 'मोबाइल ठेला',
+    fixed_spot: 'पक्की दुकान',
+    upi_cash: 'UPI और नकद',
+    street_parking: 'पार्किंग सुविधा',
     navigate: 'रास्ता देखें',
     stall_details: 'पूरी डिटेल',
     walking_directions: 'पैदल रास्ता',
@@ -370,8 +382,21 @@ export function LanguageProvider({ children }) {
     if (['en', 'gu', 'hi'].includes(newLang)) {
       setLang(newLang);
       try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          window.localStorage.setItem('hezal_language', newLang);
+        if (typeof window !== 'undefined') {
+          if (window.localStorage) {
+            window.localStorage.setItem('hezal_language', newLang);
+          }
+          if (document && document.documentElement) {
+            document.documentElement.lang = newLang;
+          }
+          // Set Google Translate cookie so the whole page translates
+          document.cookie = `googtrans=/en/${newLang}; path=/;`;
+          document.cookie = `googtrans=/en/${newLang}; path=/; domain=${window.location.hostname};`;
+          const combo = document.querySelector('.goog-te-combo');
+          if (combo) {
+            combo.value = newLang;
+            combo.dispatchEvent(new Event('change'));
+          }
         }
       } catch (e) {
         // ignore
@@ -383,7 +408,8 @@ export function LanguageProvider({ children }) {
     return TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en?.[key] || key;
   };
 
-  const tCategory = (slugOrName) => {
+  const tCategory = (slugOrName, defaultName) => {
+    if (lang === 'en' && defaultName) return defaultName;
     const slug = String(slugOrName || '').toLowerCase().trim();
     if (CATEGORY_TRANSLATIONS[slug]?.[lang]) {
       return CATEGORY_TRANSLATIONS[slug][lang];
@@ -391,10 +417,10 @@ export function LanguageProvider({ children }) {
     // Check by name substring
     for (const [key, map] of Object.entries(CATEGORY_TRANSLATIONS)) {
       if (slug.includes(key) || key.includes(slug)) {
-        return map[lang] || map.en;
+        return map[lang] || defaultName || map.en;
       }
     }
-    return slugOrName;
+    return defaultName || slugOrName;
   };
 
   return (
@@ -411,7 +437,7 @@ export function useLanguage() {
       lang: 'en',
       changeLanguage: () => {},
       t: (key) => TRANSLATIONS.en[key] || key,
-      tCategory: (s) => s,
+      tCategory: (s, defaultName) => defaultName || s,
     };
   }
   return context;

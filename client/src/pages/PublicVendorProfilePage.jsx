@@ -170,6 +170,24 @@ export default function PublicVendorProfilePage() {
         </button>
       </div>
 
+      {/* Sold Out Banner if Vendor closed for the day */}
+      {profile.availabilityStatus === 'sold_out' && (
+        <div className="bg-rose-50 border border-rose-200 rounded-3xl p-4 sm:p-5 flex items-center justify-between text-rose-800 shadow-sm animate-in fade-in">
+          <div className="flex items-center space-x-3">
+            <AlertCircle className="h-6 w-6 text-rose-600 shrink-0" />
+            <div>
+              <h4 className="font-bold text-sm text-rose-950">Sold Out for the Day</h4>
+              <p className="text-xs text-rose-700">
+                The stall owner has marked today's fresh counter batch as sold out. Please visit during normal hours tomorrow!
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-200/70 text-rose-900 shrink-0">
+            Sold Out
+          </span>
+        </div>
+      )}
+
       {/* 1. Stall Hero & Identification Card */}
       <div className="bg-white rounded-3xl border border-[#E5EAE5] overflow-hidden shadow-card">
         {/* Cover Photo */}
@@ -349,7 +367,7 @@ export default function PublicVendorProfilePage() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
           {/* Parking Card */}
           <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
             <span className="font-bold text-xs flex items-center text-[#16803D]">
@@ -363,29 +381,49 @@ export default function PublicVendorProfilePage() {
           {/* Setup & Seating */}
           <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
             <span className="font-bold text-xs flex items-center text-[#16803D]">
-              <Store className="h-4 w-4 mr-1.5" /> Physical Setup
+              <Store className="h-4 w-4 mr-1.5" /> Physical Setup & Seating
             </span>
             <p className="text-xs text-[#647067] leading-relaxed">
               {profile.stallType === 'mobile'
-                ? 'Mobile pushcart street setup with standing counter.'
-                : 'Roadside fixed counter with shaded ordering counter.'}
+                ? 'Mobile pushcart (thela) with roadside standing counter & quick service.'
+                : 'Roadside fixed counter with plastic stools & shaded ordering window.'}
             </p>
           </div>
 
-          {/* Payment */}
+          {/* Direct Payment */}
           <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
             <span className="font-bold text-xs flex items-center text-[#16803D]">
-              <QrCode className="h-4 w-4 mr-1.5" /> Direct Payment
+              <QrCode className="h-4 w-4 mr-1.5" /> Direct Payment (0% Markup)
             </span>
             <p className="text-xs text-[#647067] leading-relaxed">
               UPI QR Code (GPay, PhonePe, Paytm) & Cash accepted directly at counter. 0% middleman fees.
             </p>
           </div>
 
+          {/* Dietary Integrity */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-[#16803D]">
+              <Sparkles className="h-4 w-4 mr-1.5 text-emerald-600" /> Dietary & Jain Prep
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              100% Pure Vegetarian. Jain preparations available on request with dedicated cutting boards & ladles.
+            </p>
+          </div>
+
+          {/* Ingredient Quality */}
+          <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
+            <span className="font-bold text-xs flex items-center text-amber-700">
+              <Sparkles className="h-4 w-4 mr-1.5 text-amber-500" /> Authentic Ingredients
+            </span>
+            <p className="text-xs text-[#647067] leading-relaxed">
+              Prepared in genuine Amul Butter & peanut oil. No artificial essences or reuse of frying oil.
+            </p>
+          </div>
+
           {/* Best Time to Visit */}
           <div className="p-4 rounded-2xl bg-[#FAFAF5] border border-[#E5EAE5] space-y-1.5">
             <span className="font-bold text-xs flex items-center text-[#16803D]">
-              <Sparkles className="h-4 w-4 mr-1.5" /> Best Time to Visit
+              <Clock className="h-4 w-4 mr-1.5" /> Best Time to Visit
             </span>
             <p className="text-xs text-[#647067] leading-relaxed">
               Evenings 6:30 PM – 10:30 PM for fresh hot preparations and lively local street crowd.

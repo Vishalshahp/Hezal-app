@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export const NAV_CATEGORIES = [
   { name: 'Street Food & Chaat', slug: 'street-food-chaat', icon: Utensils, desc: 'Pani Puri, Locho, Sev Usal' },
@@ -34,6 +35,7 @@ export const NAV_CATEGORIES = [
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { lang, changeLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -183,6 +185,36 @@ export default function Navbar() {
 
           {/* Right Actions (Desktop) */}
           <div className="hidden md:flex items-center space-x-3">
+            {/* Multi-Language Selector */}
+            <div className="flex items-center bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl p-0.5 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'en' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                }`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('gu')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'gu' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                }`}
+              >
+                ગુજ
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('hi')}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'hi' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                }`}
+              >
+                हिं
+              </button>
+            </div>
             {user ? (
               <div className="flex items-center space-x-3">
                 {user.role === 'vendor' && (

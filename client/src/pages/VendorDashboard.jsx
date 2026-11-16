@@ -13,7 +13,12 @@ import {
   ArrowRight,
   Loader2,
   RefreshCw,
-  Plus
+  Plus,
+  QrCode,
+  Printer,
+  Navigation,
+  X,
+  Sparkles,
 } from 'lucide-react';
 
 export default function VendorDashboard() {
@@ -22,6 +27,46 @@ export default function VendorDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [standeeOpen, setStandeeOpen] = useState(false);
+  const [gpsUpdating, setGpsUpdating] = useState(false);
+  const [gpsNotice, setGpsNotice] = useState(null);
+
+  const handleQuickLocationUpdate = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setGpsUpdating(true);
+    setGpsNotice(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          await vendorService.updateLocation({
+            location: {
+              type: 'Point',
+              coordinates: [longitude, latitude],
+            },
+          });
+          setGpsNotice(
+            `Spot location updated successfully! Coordinates: [${latitude.toFixed(4)}, ${longitude.toFixed(4)}]`
+          );
+          fetchStats();
+        } catch (err) {
+          alert(err.message || 'Failed to update stall coordinates.');
+        } finally {
+          setGpsUpdating(false);
+        }
+      },
+      (err) => {
+        setGpsUpdating(false);
+        alert('Could not access current location: ' + err.message);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
@@ -261,6 +306,19 @@ export default function VendorDashboard() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => handleQuickAvailability('sold_out')}
+                  disabled={!stats?.hasProfile || updatingStatus}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                    stats?.availabilityStatus === 'sold_out'
+                      ? 'bg-rose-700 text-white shadow-sm'
+                      : 'bg-[#FAFAF5] text-rose-700 hover:bg-rose-50'
+                  }`}
+                  title="Mark today's fresh batch as sold out"
+                >
+                  Sold Out
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleQuickAvailability('closed')}
                   disabled={!stats?.hasProfile || updatingStatus}
                   className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
@@ -277,6 +335,54 @@ export default function VendorDashboard() {
               </span>
             </div>
           </div>
+
+          {/* Pushcart Instant GPS Update & Counter QR Standee Generator */}
+          {stats?.hasProfile && (
+            <div className="bg-gradient-to-r from-[#14532D] via-[#16803D] to-[#0E3B20] text-white rounded-2xl p-5 sm:p-6 shadow-card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#86EFAC] uppercase tracking-wider">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Street Vendor On-Spot Tools</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold font-display">
+                  Live Thela Parking & Printable Counter Standee
+                </h3>
+                <p className="text-xs text-white/80 max-w-xl">
+                  Moved your pushcart to an evening market spot? Lock your live GPS coordinates in 1 tap, or generate a counter QR poster for your stall.
+                </p>
+                {gpsNotice && (
+                  <p className="text-xs text-[#86EFAC] font-semibold pt-1 flex items-center">
+                    <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> {gpsNotice}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleQuickLocationUpdate}
+                  disabled={gpsUpdating}
+                  className="px-4 py-2.5 rounded-xl bg-white text-[#14532D] hover:bg-[#FAFAF5] text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer active:scale-95 disabled:opacity-50"
+                >
+                  {gpsUpdating ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-[#16803D]" />
+                  ) : (
+                    <Navigation className="h-4 w-4 text-[#16803D]" />
+                  )}
+                  <span>{gpsUpdating ? 'Detecting...' : 'Lock My Spot Now (1-Tap GPS)'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStandeeOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-[#22C55E]/20 hover:bg-[#22C55E]/30 text-white border border-white/20 text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                >
+                  <Printer className="h-4 w-4 text-[#86EFAC]" />
+                  <span>Print Stall QR Standee</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Quick Management Hub */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -341,6 +447,79 @@ export default function VendorDashboard() {
             </div>
           </div>
         </>
+      )}
+
+      {/* 1-Click Printable Counter Standee Modal */}
+      {standeeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-[#E5EAE5] text-center relative animate-in zoom-in-95">
+            <button
+              type="button"
+              onClick={() => setStandeeOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 print:hidden"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Printable Counter Poster Card */}
+            <div className="border-4 border-[#16803D] rounded-2xl p-6 bg-gradient-to-b from-[#FAFAF5] to-white space-y-4 shadow-sm">
+              <div className="flex items-center justify-center space-x-2 text-[#16803D] font-bold text-xs uppercase tracking-widest">
+                <Store className="h-4 w-4" />
+                <span>Hezal Verified Street Stall</span>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-black font-display text-[#17231D]">
+                  {stats?.stallName || user?.name}
+                </h2>
+                <p className="text-xs text-[#16803D] font-bold mt-0.5">
+                  Direct Street Counter • 0% Delivery Markup
+                </p>
+              </div>
+
+              {/* QR Code */}
+              <div className="h-52 w-52 mx-auto rounded-2xl bg-white p-3 border-2 border-dashed border-[#16803D] flex items-center justify-center shadow-xs">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+                    (typeof window !== 'undefined' ? window.location.origin : 'https://hezal-market.vercel.app') +
+                      '/vendors/' +
+                      (stats?.profileId || stats?.id || 'public')
+                  )}`}
+                  alt="Stall Menu QR Code"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              <div className="space-y-1 text-xs">
+                <span className="font-extrabold text-[#17231D] block">
+                  Scan to View Live Menu & Counter Prices
+                </span>
+                <span className="text-[#647067] block text-[11px]">
+                  Pay Directly via UPI QR or Cash • No Middleman Commission
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center gap-3 pt-2 print:hidden">
+              <button
+                type="button"
+                onClick={() => setStandeeOpen(false)}
+                className="flex-1 py-3 rounded-xl border border-[#E5EAE5] text-xs font-bold text-[#17231D] hover:bg-[#FAFAF5]"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="flex-1 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-1.5"
+              >
+                <Printer className="h-4 w-4" />
+                <span>Print Poster</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

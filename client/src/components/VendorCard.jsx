@@ -57,6 +57,13 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
             Away
           </span>
         );
+      case 'sold_out':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50/95 backdrop-blur-md text-rose-700 border border-rose-200 shadow-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+            Sold Out Today
+          </span>
+        );
       case 'closed':
       default:
         return (
@@ -81,6 +88,27 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
   };
 
   const stallImage = getStallCoverImage(vendor);
+
+  const isJainAvailable =
+    vendor.dietary?.jainAvailable ||
+    vendor.tagline?.toLowerCase().includes('jain') ||
+    vendor.description?.toLowerCase().includes('jain') ||
+    vendor.categories?.some((c) => ['street-food-chaat', 'fast-food-meals'].includes(c.slug));
+
+  const isButterVerified =
+    vendor.dietary?.amulButter ||
+    vendor.tagline?.toLowerCase().includes('butter') ||
+    vendor.description?.toLowerCase().includes('butter') ||
+    vendor.tagline?.toLowerCase().includes('amul') ||
+    vendor.description?.toLowerCase().includes('amul') ||
+    vendor.tagline?.toLowerCase().includes('ghee') ||
+    vendor.description?.toLowerCase().includes('ghee');
+
+  const hasSeating =
+    vendor.amenities?.seating === 'stools' ||
+    vendor.stallType === 'fixed' ||
+    vendor.description?.toLowerCase().includes('seating') ||
+    vendor.description?.toLowerCase().includes('stool');
 
   return (
     <div
@@ -173,20 +201,30 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
       {/* Card Content */}
       <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-2.5">
-          {/* Categories */}
+          {/* Categories & Dietary Badges */}
           {vendor.categories && vendor.categories.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               {vendor.categories.slice(0, 2).map((cat) => (
                 <span
                   key={cat.id || cat._id}
-                  className="px-3 py-1 rounded-lg text-xs font-semibold bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7]/70 group-hover:border-[#16803D]/40 transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7]/70 group-hover:border-[#16803D]/40 transition-colors"
                 >
                   {cat.name}
                 </span>
               ))}
-              {vendor.categories.length > 2 && (
-                <span className="px-2 py-1 rounded-lg text-xs font-medium bg-[#FAFAF5] text-[#647067] border border-[#E5EAE5]">
-                  +{vendor.categories.length - 2}
+              {isJainAvailable && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  🌿 Jain
+                </span>
+              )}
+              {isButterVerified && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                  🧈 Amul Butter
+                </span>
+              )}
+              {hasSeating && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-50 text-slate-700 border border-slate-200">
+                  🪑 Stools
                 </span>
               )}
             </div>

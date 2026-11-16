@@ -1,0 +1,22 @@
+{
+  "name": "Hezal Market — Hyperlocal Street Vendor Discovery",
+  "short_name": "Hezal Market",
+  "description": "Discover local street food stalls, khau galis, artisans, and pushcarts with walking directions and zero delivery markups.",
+  "start_url": "/explore",
+  "display": "standalone",
+  "background_color": "#FAFAF5",
+  "theme_color": "#16803D",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

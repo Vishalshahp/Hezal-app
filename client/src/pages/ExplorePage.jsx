@@ -50,6 +50,8 @@ export default function ExplorePage() {
   const [selectedArea, setSelectedArea] = useState(areaParam);
   const [selectedHub, setSelectedHub] = useState(hubParam);
   const [onlyOpenNow, setOnlyOpenNow] = useState(openParam);
+  const [onlyJain, setOnlyJain] = useState(false);
+  const [onlyButter, setOnlyButter] = useState(false);
   const [sortByNearest, setSortByNearest] = useState(false);
   const [radiusKm, setRadiusKm] = useState(radiusParam);
   const [page, setPage] = useState(pageParam);
@@ -256,6 +258,8 @@ export default function ExplorePage() {
     setSelectedArea('');
     setSelectedHub('');
     setOnlyOpenNow(false);
+    setOnlyJain(false);
+    setOnlyButter(false);
     setUserLocation(null);
     setSortByNearest(false);
     setRadiusKm(5);
@@ -296,6 +300,27 @@ export default function ExplorePage() {
       list = list.filter((v) => v.availabilityStatus === 'open');
     }
 
+    // Filter by Jain Available
+    if (onlyJain) {
+      list = list.filter((v) =>
+        v.dietary?.jainAvailable ||
+        v.tagline?.toLowerCase().includes('jain') ||
+        v.description?.toLowerCase().includes('jain') ||
+        v.categories?.some((c) => ['street-food-chaat', 'fast-food-meals'].includes(c.slug))
+      );
+    }
+
+    // Filter by Amul Butter / Ghee
+    if (onlyButter) {
+      list = list.filter((v) =>
+        v.dietary?.amulButter ||
+        v.tagline?.toLowerCase().includes('butter') ||
+        v.description?.toLowerCase().includes('butter') ||
+        v.tagline?.toLowerCase().includes('amul') ||
+        v.tagline?.toLowerCase().includes('ghee')
+      );
+    }
+
     // Sort by nearest distance if enabled & userLocation known
     if (sortByNearest && userLocation?.latitude && userLocation?.longitude) {
       list.sort((a, b) => {
@@ -314,7 +339,7 @@ export default function ExplorePage() {
     }
 
     return list;
-  }, [vendors, onlyOpenNow, sortByNearest, userLocation]);
+  }, [vendors, onlyOpenNow, onlyJain, onlyButter, sortByNearest, userLocation]);
 
   // Handle Vendor Card selection
   const handleVendorSelect = (vendor) => {
@@ -679,6 +704,32 @@ export default function ExplorePage() {
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${onlyOpenNow ? 'bg-white' : 'bg-[#16803D]'}`}></span>
               </span>
               <span>Open Right Now</span>
+            </button>
+
+            {/* "Jain Available" Dietary Toggle */}
+            <button
+              type="button"
+              onClick={() => setOnlyJain(!onlyJain)}
+              className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                onlyJain
+                  ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
+                  : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5]'
+              }`}
+            >
+              <span>🌿 Jain Options</span>
+            </button>
+
+            {/* "Amul Butter" Toggle */}
+            <button
+              type="button"
+              onClick={() => setOnlyButter(!onlyButter)}
+              className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                onlyButter
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                  : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5]'
+              }`}
+            >
+              <span>🧈 Amul Butter</span>
             </button>
 
             {/* Sort by Nearest Toggle */}

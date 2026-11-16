@@ -30,9 +30,11 @@ import {
   SlidersHorizontal,
   Check,
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t, tCategory } = useLanguage();
 
   // Search filter states from URL or defaults
   const qParam = searchParams.get('q') || '';
@@ -354,13 +356,13 @@ export default function ExplorePage() {
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#16803D] uppercase tracking-wider mb-1">
               <Store className="h-3.5 w-3.5" />
-              <span>Hyperlocal In-Person Discovery</span>
+              <span>{t('brand_subtitle')}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-[#17231D] tracking-tight">
-              Explore Local Stalls
+              {t('explore_stalls_title')}
             </h1>
             <p className="text-xs sm:text-sm text-[#647067] mt-0.5">
-              Check physical stall areas, live opening hours, menu prices, and get direct turn-by-turn walking directions.
+              {t('explore_stalls_subtitle')}
             </p>
           </div>
 
@@ -376,7 +378,7 @@ export default function ExplorePage() {
               }`}
             >
               <Columns className="h-3.5 w-3.5 text-[#16803D]" />
-              <span>Split</span>
+              <span>{t('split_view')}</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
@@ -388,7 +390,7 @@ export default function ExplorePage() {
               }`}
             >
               <ListIcon className="h-3.5 w-3.5 text-[#16803D]" />
-              <span>List</span>
+              <span>{t('list_view')}</span>
             </button>
             <button
               onClick={() => setViewMode('map')}
@@ -400,7 +402,7 @@ export default function ExplorePage() {
               }`}
             >
               <MapIcon className="h-3.5 w-3.5 text-[#16803D]" />
-              <span>Map</span>
+              <span>{t('map_view')}</span>
             </button>
           </div>
         </div>
@@ -454,7 +456,7 @@ export default function ExplorePage() {
         {/* Gujarat City Quick Filters */}
         <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none text-xs pt-1">
           <span className="text-[#647067] font-bold text-[11px] uppercase tracking-wider shrink-0 mr-1 flex items-center">
-            <Building2 className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> Major Cities:
+            <Building2 className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> {t('major_cities')}
           </span>
           {['All Gujarat', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar', 'Bhavnagar', 'Jamnagar', 'Junagadh', 'Anand', 'Bhuj'].map((c) => {
             const isSelected =
@@ -477,7 +479,7 @@ export default function ExplorePage() {
                     : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border border-[#E5EAE5] hover:border-[#A3D5AF]'
                 }`}
               >
-                {c}
+                {c === 'All Gujarat' ? t('all_gujarat') : c}
               </button>
             );
           })}
@@ -495,7 +497,7 @@ export default function ExplorePage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search product, stall name, item (pani puri, locho...)"
+              placeholder={t('search_placeholder')}
               className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5]/50 focus:bg-white text-xs sm:text-sm text-[#17231D] placeholder:text-[#647067] focus:outline-none focus:border-[#16803D] focus:ring-2 focus:ring-[#16803D]/20 transition-all"
             />
             {searchTerm && (
@@ -528,7 +530,7 @@ export default function ExplorePage() {
                   updateUrlParams({ area: selectedArea.trim() || undefined, page: 1 });
                 }, 200);
               }}
-              placeholder="Locality / Landmark (e.g. Law Garden)..."
+              placeholder={t('locality_placeholder')}
               className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5]/50 focus:bg-white text-xs sm:text-sm text-[#17231D] placeholder:text-[#647067] focus:outline-none focus:border-[#16803D] focus:ring-2 focus:ring-[#16803D]/20 transition-all"
             />
             {selectedArea && (
@@ -602,7 +604,7 @@ export default function ExplorePage() {
               className="flex-1 py-2.5 sm:py-3 px-4 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white font-bold text-xs sm:text-sm shadow-xs hover:shadow-sm transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <Search className="h-4 w-4" />
-              <span>Search Stalls</span>
+              <span>{t('search_btn')}</span>
             </button>
 
             {/* Mobile Filter Sheet Button */}
@@ -613,7 +615,7 @@ export default function ExplorePage() {
               title="Open mobile filters"
             >
               <SlidersHorizontal className="h-4 w-4 text-[#16803D]" />
-              <span>Filters</span>
+              <span>{t('filters_btn')}</span>
               {(selectedCategory || selectedArea || selectedHub || onlyOpenNow || userLocation) && (
                 <span className="h-2 w-2 rounded-full bg-[#16803D]"></span>
               )}
@@ -623,7 +625,8 @@ export default function ExplorePage() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                title="Reset all filters"
+                title="Clear search inputs"
+                aria-label="Clear search inputs"
                 className="p-2.5 sm:p-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] text-[#647067] hover:text-[#17231D] hover:bg-[#EDF7EF] transition-all cursor-pointer"
               >
                 <RefreshCw className="h-4 w-4" />
@@ -639,9 +642,9 @@ export default function ExplorePage() {
             {userLocation ? (
               <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#EDF7EF] border border-[#D1EAD7] text-[#16803D]">
                 <Footprints className="h-3.5 w-3.5 text-[#16803D]" />
-                <span className="font-bold">Your Location Detected</span>
+                <span className="font-bold">{t('location_detected')}</span>
                 <div className="flex items-center space-x-1 pl-2 border-l border-[#D1EAD7]">
-                  <span className="text-[#647067]">Within:</span>
+                  <span className="text-[#647067]">{t('within_radius')}</span>
                   <select
                     value={radiusKm}
                     onChange={(e) => {
@@ -681,7 +684,7 @@ export default function ExplorePage() {
                 ) : (
                   <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
                 )}
-                <span>{geoLoading ? 'Detecting your spot...' : 'Stalls Near Me'}</span>
+                <span>{geoLoading ? t('detecting_spot') : t('stalls_near_me')}</span>
               </button>
             )}
 
@@ -703,7 +706,7 @@ export default function ExplorePage() {
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${onlyOpenNow ? 'bg-white' : 'bg-[#22C55E]'}`}></span>
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${onlyOpenNow ? 'bg-white' : 'bg-[#16803D]'}`}></span>
               </span>
-              <span>Open Right Now</span>
+              <span>{t('open_now')}</span>
             </button>
 
             {/* "Jain Available" Dietary Toggle */}
@@ -716,7 +719,7 @@ export default function ExplorePage() {
                   : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5]'
               }`}
             >
-              <span>🌿 Jain Options</span>
+              <span>{t('jain_options')}</span>
             </button>
 
             {/* "Amul Butter" Toggle */}
@@ -729,7 +732,7 @@ export default function ExplorePage() {
                   : 'bg-[#FAFAF5] text-[#17231D] hover:bg-[#EDF7EF] border-[#E5EAE5]'
               }`}
             >
-              <span>🧈 Amul Butter</span>
+              <span>{t('amul_butter_chip')}</span>
             </button>
 
             {/* Sort by Nearest Toggle */}
@@ -751,7 +754,7 @@ export default function ExplorePage() {
 
           {/* Results Count */}
           <div className="text-[#647067] font-medium text-xs">
-            Showing <span className="font-bold text-[#17231D]">{displayedVendors.length}</span> stall{displayedVendors.length === 1 ? '' : 's'}
+            {t('showing_stalls')} <span className="font-bold text-[#17231D]">{displayedVendors.length}</span> {t('stalls_count')}
           </div>
         </div>
 
@@ -834,11 +837,11 @@ export default function ExplorePage() {
           <div className="h-16 w-16 rounded-2xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center mx-auto">
             <Store className="h-8 w-8" />
           </div>
-          <h3 className="font-extrabold text-xl font-display text-[#17231D]">No Matching Stalls Found</h3>
+          <h3 className="font-extrabold text-xl font-display text-[#17231D]">{t('no_stalls_found')}</h3>
           <p className="text-xs sm:text-sm text-[#647067] max-w-md mx-auto leading-relaxed">
             {onlyOpenNow
               ? 'There are no stalls open right now under your selected filters. Try unchecking "Open Right Now" to see operating hours and plan a visit.'
-              : "We couldn't find any vendor stalls matching your search criteria. Try selecting a famous street hub or clearing filters."}
+              : t('no_stalls_hint')}
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-2">
             {onlyOpenNow && (
@@ -853,7 +856,7 @@ export default function ExplorePage() {
               onClick={handleResetFilters}
               className="px-5 py-2.5 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] hover:bg-white text-xs font-bold text-[#17231D] transition-all cursor-pointer"
             >
-              Reset Filters
+              {t('clear_all_filters')}
             </button>
           </div>
         </div>
@@ -1007,12 +1010,12 @@ export default function ExplorePage() {
           {viewMode === 'map' ? (
             <>
               <ListIcon className="h-4 w-4 text-[#86EFAC]" />
-              <span>Show Cards ({displayedVendors.length})</span>
+              <span>{t('show_cards')} ({displayedVendors.length})</span>
             </>
           ) : (
             <>
               <MapIcon className="h-4 w-4 text-[#86EFAC]" />
-              <span>Show Pins ({displayedVendors.length})</span>
+              <span>{t('show_pins')} ({displayedVendors.length})</span>
             </>
           )}
         </button>
@@ -1074,13 +1077,13 @@ export default function ExplorePage() {
               className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-[#FAFAF5] hover:bg-[#EDF7EF] text-[#17231D] hover:text-[#16803D] border border-[#E5EAE5] text-xs font-bold transition-all"
             >
               <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
-              <span>Navigate</span>
+              <span>{t('navigate')}</span>
             </a>
             <Link
               to={`/vendors/${selectedVendor.id || selectedVendor._id}`}
               className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold transition-all shadow-xs"
             >
-              <span>View Stall</span>
+              <span>{t('stall_details')}</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -1100,7 +1103,7 @@ export default function ExplorePage() {
               <div className="flex items-center space-x-2">
                 <SlidersHorizontal className="h-5 w-5 text-[#16803D]" />
                 <h3 className="font-extrabold font-display text-base text-[#17231D]">
-                  Filter Physical Stalls
+                  {t('filter_drawer_title')}
                 </h3>
               </div>
               <button
@@ -1115,7 +1118,7 @@ export default function ExplorePage() {
               {/* Toggle: Open Right Now */}
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-[#EDF7EF]/60 border border-[#D1EAD7]">
                 <div>
-                  <span className="font-bold text-xs text-[#17231D] block">🟢 Open Right Now</span>
+                  <span className="font-bold text-xs text-[#17231D] block">🟢 {t('open_now')}</span>
                   <span className="text-[11px] text-[#647067]">
                     Only show stalls actively open right now
                   </span>
@@ -1138,7 +1141,7 @@ export default function ExplorePage() {
               {/* Distance Radius */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
-                  Search Radius: {radiusKm} km
+                  {t('filter_distance_title')}: {radiusKm} km
                 </span>
                 <div className="grid grid-cols-4 gap-2 text-xs">
                   {[1, 2, 5, 10].map((r) => (
@@ -1161,7 +1164,7 @@ export default function ExplorePage() {
               {/* Major Gujarat Cities */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
-                  Gujarat Cities
+                  {t('major_cities')}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {['All Gujarat', 'Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar'].map(
@@ -1180,7 +1183,7 @@ export default function ExplorePage() {
                               : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
                           }`}
                         >
-                          {c}
+                          {c === 'All Gujarat' ? t('all_gujarat') : c}
                         </button>
                       );
                     }
@@ -1192,7 +1195,7 @@ export default function ExplorePage() {
               {categories.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-[#17231D] uppercase tracking-wider block">
-                    Stall Categories
+                    {t('categories')}
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     <button
@@ -1204,7 +1207,7 @@ export default function ExplorePage() {
                           : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
                       }`}
                     >
-                      All Categories
+                      {t('all_categories')}
                     </button>
                     {categories.map((cat) => (
                       <button
@@ -1217,7 +1220,7 @@ export default function ExplorePage() {
                             : 'bg-[#FAFAF5] text-[#17231D] border border-[#E5EAE5]'
                         }`}
                       >
-                        {cat.name}
+                        {tCategory(cat.slug || cat.name)}
                       </button>
                     ))}
                   </div>
@@ -1235,7 +1238,7 @@ export default function ExplorePage() {
                 }}
                 className="flex-1 py-3 rounded-xl border border-[#E5EAE5] bg-[#FAFAF5] text-xs font-bold text-[#17231D]"
               >
-                Reset All
+                {t('clear_all_filters')}
               </button>
               <button
                 type="button"
@@ -1250,7 +1253,7 @@ export default function ExplorePage() {
                 }}
                 className="flex-2 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold shadow-xs"
               >
-                Apply Filters
+                {t('apply_filters')}
               </button>
             </div>
           </div>

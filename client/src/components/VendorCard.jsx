@@ -1,42 +1,47 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getStallCoverImage } from '../utils/stallImages';
-import { calculateDistanceKm, formatWalkingDistance, getNavigationUrl } from '../utils/distance';
 import {
   MapPin,
   Clock,
-  Navigation,
   Store,
-  Truck,
+  Navigation,
   ExternalLink,
-  ChevronRight,
-  Sparkles,
   Footprints,
+  Sparkles,
+  QrCode,
   Car,
-  CreditCard,
-  QrCode
+  ChevronRight,
+  Truck
 } from 'lucide-react';
+import { getNavigationUrl, formatDistanceHuman } from '../utils/distance';
+import { getStallCoverImage } from '../utils/stallImages';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function VendorCard({ vendor, isSelected, onSelect, userLocation }) {
+export default function VendorCard({
+  vendor,
+  userLocation,
+  isSelected = false,
+  onSelect = () => {}
+}) {
+  const { t, tCategory } = useLanguage();
   if (!vendor) return null;
 
-  // Compute real-time physical walking/driving distance
-  let distanceInfo = null;
-  if (vendor.distanceKm !== undefined) {
-    distanceInfo = formatWalkingDistance(vendor.distanceKm);
-  } else if (
-    userLocation?.latitude &&
-    userLocation?.longitude &&
-    vendor.location?.coordinates &&
-    vendor.location.coordinates.length === 2
-  ) {
-    const [vLng, vLat] = vendor.location.coordinates;
-    const km = calculateDistanceKm(userLocation.latitude, userLocation.longitude, vLat, vLng);
-    distanceInfo = formatWalkingDistance(km);
-  }
+  // Directions destination
+  const directionsDestination =
+    vendor.location?.coordinates && vendor.location.coordinates.length === 2
+      ? {
+          latitude: vendor.location.coordinates[1],
+          longitude: vendor.location.coordinates[0],
+          name: vendor.stallName
+        }
+      : [vendor.address?.street, vendor.address?.area, vendor.address?.city]
+          .filter(Boolean)
+          .join(', ');
 
-  // External turn-by-turn directions link (Google Maps)
-  const directionsUrl = getNavigationUrl(vendor.location?.coordinates, vendor.address);
+  const directionsUrl = getNavigationUrl(directionsDestination, userLocation);
+
+  // Compute distance display if available
+  const distanceInfo = formatDistanceHuman(vendor.distanceKm);
 
   const getStatusBadge = () => {
     switch (vendor.availabilityStatus) {
@@ -47,21 +52,21 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#16803D]"></span>
             </span>
-            Open Now
+            {t('open_now')}
           </span>
         );
       case 'away':
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50/95 backdrop-blur-md text-amber-800 border border-amber-200 shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-1.5"></span>
-            Away
+            {t('away')}
           </span>
         );
       case 'sold_out':
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50/95 backdrop-blur-md text-rose-700 border border-rose-200 shadow-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-            Sold Out Today
+            {t('sold_out_badge')}
           </span>
         );
       case 'closed':
@@ -69,7 +74,7 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-stone-100/95 backdrop-blur-md text-stone-600 border border-stone-200">
             <span className="h-1.5 w-1.5 rounded-full bg-stone-400 mr-1.5"></span>
-            Closed
+            {t('closed')}
           </span>
         );
     }
@@ -209,22 +214,22 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
                   key={cat.id || cat._id}
                   className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7]/70 group-hover:border-[#16803D]/40 transition-colors"
                 >
-                  {cat.name}
+                  {tCategory(cat.slug || cat.name)}
                 </span>
               ))}
               {isJainAvailable && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  🌿 Jain
+                  🌿 {t('jain_badge')}
                 </span>
               )}
               {isButterVerified && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                  🧈 Amul Butter
+                  🧈 {t('amul_butter_badge')}
                 </span>
               )}
               {hasSeating && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-50 text-slate-700 border border-slate-200">
-                  🪑 Stools
+                  🪑 {t('stool_seating_badge')}
                 </span>
               )}
             </div>
@@ -269,7 +274,7 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
         {vendor.sampleProducts && vendor.sampleProducts.length > 0 && (
           <div className="pt-2.5 border-t border-[#E5EAE5]">
             <span className="text-[11px] font-bold text-[#647067] uppercase tracking-wider block mb-1.5">
-              Available at Counter
+              {t('direct_counter_menu')}
             </span>
             <div className="flex flex-wrap gap-2">
               {vendor.sampleProducts.slice(0, 3).map((p, idx) => (
@@ -297,7 +302,7 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
             className="inline-flex items-center space-x-2 text-xs sm:text-sm font-bold text-[#17231D] hover:text-[#16803D] hover:bg-[#EDF7EF] px-3.5 py-2.5 rounded-xl border border-[#E5EAE5] hover:border-[#D1EAD7] transition-all cursor-pointer active:scale-95 shadow-2xs"
           >
             <Navigation className="h-4 w-4 text-[#16803D]" />
-            <span>Navigate</span>
+            <span>{t('navigate')}</span>
             <ExternalLink className="h-3 w-3 text-[#647067]" />
           </a>
 
@@ -306,7 +311,7 @@ export default function VendorCard({ vendor, isSelected, onSelect, userLocation 
             onClick={(e) => e.stopPropagation()}
             className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2.5 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white shadow-xs hover:shadow-sm transition-all active:scale-95 group/btn"
           >
-            <span>Stall Details</span>
+            <span>{t('stall_details')}</span>
             <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
           </Link>
         </div>

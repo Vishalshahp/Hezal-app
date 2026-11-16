@@ -54,6 +54,8 @@ export function formatWalkingDistance(distanceKm) {
   };
 }
 
+export const formatDistanceHuman = formatWalkingDistance;
+
 /**
  * Generates an external turn-by-turn navigation link for Google Maps.
  */

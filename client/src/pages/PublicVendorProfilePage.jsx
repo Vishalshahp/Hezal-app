@@ -29,9 +29,11 @@ import {
   Compass,
   Footprints
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function PublicVendorProfilePage() {
   const { id } = useParams();
+  const { t, tCategory } = useLanguage();
   const [profile, setProfile] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function PublicVendorProfilePage() {
       try {
         const res = await vendorService.getPublicProfile(id);
         if (res.success && res.data) {
-          setProfile(res.data.profile);
+          setProfile(res.data.profile || res.data.vendor);
           setProducts(res.data.products || []);
         } else {
           setErrorMsg(res.message || 'Vendor stall not found.');
@@ -236,19 +238,19 @@ export default function PublicVendorProfilePage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                   </span>
-                  Open Now
+                  {t('open_now')}
                 </span>
               )}
               {profile.availabilityStatus === 'away' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white shadow-sm">
                   <AlertCircle className="h-3.5 w-3.5 mr-1" />
-                  Away Temporarily
+                  {t('away')}
                 </span>
               )}
               {profile.availabilityStatus === 'closed' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#17231D]/90 backdrop-blur text-white shadow-sm">
                   <XCircle className="h-3.5 w-3.5 mr-1" />
-                  Closed
+                  {t('closed')}
                 </span>
               )}
 
@@ -316,7 +318,7 @@ export default function PublicVendorProfilePage() {
                 className="inline-flex items-center justify-center space-x-2 px-5 py-3.5 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all"
               >
                 <Navigation className="h-4 w-4" />
-                <span>Get Walking Directions</span>
+                <span>{t('walking_directions')}</span>
                 <ExternalLink className="h-3.5 w-3.5 text-white/70" />
               </a>
 
@@ -328,7 +330,7 @@ export default function PublicVendorProfilePage() {
                   className="inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border border-[#D1EAD7] bg-[#EDF7EF] text-[#16803D] hover:bg-[#D1EAD7]/60 text-xs sm:text-sm font-bold transition-all"
                 >
                   <MessageCircle className="h-4 w-4 text-[#16803D]" />
-                  <span>Check If Open (WhatsApp)</span>
+                  <span>{t('check_whatsapp')}</span>
                 </a>
               )}
 
@@ -549,11 +551,11 @@ export default function PublicVendorProfilePage() {
                 <Package className="h-4 w-4" />
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-display text-[#17231D]">
-                Counter Menu & Item Prices
+                {t('counter_menu_heading')}
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-[#647067] mt-1">
-              Check in-person specialties and prices before you visit • Pay directly at the stall
+              {t('zero_delivery_fee')}
             </p>
           </div>
 

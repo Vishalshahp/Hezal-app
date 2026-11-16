@@ -17,7 +17,8 @@ import {
   Flower2,
   Scissors,
   Wrench,
-  ArrowRight
+  ArrowRight,
+  Globe
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -35,7 +36,7 @@ export const NAV_CATEGORIES = [
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { lang, changeLanguage } = useLanguage();
+  const { lang, changeLanguage, t, tCategory } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -78,7 +79,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left: Brand Identity */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-6 lg:space-x-8">
             <Link to="/" className="flex items-center group py-1">
               <img
                 src="/logo.png"
@@ -99,7 +100,7 @@ export default function Navbar() {
                 }`}
               >
                 <Compass className="h-4 w-4" />
-                <span>Explore Stalls</span>
+                <span>{t('explore')}</span>
               </Link>
 
               {/* Interactive Categories Dropdown Button */}
@@ -116,7 +117,7 @@ export default function Navbar() {
                   aria-haspopup="true"
                 >
                   <Grid className="h-4 w-4" />
-                  <span>Categories</span>
+                  <span>{t('categories')}</span>
                   <ChevronDown
                     className={`h-3.5 w-3.5 transition-transform duration-200 ${
                       categoriesDropdownOpen ? 'rotate-180 text-[#16803D]' : 'text-[#647067]'
@@ -129,14 +130,14 @@ export default function Navbar() {
                   <div className="absolute left-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white border border-[#E5EAE5] shadow-card-hover p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-[#E5EAE5]">
                       <span className="text-xs font-bold uppercase tracking-wider text-[#17231D]">
-                        Browse by Category
+                        {t('browse_by_category')}
                       </span>
                       <Link
                         to="/explore"
                         onClick={() => setCategoriesDropdownOpen(false)}
                         className="text-[11px] font-bold text-[#16803D] hover:text-[#14532D] flex items-center space-x-1"
                       >
-                        <span>All Categories</span>
+                        <span>{t('all_categories')}</span>
                         <ArrowRight className="h-3 w-3" />
                       </Link>
                     </div>
@@ -167,7 +168,7 @@ export default function Navbar() {
                             </div>
                             <div className="overflow-hidden">
                               <span className="block text-xs font-bold leading-tight truncate">
-                                {cat.name}
+                                {tCategory(cat.slug)}
                               </span>
                               <span className="block text-[10px] text-[#647067] leading-tight truncate mt-0.5">
                                 {cat.desc}
@@ -185,13 +186,18 @@ export default function Navbar() {
 
           {/* Right Actions (Desktop) */}
           <div className="hidden md:flex items-center space-x-3">
-            {/* Multi-Language Selector */}
-            <div className="flex items-center bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl p-0.5 text-[11px] font-bold">
+            {/* Multi-Language Selector Pill */}
+            <div
+              role="group"
+              aria-label="Language selection"
+              className="flex items-center bg-[#FAFAF5] border border-[#E5EAE5] rounded-xl p-0.5 text-[11px] font-bold"
+            >
               <button
                 type="button"
                 onClick={() => changeLanguage('en')}
-                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
-                  lang === 'en' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                aria-pressed={lang === 'en'}
+                className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'en' ? 'bg-[#16803D] text-white shadow-xs font-extrabold' : 'text-[#647067] hover:text-[#17231D]'
                 }`}
               >
                 EN
@@ -199,8 +205,9 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => changeLanguage('gu')}
-                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
-                  lang === 'gu' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                aria-pressed={lang === 'gu'}
+                className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'gu' ? 'bg-[#16803D] text-white shadow-xs font-extrabold' : 'text-[#647067] hover:text-[#17231D]'
                 }`}
               >
                 ગુજ
@@ -208,13 +215,15 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => changeLanguage('hi')}
-                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
-                  lang === 'hi' ? 'bg-[#16803D] text-white shadow-2xs' : 'text-[#647067] hover:text-[#17231D]'
+                aria-pressed={lang === 'hi'}
+                className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  lang === 'hi' ? 'bg-[#16803D] text-white shadow-xs font-extrabold' : 'text-[#647067] hover:text-[#17231D]'
                 }`}
               >
-                हिं
+                હિં
               </button>
             </div>
+
             {user ? (
               <div className="flex items-center space-x-3">
                 {user.role === 'vendor' && (
@@ -223,7 +232,7 @@ export default function Navbar() {
                     className="inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7] hover:bg-[#D1EAD7]/50 transition-colors"
                   >
                     <Store className="h-3.5 w-3.5" />
-                    <span>Vendor Dashboard</span>
+                    <span>{t('vendor_dashboard')}</span>
                   </Link>
                 )}
 
@@ -233,7 +242,7 @@ export default function Navbar() {
                     className="inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
                   >
                     <Shield className="h-3.5 w-3.5" />
-                    <span>Admin Portal</span>
+                    <span>{t('admin_portal')}</span>
                   </Link>
                 )}
 
@@ -253,8 +262,8 @@ export default function Navbar() {
 
                 <button
                   onClick={handleSignOut}
-                  title="Sign Out"
-                  className="p-1.5 rounded-lg text-[#647067] hover:text-red-600 hover:bg-red-50 transition-colors"
+                  title={t('sign_out')}
+                  className="p-1.5 rounded-lg text-[#647067] hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   <LogOut className="h-4 w-4" />
                 </button>
@@ -265,38 +274,78 @@ export default function Navbar() {
                   to="/login"
                   className="text-sm font-medium text-[#647067] hover:text-[#17231D] px-3 py-1.5 rounded-lg hover:bg-[#FAFAF5] transition-colors"
                 >
-                  Sign In
+                  {t('sign_in')}
                 </Link>
                 <Link
                   to="/register/customer"
                   className="text-sm font-medium text-[#16803D] bg-[#EDF7EF] hover:bg-[#D1EAD7]/60 px-3.5 py-1.5 rounded-lg border border-[#D1EAD7] transition-colors"
                 >
-                  Sign Up
+                  {t('sign_up')}
                 </Link>
                 <Link
                   to="/register/vendor"
                   className="inline-flex items-center space-x-1.5 text-sm font-semibold text-white bg-[#16803D] hover:bg-[#14532D] px-4 py-2 rounded-lg shadow-sm transition-all"
                 >
                   <Store className="h-4 w-4" />
-                  <span>Register Your Stall</span>
+                  <span>{t('register_stall')}</span>
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Header: Language Switcher + Register + Menu Toggle */}
           <div className="md:hidden flex items-center space-x-2">
+            {/* Mobile Language Pill (Visible directly on mobile screen) */}
+            <div
+              role="group"
+              aria-label="Mobile language selector"
+              className="flex items-center bg-[#FAFAF5] border border-[#E5EAE5] rounded-lg p-0.5 text-[10px] font-bold"
+            >
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                aria-pressed={lang === 'en'}
+                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                  lang === 'en' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('gu')}
+                aria-pressed={lang === 'gu'}
+                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                  lang === 'gu' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                ગુજ
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('hi')}
+                aria-pressed={lang === 'hi'}
+                className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                  lang === 'hi' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                હિં
+              </button>
+            </div>
+
             {!user && (
               <Link
                 to="/register/vendor"
-                className="text-xs font-semibold text-white bg-[#16803D] px-3 py-1.5 rounded-lg shadow-xs"
+                className="text-xs font-semibold text-white bg-[#16803D] px-2.5 py-1.5 rounded-lg shadow-xs"
               >
-                Register Stall
+                {t('register_stall')}
               </Link>
             )}
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-[#647067] hover:text-[#17231D] hover:bg-[#FAFAF5]"
+              aria-label="Toggle mobile navigation menu"
+              className="p-1.5 rounded-lg text-[#647067] hover:text-[#17231D] hover:bg-[#FAFAF5] cursor-pointer"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -307,13 +356,50 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-[#E5EAE5] bg-white px-4 pt-3 pb-5 space-y-3 animate-in fade-in duration-150">
+          {/* Language selector in drawer */}
+          <div className="flex items-center justify-between px-3 py-2 bg-[#FAFAF5] rounded-xl border border-[#E5EAE5]">
+            <span className="text-xs font-semibold text-[#17231D] flex items-center space-x-1.5">
+              <Globe className="h-3.5 w-3.5 text-[#16803D]" />
+              <span>Language / ભાષા / भाषा</span>
+            </span>
+            <div className="flex items-center bg-white border border-[#E5EAE5] rounded-lg p-0.5 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'en' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                English
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('gu')}
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'gu' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                ગુજરાતી
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('hi')}
+                className={`px-2 py-1 rounded transition-all ${
+                  lang === 'hi' ? 'bg-[#16803D] text-white font-extrabold' : 'text-[#647067]'
+                }`}
+              >
+                हिन्दी
+              </button>
+            </div>
+          </div>
+
           <Link
             to="/explore"
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-[#17231D] hover:bg-[#FAFAF5]"
           >
             <Compass className="h-4 w-4 text-[#16803D]" />
-            <span>Explore All Stalls</span>
+            <span>{t('explore')}</span>
           </Link>
 
           {/* Mobile Categories Toggle */}
@@ -325,7 +411,7 @@ export default function Navbar() {
             >
               <div className="flex items-center space-x-2">
                 <Grid className="h-4 w-4 text-[#16803D]" />
-                <span>Categories</span>
+                <span>{t('categories')}</span>
               </div>
               <ChevronDown
                 className={`h-4 w-4 text-[#647067] transition-transform ${
@@ -343,7 +429,7 @@ export default function Navbar() {
                     onClick={() => handleCategorySelect(cat.slug)}
                     className="text-left py-1.5 px-2 text-xs font-medium text-[#647067] hover:text-[#16803D] hover:bg-[#EDF7EF] rounded-lg truncate cursor-pointer"
                   >
-                    {cat.name}
+                    {tCategory(cat.slug)}
                   </button>
                 ))}
               </div>
@@ -362,7 +448,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="block px-3 py-2 rounded-lg text-sm font-medium text-[#16803D] bg-[#EDF7EF]"
                   >
-                    Vendor Dashboard
+                    {t('vendor_dashboard')}
                   </Link>
                 )}
                 {user.role === 'admin' && (
@@ -371,7 +457,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-800 bg-slate-100"
                   >
-                    Admin Portal
+                    {t('admin_portal')}
                   </Link>
                 )}
                 <button
@@ -381,7 +467,7 @@ export default function Navbar() {
                   }}
                   className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
                 >
-                  Sign Out
+                  {t('sign_out')}
                 </button>
               </>
             ) : (
@@ -391,14 +477,14 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-center py-2 rounded-lg text-sm font-medium text-[#17231D] border border-[#E5EAE5]"
                 >
-                  Sign In
+                  {t('sign_in')}
                 </Link>
                 <Link
                   to="/register/customer"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-center py-2 rounded-lg text-sm font-medium text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7]"
                 >
-                  Sign Up
+                  {t('sign_up')}
                 </Link>
               </div>
             )}

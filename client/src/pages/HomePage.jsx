@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import vendorService from '../services/vendorService';
 import VendorCard from '../components/VendorCard';
 import { getStallCoverImage } from '../utils/stallImages';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Search,
   Navigation,
@@ -53,6 +54,7 @@ function getCategoryIcon(slug = '', name = '') {
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { t, tCategory } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState([]);
@@ -99,46 +101,39 @@ export default function HomePage() {
 
   // Handle "Near Me" Location Detection
   const handleNearMeClick = () => {
+    setGeoError(null);
     if (!navigator.geolocation) {
-      setGeoError('Geolocation is not supported by your current browser.');
+      setGeoError('Geolocation is not supported by your browser.');
       return;
     }
 
     setGeoLoading(true);
-    setGeoError(null);
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setGeoLoading(false);
         const { latitude, longitude } = position.coords;
-        navigate(
-          `/explore?lat=${latitude.toFixed(6)}&lng=${longitude.toFixed(6)}&nearby=true`
-        );
+        navigate(`/explore?lat=${latitude.toFixed(6)}&lng=${longitude.toFixed(6)}&nearby=true`);
       },
-      (error) => {
+      (err) => {
         setGeoLoading(false);
-        if (error.code === 1) {
-          setGeoError(
-            'Location permission was denied. You can still discover stalls using the search bar or area filter below.'
-          );
-        } else if (error.code === 2) {
-          setGeoError('Location position is unavailable. Please try an area search.');
-        } else {
-          setGeoError('Location request timed out. Please try again or search by area.');
-        }
+        let msg = 'Could not get your location.';
+        if (err.code === 1) msg = 'Location access was denied. Please allow location permissions to find nearby stalls.';
+        if (err.code === 2) msg = 'Location is unavailable.';
+        if (err.code === 3) msg = 'Location request timed out.';
+        setGeoError(msg);
       },
-      { timeout: 10000, enableHighAccuracy: true }
+      { timeout: 8000, enableHighAccuracy: true }
     );
   };
 
-  // Sample or live vendor for hero showcase
+  // Curated hero stall preview
   const heroVendor = featuredVendors[0] || {
-    id: 'sample-1',
-    stallName: 'MG Road Fresh Chaat Corner',
-    tagline: 'Famous spicy pani puri, sev puri and dahi bhalla made fresh daily.',
-    stallType: 'mobile',
+    id: 'demo-hero',
+    stallName: 'Manek Chowk Famous Gwalior Dosa',
+    tagline: 'Pure Amul butter cheese burst dosas & quick sandwiches on live tawa',
+    categories: [{ name: 'Street Food & Chaat', slug: 'street-food-chaat' }],
     availabilityStatus: 'open',
-    address: { area: 'MG Road', city: 'Ahmedabad' },
+    address: { area: 'Manek Chowk', city: 'Ahmedabad' },
     distanceKm: 0.4
   };
 
@@ -160,16 +155,16 @@ export default function HomePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#16803D]"></span>
               </span>
-              <span>Your neighborhood street marketplace</span>
+              <span>{t('neighborhood_tag')}</span>
             </div>
 
             <div className="space-y-3">
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-display text-[#17231D] tracking-tight leading-[1.12]">
-                Find Local Stalls <br className="hidden sm:inline" />
-                <span className="text-[#16803D]">Near You.</span>
+                {t('hero_title_1')} <br className="hidden sm:inline" />
+                <span className="text-[#16803D]">{t('hero_title_2')}</span>
               </h1>
               <p className="text-sm sm:text-base text-[#647067] max-w-xl leading-relaxed">
-                Discover roadside sellers, seasonal fruit carts, traditional crafts, and neighborhood street vendors with verified locations and walking directions.
+                {t('hero_subtitle')}
               </p>
             </div>
 
@@ -182,7 +177,7 @@ export default function HomePage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products, stalls, or local areas..."
+                    placeholder={t('hero_search_placeholder')}
                     className="w-full pl-10 pr-4 py-3 sm:py-2.5 rounded-xl border sm:border-0 border-[#E5EAE5] bg-transparent text-sm text-[#17231D] placeholder:text-[#647067] focus:outline-none"
                   />
                 </div>
@@ -191,7 +186,7 @@ export default function HomePage() {
                   className="px-6 py-3 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-sm font-semibold shadow-xs hover:shadow-sm transition-all shrink-0 flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
                 >
                   <Search className="h-4 w-4" />
-                  <span>Search</span>
+                  <span>{t('search')}</span>
                 </button>
               </div>
 
@@ -208,7 +203,7 @@ export default function HomePage() {
                   ) : (
                     <Navigation className="h-3.5 w-3.5 text-[#16803D]" />
                   )}
-                  <span>{geoLoading ? 'Detecting coordinates...' : 'Find Stalls Near Me'}</span>
+                  <span>{geoLoading ? t('detecting_spot') : t('find_stalls_near_me')}</span>
                 </button>
 
                 <Link
@@ -216,14 +211,14 @@ export default function HomePage() {
                   className="inline-flex items-center space-x-1.5 px-3 py-2 text-[#647067] hover:text-[#16803D] font-semibold transition-colors group"
                 >
                   <Compass className="h-3.5 w-3.5 group-hover:rotate-45 transition-transform duration-300" />
-                  <span>Browse all listings</span>
+                  <span>{t('browse_all_listings')}</span>
                 </Link>
               </div>
 
               {/* Popular Gujarat Localities & Khau Galli quick tags */}
               <div className="flex flex-wrap items-center gap-1.5 pt-2 text-[11px]">
                 <span className="text-[#647067] font-bold flex items-center mr-1">
-                  <Sparkles className="h-3 w-3 mr-1 text-[#16803D]" /> Gujarat Hubs:
+                  <Sparkles className="h-3 w-3 mr-1 text-[#16803D]" /> {t('gujarat_hubs')}
                 </span>
                 {[
                   { label: 'Manek Chowk', area: 'Manek Chowk' },
@@ -256,11 +251,11 @@ export default function HomePage() {
 
             {/* Direct Market Discovery Affirmation */}
             <p className="text-xs text-[#647067] pt-2 border-t border-[#E5EAE5]">
-              Connecting local residents directly with independent street stalls and neighborhood artisans without markups.
+              {t('zero_commission_desc')}
             </p>
           </div>
 
-          {/* Right Column: Realistic Marketplace Visual Preview with Subtle Floating Animation */}
+          {/* Right Column: Realistic Marketplace Visual Preview */}
           <div className="lg:col-span-5">
             <div className="bg-[#FAFAF5] border border-[#E5EAE5] rounded-3xl p-5 sm:p-6 space-y-4 shadow-card relative animate-float-slow">
               <div className="flex items-center justify-between pb-3 border-b border-[#E5EAE5]">
@@ -270,7 +265,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span className="text-xs font-bold text-[#17231D] block leading-tight">Live Discovery Preview</span>
-                    <span className="text-[11px] text-[#647067]">Neighborhood street stalls</span>
+                    <span className="text-[11px] text-[#647067]">{t('neighborhood_tag')}</span>
                   </div>
                 </div>
                 <span className="inline-flex items-center text-[11px] font-semibold text-[#16803D] bg-[#EDF7EF] border border-[#D1EAD7] px-2.5 py-0.5 rounded-full">
@@ -278,13 +273,12 @@ export default function HomePage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#16803D]"></span>
                   </span>
-                  Active Now
+                  {t('open_now')}
                 </span>
               </div>
 
-              {/* Sample Real Stall Preview Card with Real Photo */}
+              {/* Sample Real Stall Preview Card */}
               <div className="bg-white rounded-2xl border border-[#E5EAE5] p-5 sm:p-6 space-y-4 shadow-card hover:border-[#16803D]/40 transition-all overflow-hidden group">
-                {/* Stall Cover Image */}
                 <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden shadow-xs">
                   <img
                     src={heroImage}
@@ -294,7 +288,7 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
                   <div className="absolute top-3 left-3">
                     <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-[#EDF7EF]/95 backdrop-blur-xs text-[#16803D] border border-[#D1EAD7]/80 shadow-2xs">
-                      Street Food & Snacks
+                      {tCategory('street-food-chaat')}
                     </span>
                   </div>
                   <div className="absolute top-3 right-3">
@@ -317,13 +311,13 @@ export default function HomePage() {
                 <div className="flex items-center justify-between pt-3.5 border-t border-[#E5EAE5] text-xs sm:text-sm">
                   <div className="flex items-center text-[#647067] space-x-1.5">
                     <MapPin className="h-4 w-4 text-[#16803D]" />
-                    <span className="font-semibold text-[#17231D]">{heroVendor.address?.area || 'MG Road, Main Market'}</span>
+                    <span className="font-semibold text-[#17231D]">{heroVendor.address?.area || 'Law Garden, Ahmedabad'}</span>
                   </div>
                   <Link
                     to="/explore"
                     className="text-[#16803D] font-bold inline-flex items-center space-x-1 hover:text-[#14532D] transition-colors group/link"
                   >
-                    <span>View Stall</span>
+                    <span>{t('stall_details')}</span>
                     <ArrowRight className="h-3.5 w-3.5 group-link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
@@ -333,15 +327,15 @@ export default function HomePage() {
               <div className="grid grid-cols-2 gap-2.5 text-xs">
                 <div className="p-3 rounded-xl bg-white border border-[#E5EAE5] space-y-0.5 hover:border-[#16803D]/30 transition-colors">
                   <span className="font-bold text-[#17231D] flex items-center text-[11px]">
-                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> Direct Directions
+                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> {t('physical_discovery_title')}
                   </span>
-                  <span className="text-[11px] text-[#647067] block">Opens in Google Maps</span>
+                  <span className="text-[11px] text-[#647067] block">Google Maps GPS</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white border border-[#E5EAE5] space-y-0.5 hover:border-[#16803D]/30 transition-colors">
                   <span className="font-bold text-[#17231D] flex items-center text-[11px]">
-                    <Clock className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> Operating Hours
+                    <Clock className="h-3.5 w-3.5 mr-1 text-[#16803D]" /> {t('zero_commission_title')}
                   </span>
-                  <span className="text-[11px] text-[#647067] block">Updated by sellers</span>
+                  <span className="text-[11px] text-[#647067] block">0% markup</span>
                 </div>
               </div>
             </div>
@@ -349,19 +343,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Section A — Browse Categories with Micro-animations */}
+      {/* 2. Section A — Browse Categories */}
       <section className="space-y-6">
         <div className="flex items-end justify-between">
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-semibold text-[#16803D] uppercase tracking-wider mb-1">
               <Sparkles className="h-3 w-3" />
-              <span>Explore Categories</span>
+              <span>{t('categories')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold font-display text-[#17231D] tracking-tight">
-              Browse Categories
+              {t('browse_categories')}
             </h2>
             <p className="text-xs sm:text-sm text-[#647067] mt-0.5">
-              Discover street vendors by product, trade, and daily essentials
+              {t('browse_categories_sub')}
             </p>
           </div>
 
@@ -369,7 +363,7 @@ export default function HomePage() {
             to="/explore"
             className="text-xs sm:text-sm font-bold text-[#16803D] hover:text-[#14532D] inline-flex items-center space-x-1 transition-colors group"
           >
-            <span>View All</span>
+            <span>{t('view_all_stalls')}</span>
             <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -396,10 +390,10 @@ export default function HomePage() {
                 </div>
                 <div className="overflow-hidden">
                   <span className="block text-sm font-bold text-[#17231D] group-hover:text-[#16803D] truncate transition-colors">
-                    {cat.name}
+                    {tCategory(cat.slug || cat.name)}
                   </span>
                   <span className="block text-[11px] text-[#647067] group-hover:translate-x-0.5 transition-transform">
-                    Browse stalls →
+                    {t('explore_nav')} →
                   </span>
                 </div>
               </Link>
@@ -418,7 +412,7 @@ export default function HomePage() {
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">
               <Flame className="h-3.5 w-3.5" />
-              <span>Gujarat Street Food Culture</span>
+              <span>{t('hubs')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-[#17231D] tracking-tight">
               Famous Khau Galis & Street Hubs
@@ -432,7 +426,7 @@ export default function HomePage() {
             to="/explore"
             className="text-xs sm:text-sm font-bold text-[#16803D] hover:text-[#14532D] inline-flex items-center space-x-1 transition-colors group"
           >
-            <span>Explore on Map</span>
+            <span>{t('map_view')}</span>
             <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -465,7 +459,7 @@ export default function HomePage() {
               <div className="pt-2.5 border-t border-[#E5EAE5] flex items-center justify-between text-xs text-[#16803D] font-bold">
                 <span className="text-[11px] text-[#647067] font-normal">{hub.stallCountHint}</span>
                 <span className="group-hover:translate-x-1 transition-transform flex items-center">
-                  Explore Stalls →
+                  {t('explore_nav')} →
                 </span>
               </div>
             </div>
@@ -479,13 +473,13 @@ export default function HomePage() {
           <div>
             <div className="inline-flex items-center space-x-1.5 text-xs font-semibold text-[#16803D] uppercase tracking-wider mb-1">
               <Store className="h-3 w-3" />
-              <span>Live Street Directory</span>
+              <span>{t('featured_stalls')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold font-display text-[#17231D] tracking-tight">
-              Nearby Vendors & Stalls
+              {t('featured_stalls')}
             </h2>
             <p className="text-xs sm:text-sm text-[#647067] mt-0.5">
-              Verified local sellers with active schedules and confirmed locations
+              {t('featured_stalls_sub')}
             </p>
           </div>
 
@@ -493,7 +487,7 @@ export default function HomePage() {
             to="/explore"
             className="text-xs sm:text-sm font-bold text-[#16803D] hover:text-[#14532D] inline-flex items-center space-x-1 transition-colors group"
           >
-            <span>See More</span>
+            <span>{t('view_all_stalls')}</span>
             <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -523,7 +517,7 @@ export default function HomePage() {
                 to="/explore"
                 className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-white border border-[#E5EAE5] hover:border-[#16803D] text-[#17231D] hover:text-[#16803D] font-bold text-sm shadow-card hover:shadow-card-hover transition-all group"
               >
-                <span>Explore All Stalls Across Gujarat</span>
+                <span>{t('view_all_stalls')}</span>
                 <ArrowRight className="h-4 w-4 text-[#16803D] group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -532,17 +526,17 @@ export default function HomePage() {
           <div className="rounded-2xl border border-[#E5EAE5] bg-white p-8 sm:p-12 text-center space-y-3 shadow-subtle">
             <Store className="h-10 w-10 text-[#A3D5AF] mx-auto" />
             <h3 className="font-bold text-base text-[#17231D]">
-              No Stalls Published in This Area Yet
+              {t('no_stalls_found')}
             </h3>
             <p className="text-xs text-[#647067] max-w-md mx-auto leading-relaxed">
-              Vendors are registering their profiles. If you operate a stall, be the first to publish your location on Hezal Market.
+              {t('no_stalls_hint')}
             </p>
             <div className="pt-2">
               <Link
                 to="/register/vendor"
                 className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#16803D] text-white text-xs font-semibold hover:bg-[#14532D] shadow-xs transition-colors"
               >
-                <span>Register Your Stall</span>
+                <span>{t('register_stall')}</span>
               </Link>
             </div>
           </div>
@@ -600,47 +594,6 @@ export default function HomePage() {
               Buy directly from local vendors with zero middleman markups, platform cuts, or delivery commissions.
             </p>
           </div>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="pt-6 border-t border-[#E5EAE5] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-[#647067]">
-          <div className="flex items-center space-x-2.5">
-            <CheckCircle2 className="h-4 w-4 text-[#16803D] shrink-0" />
-            <span><strong>0% Commission:</strong> Every rupee goes directly to vendors</span>
-          </div>
-          <div className="flex items-center space-x-2.5">
-            <CheckCircle2 className="h-4 w-4 text-[#16803D] shrink-0" />
-            <span><strong>Verified Profiles:</strong> Vetted street sellers across Gujarat</span>
-          </div>
-          <div className="flex items-center space-x-2.5">
-            <CheckCircle2 className="h-4 w-4 text-[#16803D] shrink-0" />
-            <span><strong>Direct Contact:</strong> Free WhatsApp and Phone communication</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Section D — Vendor Onboarding Call to Action */}
-      <section className="bg-gradient-to-br from-[#EDF7EF] via-[#EDF7EF] to-[#D1EAD7]/40 rounded-3xl border border-[#D1EAD7] p-8 sm:p-12 shadow-card relative overflow-hidden">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative">
-          <div className="space-y-3 max-w-xl">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#16803D] text-white shadow-2xs">
-              For Stall Owners & Street Vendors
-            </span>
-            <h3 className="text-2xl sm:text-4xl font-extrabold font-display text-[#14532D] tracking-tight">
-              Bring Your Stall Online.
-            </h3>
-            <p className="text-xs sm:text-sm text-[#17231D]/80 leading-relaxed">
-              Help thousands of nearby customers discover your stall, your products, and where you operate today. Free to register, zero transaction fees, and simple to manage on mobile.
-            </p>
-          </div>
-
-          <Link
-            to="/register/vendor"
-            className="px-6 py-3.5 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white font-bold text-sm shadow-sm hover:shadow-md transition-all shrink-0 flex items-center space-x-2 active:scale-95 group"
-          >
-            <span>Register Your Stall</span>
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
         </div>
       </section>
     </div>

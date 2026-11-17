@@ -10,9 +10,18 @@ import apiRouter from './routes/index.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import errorHandler from './middleware/errorHandler.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
+import { connectDB } from './config/db.js';
+import logger from './utils/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initiate database connection in non-test runtime (Vercel serverless / dev)
+if (!env.isTest) {
+  connectDB().catch((err) => {
+    logger.warn(`Deferred database connection notice: ${err.message}`);
+  });
+}
 
 const app = express();
 

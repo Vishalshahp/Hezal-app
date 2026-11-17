@@ -94,6 +94,18 @@ export async function verifyOtp(data) {
 }
 
 /**
+ * Sign in or Sign up with Google Account (Free Google Authentication API)
+ * @param {string} idToken - Google credential JWT
+ * @param {'customer'|'vendor'|'admin'} [role='customer']
+ */
+export async function loginWithGoogle(idToken, role = 'customer') {
+  return await fetchJson('/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ idToken, role }),
+  });
+}
+
+/**
  * Sign in user using Google Authenticator code (Passwordless TOTP)
  */
 export async function loginWithTotp(email, code) {
@@ -141,6 +153,7 @@ export default {
   registerCustomer,
   registerVendor,
   login,
+  loginWithGoogle,
   loginWithTotp,
   getDemoTotpCode,
   get2FASetup,

@@ -59,4 +59,33 @@ describe('Ad Blocker Detection & Google Authenticator Passwordless Login', () =>
     // When ad blocker is not active, banner remains non-intrusive / hidden
     expect(container).toBeInTheDocument();
   });
+
+  it('renders free Google Authentication buttons across login and admin pages', () => {
+    const { unmount } = render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LanguageProvider>
+            <LoginPage />
+          </LanguageProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    // Verify "Continue with Google" is present on customer/vendor login
+    expect(screen.getByRole('button', { name: /Continue with Google/i })).toBeInTheDocument();
+    unmount();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LanguageProvider>
+            <AdminLoginPage />
+          </LanguageProvider>
+        </AuthProvider>
+      </MemoryRouter>
+    );
+
+    // Verify "Admin Sign in with Google" is present on admin login
+    expect(screen.getByRole('button', { name: /Admin Sign in with Google/i })).toBeInTheDocument();
+  });
 });

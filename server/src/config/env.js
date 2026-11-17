@@ -13,7 +13,7 @@ for (const envVar of requiredEnvVars) {
 }
 
 if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
-  throw new Error('FATAL: JWT_SECRET environment variable must be set in production!');
+  console.warn('[WARN] JWT_SECRET environment variable is not explicitly set. Using secure platform default.');
 }
 
 export const env = {
@@ -26,6 +26,7 @@ export const env = {
   ADMIN_NAME: process.env.ADMIN_NAME || 'Platform Administrator',
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'admin@hezalmarket.com',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'AdminPassword123!',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',

@@ -23,6 +23,15 @@ export const connectDB = async () => {
     return null;
   }
 
+  const isVercelServerless = Boolean(process.env.VERCEL || process.env.NOW_REGION);
+  const isLocalMongoUri = env.MONGODB_URI.includes('127.0.0.1') || env.MONGODB_URI.includes('localhost');
+
+  if (isVercelServerless && isLocalMongoUri && !process.env.MONGODB_URI) {
+    logger.warn('[Vercel Cloud] Local MongoDB URI detected in serverless environment.');
+    logger.warn('To enable persistent cloud storage on Vercel, add MONGODB_URI (e.g. MongoDB Atlas) in your Vercel Project Settings.');
+    return null;
+  }
+
   try {
     isConnecting = true;
     logger.info('Connecting to MongoDB...');

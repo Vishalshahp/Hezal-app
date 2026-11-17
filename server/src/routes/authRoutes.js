@@ -13,12 +13,16 @@ import {
   setup2FA,
   verify2FASetup,
   disable2FA,
-  getDemoTotpCode
+  getDemoTotpCode,
+  googleAuth
 } from '../controllers/authController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { authLimiter, otpLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
+
+// Google OAuth 2.0 Free Authentication API
+router.post('/google', authLimiter, googleAuth);
 
 // SMS OTP Verification routes
 router.post('/otp/send', otpLimiter, sendOtp);

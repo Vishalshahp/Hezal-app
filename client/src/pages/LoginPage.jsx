@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 import {
   Eye,
   EyeOff,
@@ -87,6 +88,18 @@ export default function LoginPage() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = (signedInUser) => {
+    if (from) {
+      navigate(from, { replace: true });
+    } else if (signedInUser?.role === 'vendor') {
+      navigate('/vendor/dashboard', { replace: true });
+    } else if (signedInUser?.role === 'admin') {
+      navigate('/admin', { replace: true });
+    } else {
+      navigate('/', { replace: true });
     }
   };
 
@@ -177,6 +190,23 @@ export default function LoginPage() {
             <span>{error}</span>
           </div>
         )}
+
+        {/* Free Google Authentication API */}
+        <div className="space-y-3">
+          <GoogleLoginButton
+            text="Continue with Google"
+            role="customer"
+            onSuccess={handleGoogleSuccess}
+            onError={(err) => setError(err)}
+          />
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#E5EAE5] w-full" />
+            <span className="bg-white px-3 text-[11px] font-bold text-[#647067] uppercase tracking-wider relative">
+              Or with email / code
+            </span>
+          </div>
+        </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">

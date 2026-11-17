@@ -9,8 +9,17 @@ import {
   verifyTOTP,
   getOtpAuthUri
 } from '../utils/totp.js';
+import { verifyGoogleIdToken } from '../utils/googleAuth.js';
 import env from '../config/env.js';
 import logger from '../utils/logger.js';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+
+// Fallback in-memory stores for serverless / cold start resilience when MongoDB is not connected
+const memoryOtpStore = new Map();
+const memoryUserStore = new Map();
+
+const isDbReady = () => mongoose.connection && mongoose.connection.readyState === 1;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -68,13 +77,23 @@ export const registerCustomer = async (req, res, next) => {
     const role = 'customer';
 
     // Duplicate account check
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        status: 'conflict',
-        message: 'An account with this email address already exists.'
-      });
+    if (isDbReady()) {
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return res.status(409).json({
+          success: false,
+          status: 'conflict',
+          message: 'An account with this email address already exists.'
+        });
+      }
+    } else {
+      if (memoryUserStore.has(normalizedEmail)) {
+        return res.status(409).json({
+          success: false,
+          status: 'conflict',
+          message: 'An account with this email address already exists.'
+        });
+      }
     }
 
     // Hash password
@@ -85,40 +104,68 @@ export const registerCustomer = async (req, res, next) => {
     const cleanPhone = phone ? phone.trim() : '';
     if (cleanPhone) {
       const normalizedPhone = normalizePhone(cleanPhone);
-      if (verificationToken) {
-        const otpRecord = await OtpVerification.findOne({
-          phone: normalizedPhone,
-          verificationToken,
-          verified: true
-        });
-        if (otpRecord) {
-          phoneVerified = true;
+      if (isDbReady()) {
+        if (verificationToken) {
+          const otpRecord = await OtpVerification.findOne({
+            phone: normalizedPhone,
+            verificationToken,
+            verified: true
+          });
+          if (otpRecord) {
+            phoneVerified = true;
+          }
+        } else if (otp) {
+          const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
+          const otpRecord = await OtpVerification.findOne({
+            phone: normalizedPhone,
+            otpHash: hash,
+            expiresAt: { $gt: new Date() }
+          });
+          if (otpRecord) {
+            phoneVerified = true;
+            otpRecord.verified = true;
+            await otpRecord.save();
+          }
         }
-      } else if (otp) {
-        const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
-        const otpRecord = await OtpVerification.findOne({
-          phone: normalizedPhone,
-          otpHash: hash,
-          expiresAt: { $gt: new Date() }
-        });
-        if (otpRecord) {
+      } else {
+        const memRecord = memoryOtpStore.get(normalizedPhone);
+        if (memRecord && (memRecord.verificationToken === verificationToken || memRecord.verified)) {
           phoneVerified = true;
-          otpRecord.verified = true;
-          await otpRecord.save();
+        } else if (memRecord && otp) {
+          const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
+          if (hash === memRecord.otpHash && memRecord.expiresAt > new Date()) {
+            phoneVerified = true;
+            memRecord.verified = true;
+          }
         }
       }
     }
 
     // Create user record
-    const user = await User.create({
-      name: name.trim(),
-      email: normalizedEmail,
-      phone: cleanPhone,
-      phoneVerified,
-      passwordHash,
-      role,
-      accountStatus: 'active'
-    });
+    let user;
+    if (isDbReady()) {
+      user = await User.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: cleanPhone,
+        phoneVerified,
+        passwordHash,
+        role,
+        accountStatus: 'active'
+      });
+    } else {
+      user = {
+        _id: new mongoose.Types.ObjectId().toString(),
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: cleanPhone,
+        phoneVerified,
+        role,
+        accountStatus: 'active',
+        createdAt: new Date()
+      };
+      memoryUserStore.set(normalizedEmail, { ...user, passwordHash });
+    }
 
     // Establish session
     const token = generateToken(user);
@@ -191,13 +238,23 @@ export const registerVendor = async (req, res, next) => {
     const role = 'vendor';
 
     // Duplicate account check
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        status: 'conflict',
-        message: 'An account with this email address already exists.'
-      });
+    if (isDbReady()) {
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return res.status(409).json({
+          success: false,
+          status: 'conflict',
+          message: 'An account with this email address already exists.'
+        });
+      }
+    } else {
+      if (memoryUserStore.has(normalizedEmail)) {
+        return res.status(409).json({
+          success: false,
+          status: 'conflict',
+          message: 'An account with this email address already exists.'
+        });
+      }
     }
 
     // Hash password
@@ -208,40 +265,68 @@ export const registerVendor = async (req, res, next) => {
     const cleanPhone = phone ? phone.trim() : '';
     if (cleanPhone) {
       const normalizedPhone = normalizePhone(cleanPhone);
-      if (verificationToken) {
-        const otpRecord = await OtpVerification.findOne({
-          phone: normalizedPhone,
-          verificationToken,
-          verified: true
-        });
-        if (otpRecord) {
-          phoneVerified = true;
+      if (isDbReady()) {
+        if (verificationToken) {
+          const otpRecord = await OtpVerification.findOne({
+            phone: normalizedPhone,
+            verificationToken,
+            verified: true
+          });
+          if (otpRecord) {
+            phoneVerified = true;
+          }
+        } else if (otp) {
+          const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
+          const otpRecord = await OtpVerification.findOne({
+            phone: normalizedPhone,
+            otpHash: hash,
+            expiresAt: { $gt: new Date() }
+          });
+          if (otpRecord) {
+            phoneVerified = true;
+            otpRecord.verified = true;
+            await otpRecord.save();
+          }
         }
-      } else if (otp) {
-        const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
-        const otpRecord = await OtpVerification.findOne({
-          phone: normalizedPhone,
-          otpHash: hash,
-          expiresAt: { $gt: new Date() }
-        });
-        if (otpRecord) {
+      } else {
+        const memRecord = memoryOtpStore.get(normalizedPhone);
+        if (memRecord && (memRecord.verificationToken === verificationToken || memRecord.verified)) {
           phoneVerified = true;
-          otpRecord.verified = true;
-          await otpRecord.save();
+        } else if (memRecord && otp) {
+          const hash = crypto.createHash('sha256').update(otp.trim()).digest('hex');
+          if (hash === memRecord.otpHash && memRecord.expiresAt > new Date()) {
+            phoneVerified = true;
+            memRecord.verified = true;
+          }
         }
       }
     }
 
     // Create user record
-    const user = await User.create({
-      name: name.trim(),
-      email: normalizedEmail,
-      phone: cleanPhone,
-      phoneVerified,
-      passwordHash,
-      role,
-      accountStatus: 'active'
-    });
+    let user;
+    if (isDbReady()) {
+      user = await User.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: cleanPhone,
+        phoneVerified,
+        passwordHash,
+        role,
+        accountStatus: 'active'
+      });
+    } else {
+      user = {
+        _id: new mongoose.Types.ObjectId().toString(),
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: cleanPhone,
+        phoneVerified,
+        role,
+        accountStatus: 'active',
+        createdAt: new Date()
+      };
+      memoryUserStore.set(normalizedEmail, { ...user, passwordHash });
+    }
 
     // Establish session
     const token = generateToken(user);
@@ -280,7 +365,12 @@ export const login = async (req, res, next) => {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Query user and explicitly select passwordHash
-    const user = await User.findOne({ email: normalizedEmail }).select('+passwordHash');
+    let user;
+    if (isDbReady()) {
+      user = await User.findOne({ email: normalizedEmail }).select('+passwordHash');
+    } else {
+      user = memoryUserStore.get(normalizedEmail);
+    }
 
     if (!user) {
       // Generic error message to prevent user enumeration
@@ -292,7 +382,9 @@ export const login = async (req, res, next) => {
     }
 
     // Verify password hash
-    const isMatch = await user.comparePassword(password);
+    const isMatch = isDbReady()
+      ? await user.comparePassword(password)
+      : await bcrypt.compare(password, user.passwordHash || '');
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -518,18 +610,29 @@ export const sendOtp = async (req, res, next) => {
 
     // Cooldown check: Prevent spamming within 45 seconds (skip in test environment)
     if (!env.isTest) {
-      const recentOtp = await OtpVerification.findOne({
-        phone: normalizedPhone,
-        purpose,
-        createdAt: { $gt: new Date(Date.now() - 45 * 1000) }
-      });
-
-      if (recentOtp) {
-        return res.status(429).json({
-          success: false,
-          status: 'error',
-          message: 'Please wait 45 seconds before requesting another verification code.'
+      if (isDbReady()) {
+        const recentOtp = await OtpVerification.findOne({
+          phone: normalizedPhone,
+          purpose,
+          createdAt: { $gt: new Date(Date.now() - 45 * 1000) }
         });
+
+        if (recentOtp) {
+          return res.status(429).json({
+            success: false,
+            status: 'error',
+            message: 'Please wait 45 seconds before requesting another verification code.'
+          });
+        }
+      } else {
+        const recent = memoryOtpStore.get(normalizedPhone);
+        if (recent && Date.now() - recent.createdAt < 45 * 1000) {
+          return res.status(429).json({
+            success: false,
+            status: 'error',
+            message: 'Please wait 45 seconds before requesting another verification code.'
+          });
+        }
       }
     }
 
@@ -538,16 +641,29 @@ export const sendOtp = async (req, res, next) => {
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    // Delete existing unverified OTPs for this phone/purpose to avoid clutter
-    await OtpVerification.deleteMany({ phone: normalizedPhone, purpose, verified: false });
+    if (isDbReady()) {
+      // Delete existing unverified OTPs for this phone/purpose to avoid clutter
+      await OtpVerification.deleteMany({ phone: normalizedPhone, purpose, verified: false });
 
-    // Save record
-    await OtpVerification.create({
-      phone: normalizedPhone,
-      otpHash,
-      purpose,
-      expiresAt
-    });
+      // Save record
+      await OtpVerification.create({
+        phone: normalizedPhone,
+        otpHash,
+        purpose,
+        expiresAt
+      });
+    } else {
+      memoryOtpStore.set(normalizedPhone, {
+        phone: normalizedPhone,
+        otpHash,
+        purpose,
+        expiresAt,
+        verified: false,
+        verificationToken: null,
+        attempts: 0,
+        createdAt: Date.now()
+      });
+    }
 
     // Send SMS via configured gateway (Fast2SMS, Twilio, or simulator)
     const result = await smsService.sendSmsOtp({
@@ -602,70 +718,123 @@ export const verifyOtp = async (req, res, next) => {
       });
     }
 
-    // Find latest active OTP
-    const otpRecord = await OtpVerification.findOne({
-      phone: normalizedPhone,
-      purpose
-    }).sort({ createdAt: -1 });
-
-    if (!otpRecord) {
-      return res.status(400).json({
-        success: false,
-        status: 'error',
-        message: 'No verification code requested for this phone number. Please request a code.'
-      });
-    }
-
-    if (new Date() > otpRecord.expiresAt) {
-      return res.status(400).json({
-        success: false,
-        status: 'error',
-        message: 'Verification code has expired. Please request a new code.'
-      });
-    }
-
-    if (otpRecord.attempts >= 5) {
-      return res.status(400).json({
-        success: false,
-        status: 'error',
-        message: 'Maximum verification attempts exceeded. Please request a new code.'
-      });
-    }
-
-    // Compare hash
-    const candidateHash = crypto.createHash('sha256').update(cleanOtp).digest('hex');
-    if (candidateHash !== otpRecord.otpHash) {
-      otpRecord.attempts += 1;
-      await otpRecord.save();
-      const remaining = 5 - otpRecord.attempts;
-      return res.status(400).json({
-        success: false,
-        status: 'error',
-        message: `Invalid verification code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`
-      });
-    }
-
-    // Generate verification token (valid for 15 minutes to complete registration)
-    const verificationToken = crypto
-      .createHmac('sha256', env.JWT_SECRET)
-      .update(`${normalizedPhone}:${purpose}:${Date.now()}`)
-      .digest('hex');
-
-    otpRecord.verified = true;
-    otpRecord.verificationToken = verificationToken;
-    await otpRecord.save();
-
-    return res.status(200).json({
-      success: true,
-      status: 'ok',
-      message: 'Mobile phone number verified successfully!',
-      data: {
+    if (isDbReady()) {
+      // Find latest active OTP
+      const otpRecord = await OtpVerification.findOne({
         phone: normalizedPhone,
-        formattedPhone: formatPhoneDisplay(normalizedPhone),
-        verified: true,
-        verificationToken
+        purpose
+      }).sort({ createdAt: -1 });
+
+      if (!otpRecord) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'No verification code requested for this phone number. Please request a code.'
+        });
       }
-    });
+
+      if (new Date() > otpRecord.expiresAt) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'Verification code has expired. Please request a new code.'
+        });
+      }
+
+      if (otpRecord.attempts >= 5) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'Maximum verification attempts exceeded. Please request a new code.'
+        });
+      }
+
+      // Compare hash
+      const candidateHash = crypto.createHash('sha256').update(cleanOtp).digest('hex');
+      if (candidateHash !== otpRecord.otpHash) {
+        otpRecord.attempts += 1;
+        await otpRecord.save();
+        const remaining = 5 - otpRecord.attempts;
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: `Invalid verification code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`
+        });
+      }
+
+      // Generate verification token (valid for 15 minutes to complete registration)
+      const verificationToken = crypto
+        .createHmac('sha256', env.JWT_SECRET)
+        .update(`${normalizedPhone}:${purpose}:${Date.now()}`)
+        .digest('hex');
+
+      otpRecord.verified = true;
+      otpRecord.verificationToken = verificationToken;
+      await otpRecord.save();
+
+      return res.status(200).json({
+        success: true,
+        status: 'ok',
+        message: 'Mobile phone number verified successfully!',
+        data: {
+          phone: normalizedPhone,
+          formattedPhone: formatPhoneDisplay(normalizedPhone),
+          verified: true,
+          verificationToken
+        }
+      });
+    } else {
+      const record = memoryOtpStore.get(normalizedPhone);
+      if (!record) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'No verification code requested for this phone number. Please request a code.'
+        });
+      }
+      if (new Date() > record.expiresAt) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'Verification code has expired. Please request a new code.'
+        });
+      }
+      if (record.attempts >= 5) {
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: 'Maximum verification attempts exceeded. Please request a new code.'
+        });
+      }
+      const candidateHash = crypto.createHash('sha256').update(cleanOtp).digest('hex');
+      if (candidateHash !== record.otpHash) {
+        record.attempts += 1;
+        const remaining = 5 - record.attempts;
+        return res.status(400).json({
+          success: false,
+          status: 'error',
+          message: `Invalid verification code. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`
+        });
+      }
+      const verificationToken = crypto
+        .createHmac('sha256', env.JWT_SECRET)
+        .update(`${normalizedPhone}:${purpose}:${Date.now()}`)
+        .digest('hex');
+      record.verified = true;
+      record.verificationToken = verificationToken;
+
+      return res.status(200).json({
+        success: true,
+        status: 'ok',
+        message: 'Mobile phone number verified successfully!',
+        data: {
+          phone: normalizedPhone,
+          formattedPhone: formatPhoneDisplay(normalizedPhone),
+          verified: true,
+          verificationToken
+        }
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -884,5 +1053,123 @@ export const getDemoTotpCode = async (_req, res) => {
       otpAuthUri: getOtpAuthUri('admin@hezalmarket.com', demoSecret, 'Hezal Market')
     }
   });
+};
+
+/**
+ * Sign in or Sign up with Google Account (Free Google Authentication API)
+ * POST /api/auth/google
+ */
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { idToken, role: requestedRole = 'customer' } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        status: 'error',
+        message: 'Google ID credential token is required.',
+      });
+    }
+
+    // Verify token using official Google OAuth2 TokenInfo API
+    const googleProfile = await verifyGoogleIdToken(idToken, env.GOOGLE_CLIENT_ID);
+    const { googleId, email, name, picture } = googleProfile;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        status: 'error',
+        message: 'Could not retrieve verified email address from Google account.',
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists by email
+    let user;
+    if (isDbReady()) {
+      user = await User.findOne({ email: normalizedEmail }).select('+passwordHash');
+    } else {
+      user = memoryUserStore.get(normalizedEmail);
+    }
+
+    if (user) {
+      // Link Google Account if not already linked
+      let updated = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        updated = true;
+      }
+      if (picture && !user.avatar) {
+        user.avatar = picture;
+        updated = true;
+      }
+      if (updated && isDbReady()) {
+        await user.save();
+      }
+    } else {
+      // Create new user account from verified Google credentials
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+      const passwordHash = await User.hashPassword(randomPassword);
+
+      // Determine role: if admin email, assign admin role; else assign requested role
+      const isAdminEmail = normalizedEmail === (env.ADMIN_EMAIL || 'admin@hezalmarket.com').toLowerCase().trim();
+      const finalRole = isAdminEmail ? 'admin' : (['customer', 'vendor'].includes(requestedRole) ? requestedRole : 'customer');
+
+      if (isDbReady()) {
+        user = await User.create({
+          name: name || normalizedEmail.split('@')[0],
+          email: normalizedEmail,
+          passwordHash,
+          role: finalRole,
+          accountStatus: 'active',
+          googleId,
+          avatar: picture || '',
+          authProvider: 'google',
+          phoneVerified: false,
+        });
+      } else {
+        user = {
+          _id: new mongoose.Types.ObjectId().toString(),
+          name: name || normalizedEmail.split('@')[0],
+          email: normalizedEmail,
+          passwordHash,
+          role: finalRole,
+          accountStatus: 'active',
+          googleId,
+          avatar: picture || '',
+          authProvider: 'google',
+          phoneVerified: false,
+          createdAt: new Date()
+        };
+        memoryUserStore.set(normalizedEmail, user);
+      }
+    }
+
+    // Account status checks
+    if (user.accountStatus === 'suspended') {
+      return res.status(403).json({
+        success: false,
+        status: 'forbidden',
+        message: 'Your account has been suspended. Please contact platform moderation.',
+      });
+    }
+
+    // Establish session
+    const token = generateToken(user);
+    setAuthCookie(res, token);
+
+    return res.status(200).json({
+      success: true,
+      status: 'ok',
+      message: `Signed in successfully with Google as ${user.name}.`,
+      data: {
+        user,
+        token,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 

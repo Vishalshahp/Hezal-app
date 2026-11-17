@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, User, AlertCircle, Loader2, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import PhoneOtpVerification from '../components/PhoneOtpVerification';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 export default function RegisterVendorPage() {
   const { registerVendor } = useAuth();
@@ -91,6 +92,23 @@ export default function RegisterVendorPage() {
             <span>{error}</span>
           </div>
         )}
+
+        {/* Free Google Authentication API */}
+        <div className="space-y-3">
+          <GoogleLoginButton
+            text="Register Stall with Google"
+            role="vendor"
+            onSuccess={() => navigate('/vendor/dashboard', { replace: true })}
+            onError={(err) => setError(err)}
+          />
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-[#E5EAE5] w-full" />
+            <span className="bg-white px-3 text-[11px] font-bold text-[#647067] uppercase tracking-wider relative">
+              Or with vendor email registration
+            </span>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

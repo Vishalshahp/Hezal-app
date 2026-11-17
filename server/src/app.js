@@ -40,7 +40,10 @@ app.use(
         'http://127.0.0.1:5173'
       ];
 
-      if (allowedOrigins.includes(origin)) {
+      const isVercelOrigin = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
+      const isLocalNetwork = /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(origin);
+
+      if (allowedOrigins.includes(origin) || isVercelOrigin || isLocalNetwork) {
         return callback(null, true);
       }
 

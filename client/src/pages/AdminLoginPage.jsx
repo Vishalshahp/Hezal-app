@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 import {
   Shield,
   Lock,
@@ -141,6 +142,29 @@ export default function AdminLoginPage() {
           <p className="text-xs text-slate-400 leading-relaxed">
             Platform Operations, Listing Approvals & Vendor Community Moderation.
           </p>
+        </div>
+
+        {/* Free Google Authentication API */}
+        <div className="space-y-3">
+          <GoogleLoginButton
+            text="Admin Sign in with Google"
+            role="admin"
+            onSuccess={(signedUser) => {
+              if (signedUser?.role !== 'admin') {
+                setErrorMsg('Access denied. This account does not possess platform administrator privileges.');
+                return;
+              }
+              navigate('/admin', { replace: true });
+            }}
+            onError={(err) => setErrorMsg(err)}
+          />
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-slate-800 w-full" />
+            <span className="bg-slate-900 px-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider relative">
+              Or with code / password
+            </span>
+          </div>
         </div>
 
         {/* Auth Method Switcher Tabs */}

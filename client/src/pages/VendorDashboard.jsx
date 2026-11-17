@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import vendorService from '../services/vendorService';
+import authService from '../services/authService';
 import {
   Store,
   CheckCircle2,
@@ -19,6 +20,10 @@ import {
   Navigation,
   X,
   Sparkles,
+  Smartphone,
+  ShieldCheck,
+  Copy,
+  Check,
 } from 'lucide-react';
 
 export default function VendorDashboard() {
@@ -30,6 +35,51 @@ export default function VendorDashboard() {
   const [standeeOpen, setStandeeOpen] = useState(false);
   const [gpsUpdating, setGpsUpdating] = useState(false);
   const [gpsNotice, setGpsNotice] = useState(null);
+
+  // 2FA Google Authenticator state
+  const [twoFactorModalOpen, setTwoFactorModalOpen] = useState(false);
+  const [twoFactorData, setTwoFactorData] = useState(null);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+  const [twoFactorSuccess, setTwoFactorSuccess] = useState(false);
+  const [twoFactorError, setTwoFactorError] = useState('');
+  const [copiedSecret, setCopiedSecret] = useState(false);
+
+  const handleOpen2FAModal = async () => {
+    setTwoFactorModalOpen(true);
+    setTwoFactorError('');
+    setTwoFactorSuccess(false);
+    setTwoFactorCode('');
+    setTwoFactorLoading(true);
+    try {
+      const res = await authService.get2FASetup();
+      if (res.success && res.data) {
+        setTwoFactorData(res.data);
+      }
+    } catch (err) {
+      setTwoFactorError(err.message || 'Failed to initiate 2FA setup');
+    } finally {
+      setTwoFactorLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async (e) => {
+    e.preventDefault();
+    if (!twoFactorCode.trim() || twoFactorCode.length !== 6) {
+      setTwoFactorError('Please enter a valid 6-digit code from Google Authenticator.');
+      return;
+    }
+    setTwoFactorLoading(true);
+    setTwoFactorError('');
+    try {
+      await authService.verify2FASetup(twoFactorData.secret, twoFactorCode.trim());
+      setTwoFactorSuccess(true);
+    } catch (err) {
+      setTwoFactorError(err.message || 'Invalid 6-digit code. Please check your app.');
+    } finally {
+      setTwoFactorLoading(false);
+    }
+  };
 
   const handleQuickLocationUpdate = () => {
     if (!navigator.geolocation) {
@@ -380,6 +430,15 @@ export default function VendorDashboard() {
                   <Printer className="h-4 w-4 text-[#86EFAC]" />
                   <span>Print Stall QR Standee</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={handleOpen2FAModal}
+                  className="px-4 py-2.5 rounded-xl bg-[#22C55E]/20 hover:bg-[#22C55E]/30 text-white border border-white/20 text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                >
+                  <Smartphone className="h-4 w-4 text-[#86EFAC]" />
+                  <span>Google Authenticator (2FA)</span>
+                </button>
               </div>
             </div>
           )}
@@ -518,6 +577,141 @@ export default function VendorDashboard() {
                 <span>Print Poster</span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Google Authenticator 2FA Setup Modal */}
+      {twoFactorModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in"
+        >
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-[#E5EAE5] space-y-5 text-[#17231D] relative">
+            <button
+              type="button"
+              onClick={() => setTwoFactorModalOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center space-x-3">
+              <div className="h-12 w-12 rounded-2xl bg-[#EDF7EF] text-[#16803D] border border-[#D1EAD7] flex items-center justify-center shadow-2xs">
+                <Smartphone className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-extrabold font-display text-lg sm:text-xl text-[#17231D]">
+                  Google Authenticator 2FA
+                </h3>
+                <p className="text-xs text-[#647067]">
+                  Log in with 6-digit phone code without typing passwords
+                </p>
+              </div>
+            </div>
+
+            {twoFactorError && (
+              <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 flex items-start space-x-2 text-xs text-red-700">
+                <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                <span>{twoFactorError}</span>
+              </div>
+            )}
+
+            {twoFactorSuccess ? (
+              <div className="text-center py-6 space-y-3">
+                <div className="h-14 w-14 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center border border-emerald-200 shadow-sm">
+                  <CheckCircle2 className="h-8 w-8" />
+                </div>
+                <h4 className="font-bold text-base text-[#17231D]">2FA Activated Successfully!</h4>
+                <p className="text-xs text-[#647067] max-w-xs mx-auto">
+                  From now on, you can sign in directly using your 6-digit Google Authenticator code without typing a password every time.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setTwoFactorModalOpen(false)}
+                  className="mt-2 px-6 py-2.5 rounded-xl bg-[#16803D] text-white text-xs font-bold hover:bg-[#14532D] shadow-xs"
+                >
+                  Done
+                </button>
+              </div>
+            ) : twoFactorLoading && !twoFactorData ? (
+              <div className="text-center py-10 space-y-2">
+                <Loader2 className="h-7 w-7 text-[#16803D] animate-spin mx-auto" />
+                <p className="text-xs text-[#647067]">Generating secure 2FA keys...</p>
+              </div>
+            ) : (
+              <form onSubmit={handleVerify2FA} className="space-y-4">
+                <div className="space-y-3 text-center">
+                  <div className="p-3 bg-white rounded-2xl border-2 border-dashed border-[#16803D]/30 inline-block shadow-2xs">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                        twoFactorData?.otpAuthUri || ''
+                      )}`}
+                      alt="Google Authenticator QR Code"
+                      className="w-40 h-40 object-contain mx-auto"
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#647067]">
+                    1. Open <strong>Google Authenticator</strong> on your phone and tap <strong>+ (Scan QR code)</strong>.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-semibold text-[#647067]">
+                    Can't scan? Enter key manually:
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={twoFactorData?.secret || ''}
+                      className="flex-1 px-3 py-2 text-xs font-mono bg-slate-50 border border-[#E5EAE5] rounded-xl text-slate-700 select-all"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(twoFactorData?.secret || '');
+                        setCopiedSecret(true);
+                        setTimeout(() => setCopiedSecret(false), 2000);
+                      }}
+                      className="px-3 py-2 rounded-xl border border-[#E5EAE5] text-xs font-bold text-[#17231D] hover:bg-[#FAFAF5] flex items-center space-x-1"
+                    >
+                      {copiedSecret ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copiedSecret ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 pt-1">
+                  <label className="block text-xs font-bold text-[#17231D]">
+                    2. Enter 6-Digit Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    required
+                    value={twoFactorCode}
+                    onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="123456"
+                    className="w-full py-2.5 px-3 text-center text-lg font-mono font-bold tracking-[0.3em] bg-white border border-[#E5EAE5] rounded-xl text-[#16803D] focus:outline-none focus:ring-2 focus:ring-[#16803D]/20 focus:border-[#16803D]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={twoFactorLoading || twoFactorCode.length !== 6}
+                  className="w-full py-2.5 rounded-xl bg-[#16803D] hover:bg-[#14532D] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center space-x-1.5 disabled:opacity-50"
+                >
+                  {twoFactorLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <span>Verify Code & Enable Passwordless Login</span>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}

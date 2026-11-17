@@ -3,12 +3,17 @@ import {
   registerCustomer,
   registerVendor,
   login,
+  loginWithTotp,
   logout,
   getMe,
   forgotPassword,
   resetPassword,
   sendOtp,
-  verifyOtp
+  verifyOtp,
+  setup2FA,
+  verify2FASetup,
+  disable2FA,
+  getDemoTotpCode
 } from '../controllers/authController.js';
 import { authenticate } from '../middleware/authMiddleware.js';
 import { authLimiter, otpLimiter } from '../middleware/rateLimiter.js';
@@ -26,10 +31,17 @@ router.post('/register/vendor', authLimiter, registerVendor);
 
 // Public session routes with rate limiting
 router.post('/login', authLimiter, login);
+router.post('/login/totp', authLimiter, loginWithTotp);
+router.get('/totp/demo-code', getDemoTotpCode);
 router.post('/logout', logout);
 
 // Protected session lookup
 router.get('/me', authenticate, getMe);
+
+// Google Authenticator 2FA management (Protected)
+router.get('/2fa/setup', authenticate, setup2FA);
+router.post('/2fa/verify', authenticate, verify2FASetup);
+router.post('/2fa/disable', authenticate, disable2FA);
 
 // Password recovery with rate limiting
 router.post('/forgot-password', authLimiter, forgotPassword);

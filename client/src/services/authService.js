@@ -93,10 +93,59 @@ export async function verifyOtp(data) {
   });
 }
 
+/**
+ * Sign in user using Google Authenticator code (Passwordless TOTP)
+ */
+export async function loginWithTotp(email, code) {
+  return await fetchJson('/auth/login/totp', {
+    method: 'POST',
+    body: JSON.stringify({ email, code }),
+  });
+}
+
+/**
+ * Get current live demo Google Authenticator code for testing
+ */
+export async function getDemoTotpCode() {
+  return await fetchJson('/auth/totp/demo-code');
+}
+
+/**
+ * Initiate Google Authenticator 2FA Setup
+ */
+export async function get2FASetup() {
+  return await fetchJson('/auth/2fa/setup');
+}
+
+/**
+ * Verify & enable Google Authenticator 2FA
+ */
+export async function verify2FASetup(secret, code) {
+  return await fetchJson('/auth/2fa/verify', {
+    method: 'POST',
+    body: JSON.stringify({ secret, code }),
+  });
+}
+
+/**
+ * Disable Google Authenticator 2FA
+ */
+export async function disable2FA(password) {
+  return await fetchJson('/auth/2fa/disable', {
+    method: 'POST',
+    body: JSON.stringify({ password }),
+  });
+}
+
 export default {
   registerCustomer,
   registerVendor,
   login,
+  loginWithTotp,
+  getDemoTotpCode,
+  get2FASetup,
+  verify2FASetup,
+  disable2FA,
   logout,
   getCurrentUser,
   forgotPassword,

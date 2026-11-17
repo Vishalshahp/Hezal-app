@@ -3,6 +3,12 @@ import User from '../models/User.js';
 import OtpVerification from '../models/OtpVerification.js';
 import smsService, { normalizePhone, formatPhoneDisplay, isValidPhone } from '../services/smsService.js';
 import { generateToken, setAuthCookie, clearAuthCookie } from '../utils/token.js';
+import {
+  generateBase32Secret,
+  generateTOTP,
+  verifyTOTP,
+  getOtpAuthUri
+} from '../utils/totp.js';
 import env from '../config/env.js';
 import logger from '../utils/logger.js';
 
@@ -663,5 +669,220 @@ export const verifyOtp = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+/**
+ * Passwordless User Sign In using Google Authenticator TOTP code
+ * POST /api/auth/login/totp
+ */
+export const loginWithTotp = async (req, res, next) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({
+        success: false,
+        status: 'error',
+        message: 'Please provide both email address and 6-digit Google Authenticator code.'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const cleanCode = code.toString().trim().replace(/\s+/g, '');
+
+    // Query user and explicitly select twoFactorSecret
+    const user = await User.findOne({ email: normalizedEmail }).select('+twoFactorSecret');
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        status: 'unauthorized',
+        message: 'Invalid email address or authenticator code.'
+      });
+    }
+
+    if (!user.twoFactorEnabled || !user.twoFactorSecret) {
+      return res.status(400).json({
+        success: false,
+        status: 'error',
+        message: 'Google Authenticator is not enabled for this account. Please sign in with your password first to enable 2FA.'
+      });
+    }
+
+    // Verify 6-digit TOTP code
+    const isValid = verifyTOTP(cleanCode, user.twoFactorSecret, 1);
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        status: 'unauthorized',
+        message: 'Invalid or expired 6-digit Google Authenticator code. Please check your authenticator app.'
+      });
+    }
+
+    // Account status checks
+    if (user.accountStatus === 'suspended') {
+      return res.status(403).json({
+        success: false,
+        status: 'forbidden',
+        message: 'Your account has been suspended. Please contact platform moderation.'
+      });
+    }
+
+    if (user.accountStatus === 'pending') {
+      return res.status(403).json({
+        success: false,
+        status: 'forbidden',
+        message: 'Your account registration is pending review by the platform administrator.'
+      });
+    }
+
+    // Establish session
+    const token = generateToken(user);
+    setAuthCookie(res, token);
+
+    // Remove sensitive secret before returning
+    user.twoFactorSecret = undefined;
+
+    return res.status(200).json({
+      success: true,
+      status: 'ok',
+      message: 'Authenticated successfully via Google Authenticator.',
+      data: {
+        user,
+        token
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Initiate Google Authenticator 2FA Setup
+ * GET /api/auth/2fa/setup (Requires authentication)
+ */
+export const setup2FA = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Generate new secret
+    const secret = generateBase32Secret(20);
+    const otpAuthUri = getOtpAuthUri(user.email, secret, 'Hezal Market');
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        secret,
+        otpAuthUri,
+        email: user.email,
+        issuer: 'Hezal Market'
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Verify and Enable Google Authenticator 2FA
+ * POST /api/auth/2fa/verify (Requires authentication)
+ */
+export const verify2FASetup = async (req, res, next) => {
+  try {
+    const { secret, code } = req.body;
+
+    if (!secret || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both the 2FA secret and the 6-digit verification code.'
+      });
+    }
+
+    const cleanCode = code.toString().trim().replace(/\s+/g, '');
+    const isValid = verifyTOTP(cleanCode, secret, 1);
+
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid 6-digit verification code. Please check the code in Google Authenticator.'
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+    user.twoFactorEnabled = true;
+    user.twoFactorSecret = secret;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Google Authenticator 2FA has been successfully activated for your account.',
+      data: {
+        twoFactorEnabled: true
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Disable Google Authenticator 2FA
+ * POST /api/auth/2fa/disable (Requires authentication)
+ */
+export const disable2FA = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const user = await User.findById(req.user.id).select('+passwordHash');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (password) {
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: 'Invalid password.' });
+      }
+    }
+
+    user.twoFactorEnabled = false;
+    user.twoFactorSecret = '';
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Google Authenticator 2FA has been disabled.',
+      data: {
+        twoFactorEnabled: false
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * Demo TOTP Code Generator for Testing
+ * GET /api/auth/totp/demo-code
+ */
+export const getDemoTotpCode = async (_req, res) => {
+  const demoSecret = 'JBSWY3DPEHPK3PXP';
+  const currentCode = generateTOTP(demoSecret);
+  const epoch = Math.floor(Date.now() / 1000);
+  const remainingSeconds = 30 - (epoch % 30);
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      demoEmail: 'admin@hezalmarket.com',
+      demoSecret,
+      code: currentCode,
+      remainingSeconds,
+      otpAuthUri: getOtpAuthUri('admin@hezalmarket.com', demoSecret, 'Hezal Market')
+    }
+  });
 };
 

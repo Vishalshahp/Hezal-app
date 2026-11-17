@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import vendorService from '../services/vendorService';
+import { queryFallbackVendors, FALLBACK_CATEGORIES } from '../data/fallbackData';
 import VendorCard from '../components/VendorCard';
 import InteractiveMap from '../components/InteractiveMap';
 import { filterGujaratLocations } from '../data/gujaratLocations';
@@ -97,11 +98,14 @@ export default function ExplorePage() {
     async function fetchCategories() {
       try {
         const res = await vendorService.getCategories();
-        if (res.data?.categories) {
+        if (res.data?.categories && res.data.categories.length > 0) {
           setCategories(res.data.categories);
+        } else {
+          setCategories(FALLBACK_CATEGORIES);
         }
       } catch (err) {
-        console.error('Failed to load categories:', err);
+        console.warn('Categories notice, using fallback categories:', err);
+        setCategories(FALLBACK_CATEGORIES);
       }
     }
     fetchCategories();
@@ -167,17 +171,52 @@ export default function ExplorePage() {
         });
       }
 
-      if (res.success && res.data) {
+      if (res && res.success && res.data) {
         setVendors(res.data.vendors || []);
         if (res.data.pagination) {
           setPagination(res.data.pagination);
         }
       } else {
-        setErrorMsg('Failed to retrieve vendor results.');
+        const fallback = queryFallbackVendors({
+          q: searchTerm.trim() || undefined,
+          category: selectedCategory || undefined,
+          area: selectedArea.trim() || undefined,
+          latitude: userLocation?.latitude,
+          longitude: userLocation?.longitude,
+          radius: radiusKm,
+          page,
+          limit: 18
+        });
+        if (fallback.success && fallback.data) {
+          setVendors(fallback.data.vendors || []);
+          if (fallback.data.pagination) {
+            setPagination(fallback.data.pagination);
+          }
+        } else {
+          setErrorMsg('Failed to retrieve vendor results.');
+        }
       }
     } catch (err) {
-      console.error('Search error:', err);
-      setErrorMsg(err.message || 'Unable to connect to marketplace service.');
+      console.warn('Search notice, loaded verified stalls fallback:', err);
+      const fallback = queryFallbackVendors({
+        q: searchTerm.trim() || undefined,
+        category: selectedCategory || undefined,
+        area: selectedArea.trim() || undefined,
+        latitude: userLocation?.latitude,
+        longitude: userLocation?.longitude,
+        radius: radiusKm,
+        page,
+        limit: 18
+      });
+      if (fallback.success && fallback.data) {
+        setVendors(fallback.data.vendors || []);
+        if (fallback.data.pagination) {
+          setPagination(fallback.data.pagination);
+        }
+        setErrorMsg(null);
+      } else {
+        setErrorMsg(err.message || 'Unable to connect to marketplace service.');
+      }
     } finally {
       setLoading(false);
     }

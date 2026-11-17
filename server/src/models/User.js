@@ -57,6 +57,15 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: {
       type: Date,
       select: false
+    },
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false
+    },
+    twoFactorSecret: {
+      type: String,
+      select: false,
+      default: ''
     }
   },
   {

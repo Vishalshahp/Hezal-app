@@ -1,4 +1,4 @@
-import { fetchJson, uploadFormData } from './api';
+import { fetchJson, uploadFormData, isVercelDeployment } from './api';
 import {
   FALLBACK_CATEGORIES,
   queryFallbackVendors,
@@ -9,15 +9,23 @@ function isNetworkError(err) {
   if (!err) return false;
   const msg = (err.message || '').toLowerCase();
   return (
+    err.code === 'BACKEND_UNAVAILABLE' ||
+    err.code === 'TIMEOUT' ||
+    err.name === 'TypeError' ||
     msg.includes('failed to fetch') ||
     msg.includes('networkerror') ||
     msg.includes('connection refused') ||
     msg.includes('timed out') ||
     msg.includes('abort') ||
-    err.name === 'TypeError' ||
-    err.code === 'TIMEOUT' ||
+    msg.includes('html instead of json') ||
+    msg.includes('failed to parse json') ||
     (typeof window !== 'undefined' && window.location.hostname.endsWith('vercel.app'))
   );
+}
+
+function shouldUseDirectFallback() {
+  // If hosted on Vercel without an explicitly provided external backend URL, serve verified fallback directly for instant response
+  return isVercelDeployment() && !import.meta.env.VITE_API_BASE_URL;
 }
 
 export async function getMyProfile() {
@@ -63,6 +71,9 @@ export async function uploadStallImage(file) {
 }
 
 export async function getCategories() {
+  if (shouldUseDirectFallback()) {
+    return { success: true, data: { categories: FALLBACK_CATEGORIES } };
+  }
   try {
     return await fetchJson('/categories');
   } catch (err) {
@@ -75,6 +86,9 @@ export async function getCategories() {
 }
 
 export async function searchVendors(params = {}) {
+  if (shouldUseDirectFallback()) {
+    return queryFallbackVendors(params);
+  }
   try {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
@@ -83,17 +97,24 @@ export async function searchVendors(params = {}) {
       }
     }
     const qs = query.toString();
-    return await fetchJson(`/vendors${qs ? `?${qs}` : ''}`);
+    const res = await fetchJson(`/vendors${qs ? `?${qs}` : ''}`);
+    if (res && res.success && res.data) {
+      return res;
+    }
+    return queryFallbackVendors(params);
   } catch (err) {
     if (isNetworkError(err)) {
       console.warn('Backend unavailable, using verified stalls fallback:', err.message);
       return queryFallbackVendors(params);
     }
-    throw err;
+    return queryFallbackVendors(params);
   }
 }
 
 export async function getNearbyVendors(params = {}) {
+  if (shouldUseDirectFallback()) {
+    return queryFallbackVendors(params);
+  }
   try {
     const query = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
@@ -101,17 +122,25 @@ export async function getNearbyVendors(params = {}) {
         query.append(key, value);
       }
     }
-    return await fetchJson(`/vendors/nearby?${query.toString()}`);
+    const res = await fetchJson(`/vendors/nearby?${query.toString()}`);
+    if (res && res.success && res.data) {
+      return res;
+    }
+    return queryFallbackVendors(params);
   } catch (err) {
     if (isNetworkError(err)) {
       console.warn('Backend unavailable, using nearby stalls fallback:', err.message);
       return queryFallbackVendors(params);
     }
-    throw err;
+    return queryFallbackVendors(params);
   }
 }
 
 export async function getPublicProfile(id) {
+  if (shouldUseDirectFallback()) {
+    const fallback = queryFallbackVendorProfile(id);
+    if (fallback.success) return fallback;
+  }
   try {
     return await fetchJson(`/vendors/${id}`);
   } catch (err) {
@@ -120,6 +149,8 @@ export async function getPublicProfile(id) {
       const fallback = queryFallbackVendorProfile(id);
       if (fallback.success) return fallback;
     }
+    const fallback = queryFallbackVendorProfile(id);
+    if (fallback.success) return fallback;
     throw err;
   }
 }

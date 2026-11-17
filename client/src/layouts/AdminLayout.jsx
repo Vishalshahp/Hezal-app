@@ -15,6 +15,7 @@ import {
   Activity,
   CheckCircle2,
 } from 'lucide-react';
+import AdBlockerBanner from '../components/AdBlockerBanner';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -36,6 +37,7 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-white">
+      <AdBlockerBanner />
       {/* 1. Top Operations Banner */}
       <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

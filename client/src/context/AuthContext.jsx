@@ -40,6 +40,17 @@ export function AuthProvider({ children }) {
     return res;
   };
 
+  const loginWithTotpUser = async (email, code) => {
+    const res = await authService.loginWithTotp(email, code);
+    if (res && res.data && res.data.user) {
+      setUser(res.data.user);
+      if (res.data.token && typeof localStorage !== 'undefined') {
+        localStorage.setItem('hezal_auth_token', res.data.token);
+      }
+    }
+    return res;
+  };
+
   const registerCustomerUser = async (payload) => {
     const res = await authService.registerCustomer(payload);
     if (res && res.data && res.data.user) {
@@ -79,6 +90,7 @@ export function AuthProvider({ children }) {
         user,
         loading,
         login: loginUser,
+        loginWithTotp: loginWithTotpUser,
         registerCustomer: registerCustomerUser,
         registerVendor: registerVendorUser,
         logout: logoutUser,

@@ -14,23 +14,20 @@ const seedAdmin = async () => {
     const adminPassword = env.ADMIN_PASSWORD || 'AdminPassword123!';
     const adminName = env.ADMIN_NAME || 'Platform Administrator';
 
+    const DEMO_TOTP_SECRET = 'JBSWY3DPEHPK3PXP';
+
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: adminEmail });
+    const existingAdmin = await User.findOne({ email: adminEmail }).select('+twoFactorSecret');
 
     if (existingAdmin) {
-      if (existingAdmin.role === 'admin') {
-        logger.info(`Administrator account (${adminEmail}) already exists. No action required.`);
-        await disconnectDB();
-        process.exit(0);
-      } else {
-        // Upgrade existing user to admin
-        existingAdmin.role = 'admin';
-        existingAdmin.accountStatus = 'active';
-        await existingAdmin.save();
-        logger.info(`Existing account (${adminEmail}) upgraded to administrator role.`);
-        await disconnectDB();
-        process.exit(0);
-      }
+      existingAdmin.role = 'admin';
+      existingAdmin.accountStatus = 'active';
+      existingAdmin.twoFactorEnabled = true;
+      existingAdmin.twoFactorSecret = DEMO_TOTP_SECRET;
+      await existingAdmin.save();
+      logger.info(`Administrator account (${adminEmail}) updated with Google Authenticator TOTP support (Secret: ${DEMO_TOTP_SECRET}).`);
+      await disconnectDB();
+      process.exit(0);
     }
 
     // Create new admin
@@ -42,14 +39,18 @@ const seedAdmin = async () => {
       phone: '+919999999999',
       passwordHash,
       role: 'admin',
-      accountStatus: 'active'
+      accountStatus: 'active',
+      twoFactorEnabled: true,
+      twoFactorSecret: DEMO_TOTP_SECRET
     });
 
     logger.info(`=================================================`);
     logger.info(`  Administrator Provisioned Successfully!`);
-    logger.info(`  Name:  ${adminName}`);
-    logger.info(`  Email: ${adminEmail}`);
-    logger.info(`  Role:  admin`);
+    logger.info(`  Name:   ${adminName}`);
+    logger.info(`  Email:  ${adminEmail}`);
+    logger.info(`  Role:   admin`);
+    logger.info(`  2FA:    Google Authenticator Enabled`);
+    logger.info(`  Secret: ${DEMO_TOTP_SECRET}`);
     logger.info(`=================================================`);
 
     await disconnectDB();

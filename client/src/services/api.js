@@ -1,3 +1,9 @@
+export function isVercelDeployment() {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname || '';
+  return host.endsWith('vercel.app') || host.includes('vercel');
+}
+
 export function getApiBaseUrl() {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
@@ -5,8 +11,12 @@ export function getApiBaseUrl() {
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;
     // When accessing from phone or another device on the local network (e.g. 192.168.1.9)
-    if (host && host !== 'localhost' && host !== '127.0.0.1' && !host.endsWith('vercel.app')) {
+    if (host && host !== 'localhost' && host !== '127.0.0.1' && !isVercelDeployment()) {
       return `http://${host}:5000/api`;
+    }
+    // On Vercel without a custom external backend URL
+    if (isVercelDeployment()) {
+      return '/api';
     }
   }
   return 'http://localhost:5000/api';
@@ -32,7 +42,7 @@ export async function fetchJson(endpoint, options = {}) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 8000);
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout || 6000);
 
   try {
     const response = await fetch(url, {
@@ -47,6 +57,14 @@ export async function fetchJson(endpoint, options = {}) {
 
     clearTimeout(timeoutId);
 
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+      const htmlError = new Error('API service returned HTML instead of JSON (backend endpoint unavailable).');
+      htmlError.code = 'BACKEND_UNAVAILABLE';
+      htmlError.status = 503;
+      throw htmlError;
+    }
+
     const data = await response.json().catch(() => ({
       success: false,
       message: 'Failed to parse JSON response from server',
@@ -56,6 +74,9 @@ export async function fetchJson(endpoint, options = {}) {
       const error = new Error(data.message || `HTTP ${response.status} Error`);
       error.status = response.status;
       error.data = data;
+      if (data.message === 'Failed to parse JSON response from server') {
+        error.code = 'BACKEND_UNAVAILABLE';
+      }
       throw error;
     }
 
@@ -67,6 +88,13 @@ export async function fetchJson(endpoint, options = {}) {
       const timeoutError = new Error('Connection timed out. Backend server is not responding.');
       timeoutError.code = 'TIMEOUT';
       throw timeoutError;
+    }
+
+    if (error.name === 'TypeError' || error.message?.includes('Failed to fetch')) {
+      const netError = new Error('Failed to connect to backend server.');
+      netError.code = 'BACKEND_UNAVAILABLE';
+      netError.originalError = error;
+      throw netError;
     }
 
     throw error;
